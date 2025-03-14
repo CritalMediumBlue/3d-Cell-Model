@@ -3,6 +3,8 @@ import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { VRButton } from 'three/addons/webxr/VRButton.js';
+import { ARButton } from 'three/addons/webxr/ARButton.js';
+
 class CellViewer {
   constructor() {
     this.scene = new THREE.Scene();
@@ -33,6 +35,21 @@ class CellViewer {
     this.loadCellModel();
     this.createParticles(); 
     this.animate();
+    document.body.appendChild(ARButton.createButton(this.renderer, {
+      requiredFeatures: ['hit-test'],
+      optionalFeatures: ['dom-overlay'],
+      domOverlay: { root: document.body }
+    }));
+    // Add to your constructor
+if (window.DeviceOrientationEvent) {
+  window.addEventListener('deviceorientation', (event) => {
+    // Only use device orientation when not in VR mode
+    if (!this.renderer.xr.isPresenting) {
+      // Use device orientation to control camera when not in VR mode
+      // This gives a more immersive experience even without entering VR
+    }
+  });
+}
   }
   
   loadCellModel() {
