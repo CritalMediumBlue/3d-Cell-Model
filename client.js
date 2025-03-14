@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { VRButton } from 'three/addons/webxr/VRButton.js';
 import { ARButton } from 'three/addons/webxr/ARButton.js';
 
 class CellViewer {
@@ -14,7 +13,7 @@ class CellViewer {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.xr.enabled = true;
     document.body.appendChild(this.renderer.domElement);
-    document.body.appendChild(VRButton.createButton(this.renderer));
+    
     
     this.camera.position.set(40, 40, 40);
     this.camera.lookAt(0, 0, 0);
