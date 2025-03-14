@@ -3,7 +3,6 @@ import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { VRButton } from 'three/addons/webxr/VRButton.js';
-
 class CellViewer {
   constructor() {
     this.scene = new THREE.Scene();
@@ -11,16 +10,10 @@ class CellViewer {
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    const meta = document.createElement('meta');
-    meta.name = 'viewport';
-    meta.content = 'width=device-width, initial-scale=1.0, user-scalable=no';
-    document.head.appendChild(meta);
-    // Enable WebXR
     this.renderer.xr.enabled = true;
     document.body.appendChild(this.renderer.domElement);
+    document.body.appendChild(VRButton.createButton(this.renderer));
     
-    // Add VR button to the page
-    document.body.appendChild(VRButton.createButton(this.renderer));  
     this.camera.position.set(40, 40, 40);
     this.camera.lookAt(0, 0, 0);
     const keyLight = new THREE.DirectionalLight(0xFFFFFF, 3);
@@ -40,22 +33,8 @@ class CellViewer {
     this.loadCellModel();
     this.createParticles(); 
     this.animate();
- 
-    window.addEventListener('resize', this.onWindowResize.bind(this));
-    const isDesktop = !(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
-if (isDesktop) {
-  const infoDiv = document.createElement('div');
-  infoDiv.style = "position:fixed; bottom:10px; width:100%; text-align:center; color:white; background:rgba(0,0,0,0.5); padding:10px;";
-  infoDiv.innerHTML = "For VR experience, please open this page on a mobile device using Chrome";
-  document.body.appendChild(infoDiv);
-}
   }
   
-  onWindowResize() {
-    this.camera.aspect = window.innerWidth / window.innerHeight;
-    this.camera.updateProjectionMatrix();
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-  }
   loadCellModel() {
     const mtlLoader = new MTLLoader();
     mtlLoader.setPath('./cellModel/');
@@ -85,8 +64,10 @@ if (isDesktop) {
     
     for (let i = 0; i < 300; i++) {
      
+      
       const protein = new THREE.Mesh(proteinGeometry, proteinMaterial);
       
+    
       protein.position.set(
         (Math.random() - 0.5)*50,
         (Math.random() - 0.5)*50,
@@ -147,9 +128,43 @@ if (isDesktop) {
     }
     );
     
-    this.renderer.setAnimationLoop(this.animate.bind(this));
+    requestAnimationFrame(this.animate.bind(this));
+    this.renderer.setAnimationLoop(this.render.bind(this));
+  }
+  render() {
+    // Move your animation logic here
+    // Update protein positions with Brownian motion
+    this.proteins.forEach(protein => {
+      // Random movement in each direction
+      protein.position.x += (Math.random() - 0.5) * this.proteinSpeed;
+      protein.position.y += (Math.random() - 0.5) * this.proteinSpeed;
+      protein.position.z += (Math.random() - 0.5) * this.proteinSpeed;
+
+      //if the position is outside the bounds of the cell membrane, reflect the protein back into the cell
+      const radius = this.cellRadius;
+      if (protein.position.length() > radius) {
+        protein.position.setLength(radius);
+      }
+    });
+
+    // Update water molecule positions with Brownian motion
+    this.waterMolecules.forEach(water => {
+      // Random movement in each direction
+      water.position.x += (Math.random() - 0.5) * this.waterSpeed;
+      water.position.y += (Math.random() - 0.5) * this.waterSpeed;
+      water.position.z += (Math.random() - 0.5) * this.waterSpeed;
+
+      //if the position is outside the bounds of the cell membrane, reflect the protein back into the cell
+      const radius = this.cellRadius;
+      if (water.position.length() > radius) {
+        water.position.setLength(radius);
+      }
+    });
+    
     this.renderer.render(this.scene, this.camera);
   }
+
+
 }
 
 document.addEventListener('DOMContentLoaded', () => new CellViewer());
