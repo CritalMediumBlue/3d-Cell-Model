@@ -42,16 +42,7 @@ class CellViewer {
       optionalFeatures: ['dom-overlay'],
       domOverlay: { root: document.body }
     }));
-    // Add to your constructor
-if (window.DeviceOrientationEvent) {
-  window.addEventListener('deviceorientation', (event) => {
-    // Only use device orientation when not in VR mode
-    if (!this.renderer.xr.isPresenting) {
-      // Use device orientation to control camera when not in VR mode
-      // This gives a more immersive experience even without entering VR
-    }
-  });
-}
+
 this.renderer.xr.addEventListener('sessionstart', () => {
   // Set up AR session controller
   this.controller = this.renderer.xr.getController(0);
