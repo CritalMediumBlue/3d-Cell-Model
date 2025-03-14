@@ -42,6 +42,13 @@ class CellViewer {
     this.animate();
  
     window.addEventListener('resize', this.onWindowResize.bind(this));
+    const isDesktop = !(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+if (isDesktop) {
+  const infoDiv = document.createElement('div');
+  infoDiv.style = "position:fixed; bottom:10px; width:100%; text-align:center; color:white; background:rgba(0,0,0,0.5); padding:10px;";
+  infoDiv.innerHTML = "For VR experience, please open this page on a mobile device using Chrome";
+  document.body.appendChild(infoDiv);
+}
   }
   
   onWindowResize() {
