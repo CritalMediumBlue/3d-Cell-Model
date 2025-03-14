@@ -25,7 +25,7 @@ class CellViewer {
     const fogColor = new THREE.Color(0x0F000F);  // Light gray fog
     this.scene.fog = new THREE.Fog(fogColor, 2, 90);
     this.scene.background = fogColor;
-    this.scene.add(keyLight);
+    this.sceneGroup.add(keyLight);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
     this.proteins = []; 
@@ -47,13 +47,25 @@ this.renderer.xr.addEventListener('sessionstart', () => {
   // Set up AR session controller
   this.controller = this.renderer.xr.getController(0);
   this.controller.addEventListener('select', (event) => {
-    // When user taps, position content at the hit point
     if (this.hitTestSource && this.hitTestSourceRequested) {
-      // Position the sceneGroup at hit point
+      const hitTestResults = frame.getHitTestResults(this.hitTestSource);
+      if (hitTestResults.length) {
+        const hit = hitTestResults[0];
+        const referenceSpace = this.renderer.xr.getReferenceSpace();
+        const hitPose = hit.getPose(referenceSpace);
+        
+        // Position the entire sceneGroup at the hit point
+        this.sceneGroup.position.set(
+          hitPose.transform.position.x,
+          hitPose.transform.position.y,
+          hitPose.transform.position.z
+        );
+      }
     }
   });
-  this.scene.add(this.controller);
+  this.sceneGroup.add(this.controller);
 });
+this.sceneGroup.scale.set(0.2, 0.2, 0.2); 
   }
   
   loadCellModel() {
@@ -67,7 +79,7 @@ this.renderer.xr.addEventListener('sessionstart', () => {
       objLoader.load("CellAnatomy.obj", (object) => {
         object.scale.set(0.5, 0.5, 0.5);
         object.position.set(1, -26, 0);
-        this.scene.add(object);
+        this.sceneGroup.add(object);
       });
     });
   }
@@ -95,7 +107,7 @@ this.renderer.xr.addEventListener('sessionstart', () => {
         (Math.random() - 0.5)*50
       );
       
-      this.scene.add(protein);
+      this.sceneGroup.add(protein);
       this.proteins.push(protein);
     }
     const waterMaterial = new THREE.MeshPhongMaterial({ 
@@ -111,7 +123,7 @@ this.renderer.xr.addEventListener('sessionstart', () => {
             (Math.random() - 0.5) * 50,
             (Math.random() - 0.5) * 50
         );
-        this.scene.add(water);
+        this.sceneGroup.add(water);
         this.waterMolecules.push(water);
         }
   }
