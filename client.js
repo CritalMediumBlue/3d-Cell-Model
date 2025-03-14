@@ -14,7 +14,10 @@ class CellViewer {
     this.renderer.xr.enabled = true;
     document.body.appendChild(this.renderer.domElement);
     
-    
+        // Add to constructor
+    this.sceneGroup = new THREE.Group();
+    this.scene.add(this.sceneGroup);
+    // Add objects to this.sceneGroup instead of this.scene
     this.camera.position.set(40, 40, 40);
     this.camera.lookAt(0, 0, 0);
     const keyLight = new THREE.DirectionalLight(0xFFFFFF, 3);
@@ -27,8 +30,8 @@ class CellViewer {
 
     this.proteins = []; 
     this.waterMolecules = []; 
-    this.proteinSpeed = 0.1; 
-    this.waterSpeed = 1; 
+    this.proteinSpeed = 0.5; 
+    this.waterSpeed = this.proteinSpeed * 20; 
     this.cellRadius = 25; 
 
     this.loadCellModel();
@@ -49,6 +52,17 @@ if (window.DeviceOrientationEvent) {
     }
   });
 }
+this.renderer.xr.addEventListener('sessionstart', () => {
+  // Set up AR session controller
+  this.controller = this.renderer.xr.getController(0);
+  this.controller.addEventListener('select', (event) => {
+    // When user taps, position content at the hit point
+    if (this.hitTestSource && this.hitTestSourceRequested) {
+      // Position the sceneGroup at hit point
+    }
+  });
+  this.scene.add(this.controller);
+});
   }
   
   loadCellModel() {
@@ -150,6 +164,8 @@ if (window.DeviceOrientationEvent) {
   render() {
     // Move your animation logic here
     // Update protein positions with Brownian motion
+    const radius = this.cellRadius;
+
     this.proteins.forEach(protein => {
       // Random movement in each direction
       protein.position.x += (Math.random() - 0.5) * this.proteinSpeed;
@@ -157,7 +173,6 @@ if (window.DeviceOrientationEvent) {
       protein.position.z += (Math.random() - 0.5) * this.proteinSpeed;
 
       //if the position is outside the bounds of the cell membrane, reflect the protein back into the cell
-      const radius = this.cellRadius;
       if (protein.position.length() > radius) {
         protein.position.setLength(radius);
       }
@@ -171,7 +186,6 @@ if (window.DeviceOrientationEvent) {
       water.position.z += (Math.random() - 0.5) * this.waterSpeed;
 
       //if the position is outside the bounds of the cell membrane, reflect the protein back into the cell
-      const radius = this.cellRadius;
       if (water.position.length() > radius) {
         water.position.setLength(radius);
       }
