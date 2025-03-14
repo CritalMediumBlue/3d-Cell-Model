@@ -48,6 +48,11 @@ class CellViewer {
     this.waterSpeed = this.proteinSpeed * 20; 
     this.cellRadius = 25; 
     
+    // Store original scale for switching between AR and non-AR
+    this.originalScale = new THREE.Vector3(1, 1, 1);
+    // AR scale will be much smaller, in meters
+    this.arScale = new THREE.Vector3(0.02, 0.02, 0.02);
+    
     // Handle window resizing
     window.addEventListener('resize', this.onWindowResize.bind(this), false);
 
@@ -69,14 +74,14 @@ class CellViewer {
     this.renderer.xr.addEventListener('sessionstart', this.onSessionStart.bind(this));
     this.renderer.xr.addEventListener('sessionend', this.onSessionEnd.bind(this));
     
-    // Scale the group for AR viewing
-    this.sceneGroup.scale.set(0.2, 0.2, 0.2); 
-    
     // Start animation loop
     this.renderer.setAnimationLoop(this.render.bind(this));
   }
   
   onSessionStart() {
+    // Apply AR scaling - make the cell much smaller to look appropriate in real world
+    this.sceneGroup.scale.copy(this.arScale);
+    
     this.hitTestSourceRequested = false;
     this.hitTestSource = null;
     
@@ -84,14 +89,53 @@ class CellViewer {
     this.controller = this.renderer.xr.getController(0);
     this.controller.addEventListener('select', this.onSelect.bind(this));
     this.sceneGroup.add(this.controller);
+    
+    // Create a reset button in AR to make the cell return to origin if needed
+    this.createARResetButton();
   }
   
   onSessionEnd() {
+    // Return to original scale for non-AR mode
+    this.sceneGroup.scale.copy(this.originalScale);
+    
     if (this.hitTestSource) {
       this.hitTestSource.cancel();
       this.hitTestSource = null;
     }
     this.hitTestSourceRequested = false;
+    
+    // Remove the reset button when exiting AR
+    this.removeARResetButton();
+  }
+  
+  createARResetButton() {
+    // Create a button to reset cell position
+    const resetButton = document.createElement('button');
+    resetButton.id = 'ar-reset-button';
+    resetButton.style.position = 'absolute';
+    resetButton.style.bottom = '20px';
+    resetButton.style.left = '50%';
+    resetButton.style.transform = 'translateX(-50%)';
+    resetButton.style.padding = '12px 24px';
+    resetButton.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    resetButton.style.color = 'white';
+    resetButton.style.border = 'none';
+    resetButton.style.borderRadius = '4px';
+    resetButton.style.fontWeight = 'bold';
+    resetButton.style.zIndex = '100';
+    resetButton.textContent = 'Reset Position';
+    resetButton.addEventListener('click', () => {
+      // Reset the scene group position
+      this.sceneGroup.position.set(0, 0, 0);
+    });
+    document.body.appendChild(resetButton);
+  }
+  
+  removeARResetButton() {
+    const resetButton = document.getElementById('ar-reset-button');
+    if (resetButton) {
+      resetButton.remove();
+    }
   }
   
   onSelect() {
@@ -137,7 +181,11 @@ class CellViewer {
     // Add a reticle for AR hit testing
     const reticleGeometry = new THREE.RingGeometry(0.15, 0.2, 32);
     reticleGeometry.rotateX(-Math.PI / 2);
-    const reticleMaterial = new THREE.MeshBasicMaterial();
+    const reticleMaterial = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      opacity: 0.8,
+      transparent: true
+    });
     this.reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
     this.reticle.matrixAutoUpdate = false;
     this.reticle.visible = false;
@@ -145,8 +193,8 @@ class CellViewer {
   }
 
   createParticles() {
-    const proteinGeometry = new THREE.SphereGeometry(0.5, 8, 8); // Increased segments for better appearance
-    const waterGeometry = new THREE.SphereGeometry(0.1, 6, 6);   // Increased segments for smoother spheres
+    const proteinGeometry = new THREE.SphereGeometry(0.5, 8, 8);
+    const waterGeometry = new THREE.SphereGeometry(0.1, 6, 6);
     
     const proteinColor = 0x00ff00;
     const waterColor = 0x0000ff;
