@@ -1,8 +1,7 @@
-import * as THREE from '/build/three.module.js';
-import {OBJLoader} from '/jsm/loaders/OBJLoader.js';
-import {MTLLoader} from '/jsm/loaders/MTLLoader.js';
-import {OrbitControls} from '/jsm/controls/OrbitControls.js';
-
+import * as THREE from 'three';
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 "use strict";
 
 let WIDTH = window.innerWidth;
@@ -194,7 +193,7 @@ function createNeighborCells(){
     array.push("images/cellTextures/cover2.jpg");
     array.push("images/cellTextures/cover3.jpg");
 
-    var geometry = new THREE.SphereBufferGeometry(35, 35, 35);
+    var geometry = new THREE.SphereGeometry(35, 35, 35);
 
     for (var i = 0; i < 27; i  = i + 3) {
 
@@ -235,7 +234,7 @@ function createNeighborCells(){
 
 function getSphere(radius){
 
-    var geometry = new THREE.SphereBufferGeometry(radius, 35, 35);
+    var geometry = new THREE.SphereGeometry(radius, 35, 35);
     var material = new THREE.MeshBasicMaterial( {color: 0xFDB813} );
 
     var mesh = new THREE.Mesh(geometry, material);
