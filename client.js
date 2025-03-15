@@ -11,7 +11,7 @@ class CellViewer {
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(this.renderer.domElement);    
-    this.camera.position.set(40, 40, 40);
+    this.camera.position.set(10, 10, 10);
     this.camera.lookAt(0, 0, 0);
     const keyLight = new THREE.DirectionalLight(0xFFFFFF, 1.0);
     keyLight.position.set(3, 10, 3).normalize();
@@ -29,11 +29,11 @@ class CellViewer {
     this.waterMolecules = []; // Array to store water molecules
     this.proteinSpeed = 0.1; // Controls the speed of Brownian motion
     this.waterSpeed = 1; // Controls the speed of Brownian motion
-    this.cellRadius = 25; // Radius of the cell membrane
+    this.cellRadius = 7.8; // Radius of the cell membrane
 
     this.loadCellModel();
     this.createParticles(); // Add proteins to the scene
-    //this.createCellMembrane(); // Add cell membrane to the scene
+    this.createCellMembrane(); // Add cell membrane to the scene
     this.animate();
   }
   
@@ -46,19 +46,20 @@ class CellViewer {
       objLoader.setMaterials(materials);
       objLoader.setPath("./cellModel/");
       objLoader.load("CellAnatomy.obj", (object) => {
-        object.scale.set(0.5, 0.5, 0.5);
-        object.position.set(1, -26, 0);
+        object.scale.set(0.15, 0.15, 0.15);
+        object.position.set(0.2, -7.95, 0.2);
         this.scene.add(object);
       });
     });
   }
 
   createParticles() {
-    const proteinGeometry = new THREE.SphereGeometry(0.5, 4, 4);
-    const waterGeometry = new THREE.SphereGeometry(0.1, 1, 1);
+    const proteinGeometry = new THREE.SphereGeometry(0.05, 4, 4);
+    const waterGeometry = new THREE.SphereGeometry(0.01, 1, 1);
     
     const proteinColor=0x00ff00;
     const waterColor=0x0000ff;
+    const radius = this.cellRadius;
 
     
     for (let i = 0; i < 300; i++) {
@@ -69,11 +70,10 @@ class CellViewer {
       
       const protein = new THREE.Mesh(proteinGeometry, proteinMaterial);
       
-    
       protein.position.set(
-        (Math.random() - 0.5)*50,
-        (Math.random() - 0.5)*50,
-        (Math.random() - 0.5)*50
+        (Math.random() - 0.5)*radius*2,
+        (Math.random() - 0.5)*radius*2,
+        (Math.random() - 0.5)*radius*2
       );
       
       this.scene.add(protein);
@@ -87,9 +87,9 @@ class CellViewer {
         });
         const water = new THREE.Mesh(waterGeometry, waterMaterial);
         water.position.set(
-            (Math.random() - 0.5) * 50,
-            (Math.random() - 0.5) * 50,
-            (Math.random() - 0.5) * 50
+            (Math.random() - 0.5) * radius*2,
+            (Math.random() - 0.5) * radius*2,
+            (Math.random() - 0.5) * radius*2
         );
         this.scene.add(water);
         this.waterMolecules.push(water);
@@ -99,7 +99,9 @@ class CellViewer {
   createCellMembrane() {
     const segments = 64; // Number of segments
     const geometry = new THREE.SphereGeometry(this.cellRadius, segments, segments);
-    const material = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: true });
+    const material = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: true,
+    transparent: true,
+    opacity: 0.2, });
     const sphere = new THREE.Mesh(geometry, material);
     sphere.position.set(0, 0, 0);
     this.scene.add(sphere);
