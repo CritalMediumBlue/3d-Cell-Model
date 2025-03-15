@@ -5,38 +5,55 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 class CellViewer {
   constructor() {
+    this.initScene();
+    this.initLights();
+    this.initControls();
+    this.initProperties();
+
+    this.loadCellModel();
+    this.createParticles(0.05, 1, 0x0000ff, 500, this.waterMolecules); // Water molecules
+    this.createParticles(0.1, 4, 0x00ff00, 200, this.proteins); // Proteins
+    this.createCellMembrane();
+    this.animate();
+  }
+
+  initScene() {
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+    this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.001, 3000);
+    this.camera.position.set(10, 10, 10);
+    this.camera.lookAt(0, 0, 0);
+
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(this.renderer.domElement);    
-    this.camera.position.set(10, 10, 10);
-    this.camera.lookAt(0, 0, 0);
-    const keyLight = new THREE.DirectionalLight(0xFFFFFF, 1.0);
-    keyLight.position.set(3, 10, 3).normalize();
-    const fillLight = new THREE.DirectionalLight(0xFFFFFF, 1.2);
-    fillLight.position.set(0, -5, -1).normalize();
-    const backLight = new THREE.DirectionalLight(0xFFFFFF, 0.5);
-    backLight.position.set(-10, 0, 0).normalize();
-    const fogColor = new THREE.Color(0x0F0000);  // Light gray fog
-    this.scene.fog = new THREE.Fog(fogColor, 10, 120);
-    this.scene.background = fogColor;
-    this.scene.add(keyLight, fillLight, backLight);   
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-
-    this.proteins = []; // Array to store proteins
-    this.waterMolecules = []; // Array to store water molecules
-    this.proteinSpeed = 0.1; // Controls the speed of Brownian motion
-    this.waterSpeed = 1; // Controls the speed of Brownian motion
-    this.cellRadius = 7.8; // Radius of the cell membrane
-
-    this.loadCellModel();
-    this.createParticles(); // Add proteins to the scene
-    this.createCellMembrane(); // Add cell membrane to the scene
-    this.animate();
+    document.body.appendChild(this.renderer.domElement);
   }
-  
+
+  initLights() {
+    const lights = [
+      { color: 0xFFFFFF, intensity: 1.0, position: [3, 10, 3] },
+      { color: 0xFFFFFF, intensity: 1.2, position: [0, -5, -1] },
+      { color: 0xFFFFFF, intensity: 0.5, position: [-10, 0, 0] }
+    ];
+    lights.forEach(({ color, intensity, position }) => {
+      const light = new THREE.DirectionalLight(color, intensity);
+      light.position.set(...position).normalize();
+      this.scene.add(light);
+    });
+  }
+
+  initControls() {
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+  }
+
+  initProperties() {
+    this.proteins = [];
+    this.waterMolecules = [];
+    this.proteinSpeed = 0.1;
+    this.waterSpeed = 1;
+    this.cellRadius = 7.8;
+  }
+
   loadCellModel() {
     const mtlLoader = new MTLLoader();
     mtlLoader.setPath('./cellModel/');
@@ -53,91 +70,51 @@ class CellViewer {
     });
   }
 
-  createParticles() {
-    const proteinGeometry = new THREE.SphereGeometry(0.05, 4, 4);
-    const waterGeometry = new THREE.SphereGeometry(0.01, 1, 1);
-    
-    const proteinColor=0x00ff00;
-    const waterColor=0x0000ff;
+  createParticles(size, segments, color, number, particleGroup) {
+    const geometry = new THREE.SphereGeometry(size, segments, segments);
+    const material = new THREE.MeshPhongMaterial({ emissive: color, emissiveIntensity: 1 });
     const radius = this.cellRadius;
 
-    
-    for (let i = 0; i < 300; i++) {
-      const proteinMaterial = new THREE.MeshPhongMaterial({ 
-        emissive: proteinColor,
-        emissiveIntensity: 1,
-      });
-      
-      const protein = new THREE.Mesh(proteinGeometry, proteinMaterial);
-      
-      protein.position.set(
-        (Math.random() - 0.5)*radius*2,
-        (Math.random() - 0.5)*radius*2,
-        (Math.random() - 0.5)*radius*2
+    for (let i = 0; i < number; i++) {
+      const particle = new THREE.Mesh(geometry, material);
+      particle.position.set(
+        (Math.random() - 0.5) * radius * 2,
+        (Math.random() - 0.5) * radius * 2,
+        (Math.random() - 0.5) * radius * 2
       );
-      
-      this.scene.add(protein);
-      this.proteins.push(protein);
+      this.scene.add(particle);
+      particleGroup.push(particle);
     }
-
-    for (let i = 0; i < 200; i++) {
-        const waterMaterial = new THREE.MeshPhongMaterial({ 
-            emissive: waterColor,
-            emissiveIntensity: 1,
-        });
-        const water = new THREE.Mesh(waterGeometry, waterMaterial);
-        water.position.set(
-            (Math.random() - 0.5) * radius*2,
-            (Math.random() - 0.5) * radius*2,
-            (Math.random() - 0.5) * radius*2
-        );
-        this.scene.add(water);
-        this.waterMolecules.push(water);
-        }
   }
 
   createCellMembrane() {
-    const segments = 64; // Number of segments
-    const geometry = new THREE.SphereGeometry(this.cellRadius, segments, segments);
-    const material = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: true,
-    transparent: true,
-    opacity: 0.2, });
-    const sphere = new THREE.Mesh(geometry, material);
-    sphere.position.set(0, 0, 0);
-    this.scene.add(sphere);
-  }
-  
-  animate() {
-    // Update protein positions with Brownian motion
-    this.proteins.forEach(protein => {
-      // Random movement in each direction
-      protein.position.x += (Math.random() - 0.5) * this.proteinSpeed;
-      protein.position.y += (Math.random() - 0.5) * this.proteinSpeed;
-      protein.position.z += (Math.random() - 0.5) * this.proteinSpeed;
-
-    //if the position is outside the bounds of the cell membrane, reflect the protein back into the cell
-    const radius = this.cellRadius;
-    if (protein.position.length() > radius) {
-            protein.position.setLength(radius);
-           }
-      
+    const geometry = new THREE.SphereGeometry(this.cellRadius, 64, 64);
+    const material = new THREE.MeshBasicMaterial({
+      color: 0x0000ff,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.2
     });
+    this.scene.add(new THREE.Mesh(geometry, material));
+  }
 
-    // Update water molecule positions with Brownian motion
-    this.waterMolecules.forEach(water => {
-      // Random movement in each direction
-      water.position.x += (Math.random() - 0.5) * this.waterSpeed;
-      water.position.y += (Math.random() - 0.5) * this.waterSpeed;
-      water.position.z += (Math.random() - 0.5) * this.waterSpeed;
+  brownianMotion(speed, molecules) {
+    molecules.forEach(molecule => {
+      molecule.position.add(new THREE.Vector3(
+        (Math.random() - 0.5) * speed,
+        (Math.random() - 0.5) * speed,
+        (Math.random() - 0.5) * speed
+      ));
+      if (molecule.position.length() > this.cellRadius) {
+        molecule.position.setLength(this.cellRadius);
+      }
+    });
+  }
 
-        //if the position is outside the bounds of the cell membrane, reflect the protein back into the cell
-        const radius = this.cellRadius;
-        if (water.position.length() > radius) {
-            water.position.setLength(radius);
-        }
-    }
-    );
-    
+  animate() {
+    this.brownianMotion(this.waterSpeed, this.waterMolecules);
+    this.brownianMotion(this.proteinSpeed, this.proteins);
+
     requestAnimationFrame(this.animate.bind(this));
     this.renderer.render(this.scene, this.camera);
   }
