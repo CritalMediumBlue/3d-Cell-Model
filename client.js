@@ -11,8 +11,9 @@ class CellViewer {
     this.initProperties();
 
     this.loadCellModel();
-    this.createParticles(0.05, 1, 0x0000ff, 500, this.waterMolecules); // Water molecules
-    this.createParticles(0.1, 4, 0x00ff00, 200, this.proteins); // Proteins
+    this.createParticles(0.05, 1, 0x0000ff, 500, this.waterMolecules, 0, this.cellRadius); // Water molecules
+    this.createParticles(0.1, 4, 0x00ff00, 200, this.proteins, this.cellRadius/4, this.cellRadius); // Proteins
+    this.createParticles(0.5, 5, 0xff0000, 100, this.extraCellularMolecules, this.cellRadius, this.cellRadius*3); // Extra cellular molecules
     this.createCellMembrane();
     this.animate();
   }
@@ -49,8 +50,10 @@ class CellViewer {
   initProperties() {
     this.proteins = [];
     this.waterMolecules = [];
+    this.extraCellularMolecules = [];
     this.proteinSpeed = 0.1;
     this.waterSpeed = 1;
+    this.extraCellularSpeed = 0.05;
     this.cellRadius = 7.8;
   }
 
@@ -70,22 +73,30 @@ class CellViewer {
     });
   }
 
-  createParticles(size, segments, color, number, particleGroup) {
-    const geometry = new THREE.SphereGeometry(size, segments, segments);
-    const material = new THREE.MeshPhongMaterial({ emissive: color, emissiveIntensity: 1 });
-    const radius = this.cellRadius;
-
-    for (let i = 0; i < number; i++) {
-      const particle = new THREE.Mesh(geometry, material);
-      particle.position.set(
-        (Math.random() - 0.5) * radius * 2,
-        (Math.random() - 0.5) * radius * 2,
-        (Math.random() - 0.5) * radius * 2
-      );
-      this.scene.add(particle);
-      particleGroup.push(particle);
+    createParticles(size, segments, color, number, particleGroup, minRadius, maxRadius) {
+      const geometry = new THREE.SphereGeometry(size, segments, segments);
+      const material = new THREE.MeshPhongMaterial({ emissive: color, emissiveIntensity: 1 });
+  
+      for (let i = 0; i < number; i++) {
+        const particle = new THREE.Mesh(geometry, material);
+        const randomUnitVector = () => new THREE.Vector3(
+          Math.random() - 0.5,
+          Math.random() - 0.5,
+          Math.random() - 0.5
+        ).normalize();  // Added parentheses here
+        const randomPosition = () => randomUnitVector().multiplyScalar(
+          Math.random() * (maxRadius - minRadius) + minRadius
+        );
+        particle.position.set(
+          randomPosition().x,
+          randomPosition().y,
+          randomPosition().z
+        );
+        this.scene.add(particle);
+        particleGroup.push(particle);
+      }
     }
-  }
+  // ...existing code...
 
   createCellMembrane() {
     const geometry = new THREE.SphereGeometry(this.cellRadius, 64, 64);
@@ -98,22 +109,27 @@ class CellViewer {
     this.scene.add(new THREE.Mesh(geometry, material));
   }
 
-  brownianMotion(speed, molecules) {
+  brownianMotion(speed, molecules, minRadius, maxRadius) {
     molecules.forEach(molecule => {
       molecule.position.add(new THREE.Vector3(
         (Math.random() - 0.5) * speed,
         (Math.random() - 0.5) * speed,
         (Math.random() - 0.5) * speed
       ));
-      if (molecule.position.length() > this.cellRadius) {
-        molecule.position.setLength(this.cellRadius);
+      if (molecule.position.length() > maxRadius) {
+        molecule.position.setLength(maxRadius);
+      }
+      if (molecule.position.length() < minRadius) {
+        molecule.position.setLength(minRadius);
       }
     });
   }
 
   animate() {
-    this.brownianMotion(this.waterSpeed, this.waterMolecules);
-    this.brownianMotion(this.proteinSpeed, this.proteins);
+    this.brownianMotion(this.waterSpeed, this.waterMolecules, 0, this.cellRadius);
+    this.brownianMotion(this.proteinSpeed, this.proteins, this.cellRadius/4, this.cellRadius);
+    this.brownianMotion(this.extraCellularSpeed, this.extraCellularMolecules, this.cellRadius, this.cellRadius*3);
+    
 
     requestAnimationFrame(this.animate.bind(this));
     this.renderer.render(this.scene, this.camera);
