@@ -96,7 +96,6 @@ class CellViewer {
         particleGroup.push(particle);
       }
     }
-  // ...existing code...
 
   createCellMembrane() {
     const geometry = new THREE.SphereGeometry(this.cellRadius, 64, 64);
