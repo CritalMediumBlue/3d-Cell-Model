@@ -14,11 +14,11 @@ class CellViewer {
     this.createSceneGroup();
 
     this.loadCellModel();
-    this.createParticles(0.05, 1, 0x0000ff, 500, this.waterMolecules, 0, this.cellRadius); // Water molecules
-    this.createParticles(0.1, 4, 0x00ff00, 200, this.proteins, this.cellRadius/4, this.cellRadius); // Proteins
-    this.createParticles(1, 5, 0xff0000, 20, this.extraCellularMolecules, this.cellRadius*1.5, this.cellRadius*3); // Extra cellular molecules
+    this.createParticles(this.viralRadius, 1, 0x0000ff, 300, this.viralMolecules, this.cellRadius*1.2, this.cellRadius*3); // Viral molecules
+    this.createParticles(this.proteinRadius, 1, 0x00ff00, 300, this.proteins, this.cellRadius/4, this.cellRadius); // Proteins
+    this.createParticles(this.bacteriaRadius, 8, 0xff0000, 20, this.bacteria, this.cellRadius*1.2, this.cellRadius*3); // Extra cellular molecules
     //round bacteria are around 1 micrometers in diameter
-    //The average human cell is around 25 micrometers in diameter
+    //The average human cell is around 20 micrometers in diameter
     //The average covid-19 virus particle is around 0.1 micrometers in diameter
     //The average protein is around 7 nanometers in diameter (0.007 micrometers)
     this.createCellMembrane();
@@ -87,12 +87,19 @@ class CellViewer {
 
   initProperties() {
     this.proteins = [];
-    this.waterMolecules = [];
-    this.extraCellularMolecules = [];
-    this.proteinSpeed = 0.1;
-    this.waterSpeed = 1;
-    this.extraCellularSpeed = 0.05;
-    this.cellRadius = 7.8;
+    this.viralMolecules = [];
+    this.bacteria = [];
+    this.temperatureKelvin = 310; // 37 degrees Celsius
+    this.cellViscosity = 
+    this.proteinSpeed = 0.5;
+    this.virusSpeed = 0.5;
+    this.bacteriaSpeed = 0.05;
+    this.cellRadius = 10*0.78; // Average human cell diameter is around 20 micrometers. Radius is 10
+    this.viralRadius = 0.05*0.78; 
+    this.proteinRadius = 0.007*0.78; 
+    this.bacteriaRadius = 1*0.78;
+    
+  
     this.isARMode = false;
     this.reticle = null;
     this.hitTestSource = null;
@@ -315,9 +322,9 @@ class CellViewer {
   }
 
   animate() {
-    this.brownianMotion(this.waterSpeed, this.waterMolecules, 0, this.cellRadius);
+    this.brownianMotion(this.virusSpeed, this.viralMolecules, this.cellRadius*1.2, this.cellRadius*3);
     this.brownianMotion(this.proteinSpeed, this.proteins, this.cellRadius/4, this.cellRadius);
-    this.brownianMotion(this.extraCellularSpeed, this.extraCellularMolecules, this.cellRadius, this.cellRadius*3);
+    this.brownianMotion(this.bacteriaSpeed, this.bacteria, this.cellRadius*1.2, this.cellRadius*3);
     
     // AR hit testing
     if (this.isARMode) {
