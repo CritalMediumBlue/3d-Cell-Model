@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { ARButton } from 'three/addons/webxr/ARButton.js';
@@ -343,22 +344,19 @@ class CellViewer {
     }
   }
 
+  
   loadCellModel() {
-    const mtlLoader = new MTLLoader();
-    mtlLoader.setPath('./cellModel/');
-    mtlLoader.load("CellAnatomy.mtl", (materials) => {
-      materials.preload();
-      const objLoader = new OBJLoader();
-      objLoader.setMaterials(materials);
-      objLoader.setPath("./cellModel/");
-      objLoader.load("CellAnatomy.obj", (object) => {
-        object.scale.set(0.15, 0.15, 0.15);
-        object.position.set(0.2, -7.95, 0.2);
-        this.cellGroup.add(object);
+      const gltfLoader = new GLTFLoader();
+      gltfLoader.setPath('./cellModel/'); // Set the path to the folder containing the .glb file
+      gltfLoader.load("cell.glb", (gltf) => { // Use the .glb file instead of .gltf
+          const object = gltf.scene; // Access the loaded 3D scene
+          object.scale.set(0.15, 0.15, 0.15); // Scale the model
+          object.position.set(0.2, -7.95, 0.2); // Position the model
+          this.cellGroup.add(object); // Add the model to the cell group
+      }, undefined, (error) => {
+          console.error("An error occurred while loading the GLB model:", error);
       });
-    });
   }
-
   createParticles(size, segments, color, number, particleGroup, minRadius, maxRadius) {
     const geometry = new THREE.SphereGeometry(size, segments, segments);
     const material = new THREE.MeshPhongMaterial({ emissive: color, emissiveIntensity: 1 });
