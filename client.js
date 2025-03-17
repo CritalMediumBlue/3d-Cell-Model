@@ -16,7 +16,7 @@ class CellViewer {
     this.loadCellModel();
     this.createParticles(0.05, 1, 0x0000ff, 500, this.waterMolecules, 0, this.cellRadius); // Water molecules
     this.createParticles(0.1, 4, 0x00ff00, 200, this.proteins, this.cellRadius/4, this.cellRadius); // Proteins
-    this.createParticles(0.5, 5, 0xff0000, 100, this.extraCellularMolecules, this.cellRadius, this.cellRadius*3); // Extra cellular molecules
+    this.createParticles(1, 5, 0xff0000, 20, this.extraCellularMolecules, this.cellRadius*1.5, this.cellRadius*3); // Extra cellular molecules
     this.createCellMembrane();
     this.setupAR();
     this.animate();
