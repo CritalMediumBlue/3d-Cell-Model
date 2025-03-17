@@ -177,7 +177,7 @@ class CellViewer {
     // Create reticle for AR placement
     const reticleGeometry = new THREE.RingGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2);
     const reticleMaterial = new THREE.MeshBasicMaterial({
-      color: 0x0000ff,
+      color: 0xff0000,
       transparent: true,
       opacity: 0.3,
       side: THREE.DoubleSide
