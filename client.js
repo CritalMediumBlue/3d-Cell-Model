@@ -15,7 +15,7 @@ class CellViewer {
 
     this.loadCellModel();
     this.createParticles(this.viralRadius, 1, 0x0000ff, 300, this.viralMolecules, this.cellRadius*1.2, this.cellRadius*3); // Viral molecules
-    this.createParticles(this.proteinRadius, 1, 0x00ff00, 600, this.proteins, 0, this.cellRadius); // Proteins
+    this.createParticles(this.proteinRadius, 1, 0x00ff00, 800, this.proteins, 0, this.cellRadius); // Proteins
     this.createParticles(this.bacteriaRadius, 8, 0xff0000, 20, this.bacteria, this.cellRadius*1.2, this.cellRadius*3); // Extra cellular molecules
     //round bacteria are around 1 micrometers in diameter
     //The average human cell is around 20 micrometers in diameter
@@ -337,7 +337,7 @@ class CellViewer {
     this.cellGroup.add(new THREE.Mesh(geometry, material));
   }
 
-  brownianMotion(sd, molecules, minRadius, maxRadius) {
+  brownianMotion(sd, molecules, minRadius, maxRadius, minX, minY) {
     molecules.forEach(molecule => {
       const step = this.generateBrownianStep(0, sd);
       molecule.position.add(step);
@@ -348,12 +348,18 @@ class CellViewer {
       if (molecule.position.length() < minRadius) {
         molecule.position.setLength(minRadius);
       }
+      if(molecule.position.z < minX){
+        molecule.position.z = minX;
+      }
+      if(molecule.position.y < minY){
+        molecule.position.y = minY;
+      }
     });
   }
 
   animate() {
     this.brownianMotion(this.virusSD, this.viralMolecules, this.cellRadius*1.2, this.cellRadius*3);
-    this.brownianMotion(this.proteinSD, this.proteins, this.cellRadius/3, this.cellRadius);
+    this.brownianMotion(this.proteinSD, this.proteins, this.cellRadius/3, this.cellRadius,0,0);
     this.brownianMotion(this.bacteriaSD, this.bacteria, this.cellRadius*1.2, this.cellRadius*3);
     
     // AR hit testing
