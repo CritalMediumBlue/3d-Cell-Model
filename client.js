@@ -231,6 +231,7 @@ class CellViewer {
     if (this.reticle.visible && !this.modelPlaced) {
       // Place the cell group at the reticle position
       this.cellGroup.position.setFromMatrixPosition(this.reticle.matrix);
+      this.cellGroup.position.y = 0.2; // Offset to avoid clipping with the ground
       
 
       this.cellGroup.scale.set(0.05, 0.05, 0.05);
