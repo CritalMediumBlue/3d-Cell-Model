@@ -177,7 +177,7 @@ class CellViewer {
     // Create reticle for AR placement
     const reticleGeometry = new THREE.RingGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2);
     const reticleMaterial = new THREE.MeshBasicMaterial({
-      color: 0x000000,
+      color: 0x0000ff,
       transparent: true,
       opacity: 0.3,
       side: THREE.DoubleSide
@@ -231,7 +231,7 @@ class CellViewer {
     if (this.reticle.visible && !this.modelPlaced) {
       // Place the cell group at the reticle position
       this.cellGroup.position.setFromMatrixPosition(this.reticle.matrix);
-      this.cellGroup.position.y += this.cellRadius;
+      this.cellGroup.position.y += 0.1;
 
       this.cellGroup.scale.set(0.05, 0.05, 0.05);
       //hide the reticle after placing the model
