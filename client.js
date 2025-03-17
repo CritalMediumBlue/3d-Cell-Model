@@ -239,7 +239,7 @@ class CellViewer {
     
     // Add a label to make it clear what the button does
     if (arButton.textContent === 'START AR') {
-      arButton.textContent = 'View in AR';
+      arButton.textContent = 'View in your space';
     }
     
     document.body.appendChild(arButton);
@@ -257,15 +257,7 @@ class CellViewer {
     this.reticle.visible = false;
     this.scene.add(this.reticle);
     
-    // Add a pulsing animation to the reticle to make it more visible
-    const pulseReticle = () => {
-      if (this.reticle && this.isARMode) {
-        const scale = 1 + 0.2 * Math.sin(Date.now() * 0.005);
-        this.reticle.scale.set(scale, scale, scale);
-        requestAnimationFrame(pulseReticle);
-      }
-    };
-    pulseReticle();
+
     
     // Set up controller for AR interaction
     this.controller = this.renderer.xr.getController(0);
@@ -291,7 +283,7 @@ class CellViewer {
       this.cellGroup.visible = true;
       this.cellGroup.position.set(0, 0, 0);
       this.cellGroup.rotation.set(0, 0, 0);
-      this.cellGroup.scale.set(1, 1, 1);
+      this.cellGroup.scale.set(0.5, 0.5, 10.5);
       this.adjustLighting(false); // Restore lighting for 3D mode
       
       // Re-enable OrbitControls in 3D mode
