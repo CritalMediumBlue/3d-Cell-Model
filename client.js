@@ -247,7 +247,7 @@ class CellViewer {
     // Create reticle for AR placement
     const reticleGeometry = new THREE.RingGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2);
     const reticleMaterial = new THREE.MeshBasicMaterial({
-      color: 0x00fff2,
+      color: 0xffffff,
       transparent: true,
       opacity: 0.8,
       side: THREE.DoubleSide
@@ -257,7 +257,7 @@ class CellViewer {
     this.reticle.visible = false;
     this.scene.add(this.reticle);
     
-
+  
     
     // Set up controller for AR interaction
     this.controller = this.renderer.xr.getController(0);
@@ -283,7 +283,7 @@ class CellViewer {
       this.cellGroup.visible = true;
       this.cellGroup.position.set(0, 0, 0);
       this.cellGroup.rotation.set(0, 0, 0);
-      this.cellGroup.scale.set(0.5, 0.5, 10.5);
+      this.cellGroup.scale.set(1, 1, 1);
       this.adjustLighting(false); // Restore lighting for 3D mode
       
       // Re-enable OrbitControls in 3D mode
@@ -306,33 +306,11 @@ class CellViewer {
       
       // Scale the cell group to be more appropriate for AR viewing
       // Making it smaller for better visibility in real-world context
-      this.cellGroup.scale.set(0.5, 0.5, 0.5);
+      this.cellGroup.scale.set(0.2, 0.2, 0.2);
       
       this.cellGroup.visible = true;
       this.modelPlaced = true;
       
-      // Create and show a simple instruction element
-      if (!this.instructionElement) {
-        this.instructionElement = document.createElement('div');
-        this.instructionElement.style.position = 'absolute';
-        this.instructionElement.style.bottom = '80px';
-        this.instructionElement.style.width = '100%';
-        this.instructionElement.style.textAlign = 'center';
-        this.instructionElement.style.color = 'white';
-        this.instructionElement.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-        this.instructionElement.style.padding = '10px';
-        this.instructionElement.style.zIndex = '100';
-        this.instructionElement.innerHTML = 'Cell model placed! Move around to explore in 3D.<br>Use one finger to rotate and two fingers to scale.';
-        document.body.appendChild(this.instructionElement);
-        
-        // Remove the instruction after 8 seconds
-        setTimeout(() => {
-          if (this.instructionElement) {
-            document.body.removeChild(this.instructionElement);
-            this.instructionElement = null;
-          }
-        }, 8000);
-      }
     }
   }
 
