@@ -15,7 +15,7 @@ class CellViewer {
 
     this.loadCellModel();
     this.createParticles(this.viralRadius, 1, 0x0000ff, 300, this.viralMolecules, this.cellRadius*1.2, this.cellRadius*3); // Viral molecules
-    this.createParticles(this.proteinRadius, 1, 0x00ff00, 300, this.proteins, this.cellRadius/4, this.cellRadius); // Proteins
+    this.createParticles(this.proteinRadius, 1, 0x00ff00, 600, this.proteins, 0, this.cellRadius); // Proteins
     this.createParticles(this.bacteriaRadius, 8, 0xff0000, 20, this.bacteria, this.cellRadius*1.2, this.cellRadius*3); // Extra cellular molecules
     //round bacteria are around 1 micrometers in diameter
     //The average human cell is around 20 micrometers in diameter
@@ -89,16 +89,31 @@ class CellViewer {
     this.proteins = [];
     this.viralMolecules = [];
     this.bacteria = [];
-    this.temperatureKelvin = 310; // 37 degrees Celsius
-    this.cellViscosity = 
-    this.proteinSpeed = 0.5;
-    this.virusSpeed = 0.5;
-    this.bacteriaSpeed = 0.05;
+    const temperatureKelvin = 310; // Kelvin
+    const waterViscosity = 0.0007;
+    const cytoplasmViscosity = 5*waterViscosity; // Cytoplasm is around 5 times more viscous than water
+    const boltzmannConstant = 1.38e-23; // J/K
+    
     this.cellRadius = 10*0.78; // Average human cell diameter is around 20 micrometers. Radius is 10
     this.viralRadius = 0.05*0.78; 
-    this.proteinRadius = 0.007*0.78; 
-    this.bacteriaRadius = 1*0.78;
+    this.proteinRadius = 0.01*0.78; 
     
+    this.bacteriaRadius = 1*0.78;
+    this.diffusionCoefficientProtein = boltzmannConstant * temperatureKelvin / (6 * Math.PI * cytoplasmViscosity * this.proteinRadius);
+    this.diffusionCoefficientVirus = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.viralRadius);
+    this.diffusionCoefficientBacteria = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.bacteriaRadius);
+    this.timeStep = 100;
+
+    // Calculate standard deviations based on the Stokes-Einstein relation
+    this.proteinSD = Math.sqrt(2*this.diffusionCoefficientProtein*this.timeStep);
+    this.virusSD = Math.sqrt(2*this.diffusionCoefficientVirus*this.timeStep);
+    this.bacteriaSD = Math.sqrt(2*this.diffusionCoefficientBacteria*this.timeStep);
+    
+    // Scale factor to make the movement visible in the 3D space while preserving physical relationships
+    const scaleFactor = 1e6; // Adjust this value as needed for visible movement
+    this.proteinSD *= scaleFactor;
+    this.virusSD *= scaleFactor;
+    this.bacteriaSD *= scaleFactor;
   
     this.isARMode = false;
     this.reticle = null;
@@ -115,6 +130,23 @@ class CellViewer {
     
     // Add touch event listeners for AR interaction
     this.setupTouchInteraction();
+  }
+
+  normalDistribution(mean, sd) {
+    // Generate a random value using the Box-Muller transform
+    const u1 = Math.random();
+    const u2 = Math.random();
+    const z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+    return mean + z0 * sd;
+  }
+
+  generateBrownianStep(mean, sd) {
+    // Generate random steps for x, y, and z using the normal distribution
+    const stepX = this.normalDistribution(mean, sd);
+    const stepY = this.normalDistribution(mean, sd);
+    const stepZ = this.normalDistribution(mean, sd);
+    //console.log(stepX, stepY, stepZ);
+    return new THREE.Vector3(stepX, stepY, stepZ);
   }
   
   setupTouchInteraction() {
@@ -280,7 +312,7 @@ class CellViewer {
         Math.random() - 0.5,
         Math.random() - 0.5,
         Math.random() - 0.5
-      ).normalize();  // Added parentheses here
+      ).normalize();
       const randomPosition = () => randomUnitVector().multiplyScalar(
         Math.random() * (maxRadius - minRadius) + minRadius
       );
@@ -305,13 +337,11 @@ class CellViewer {
     this.cellGroup.add(new THREE.Mesh(geometry, material));
   }
 
-  brownianMotion(speed, molecules, minRadius, maxRadius) {
+  brownianMotion(sd, molecules, minRadius, maxRadius) {
     molecules.forEach(molecule => {
-      molecule.position.add(new THREE.Vector3(
-        (Math.random() - 0.5) * speed,
-        (Math.random() - 0.5) * speed,
-        (Math.random() - 0.5) * speed
-      ));
+      const step = this.generateBrownianStep(0, sd);
+      molecule.position.add(step);
+  
       if (molecule.position.length() > maxRadius) {
         molecule.position.setLength(maxRadius);
       }
@@ -322,17 +352,17 @@ class CellViewer {
   }
 
   animate() {
-    this.brownianMotion(this.virusSpeed, this.viralMolecules, this.cellRadius*1.2, this.cellRadius*3);
-    this.brownianMotion(this.proteinSpeed, this.proteins, this.cellRadius/4, this.cellRadius);
-    this.brownianMotion(this.bacteriaSpeed, this.bacteria, this.cellRadius*1.2, this.cellRadius*3);
+    this.brownianMotion(this.virusSD, this.viralMolecules, this.cellRadius*1.2, this.cellRadius*3);
+    this.brownianMotion(this.proteinSD, this.proteins, this.cellRadius/3, this.cellRadius);
+    this.brownianMotion(this.bacteriaSD, this.bacteria, this.cellRadius*1.2, this.cellRadius*3);
     
     // AR hit testing
     if (this.isARMode) {
       this.handleARHitTest();
     }
     
-    this.renderer.setAnimationLoop(this.animate.bind(this));
     this.renderer.render(this.scene, this.camera);
+    requestAnimationFrame(this.animate.bind(this));
   }
   
   handleARHitTest() {
