@@ -17,6 +17,10 @@ class CellViewer {
     this.createParticles(0.05, 1, 0x0000ff, 500, this.waterMolecules, 0, this.cellRadius); // Water molecules
     this.createParticles(0.1, 4, 0x00ff00, 200, this.proteins, this.cellRadius/4, this.cellRadius); // Proteins
     this.createParticles(1, 5, 0xff0000, 20, this.extraCellularMolecules, this.cellRadius*1.5, this.cellRadius*3); // Extra cellular molecules
+    //round bacteria are around 1 micrometers in diameter
+    //The average human cell is around 25 micrometers in diameter
+    //The average covid-19 virus particle is around 0.1 micrometers in diameter
+    //The average protein is around 7 nanometers in diameter (0.007 micrometers)
     this.createCellMembrane();
     this.setupAR();
     this.animate();
@@ -25,7 +29,7 @@ class CellViewer {
   initScene() {
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.001, 3000);
-    this.camera.position.set(10, 10, 10);
+    this.camera.position.set(20, 20, 20);
     this.camera.lookAt(0, 0, 0);
 
     this.renderer = new THREE.WebGLRenderer({ 
