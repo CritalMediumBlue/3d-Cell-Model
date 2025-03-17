@@ -256,7 +256,7 @@ class CellViewer {
   }
   
   onSelect() {
-    if (this.reticle.visible) {
+    if (this.reticle.visible && !this.modelPlaced) {
       // Place the cell group at the reticle position
       this.cellGroup.position.setFromMatrixPosition(this.reticle.matrix);
       
