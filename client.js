@@ -75,29 +75,7 @@ class CellViewer {
     this.lightGroup.add(this.hemisphereLight);
   }
   
-  // Method to adjust lighting based on mode
-  adjustLighting(isAR) {
-    // Increase ambient light in AR mode for better visibility
-    this.ambientLight.intensity = isAR ? 1.0 : 0.5;
-    
-    // Enable hemisphere light in AR mode
-    this.hemisphereLight.visible = isAR;
-    
-    // Adjust the cell material properties for better AR visibility if needed
-    this.cellGroup.traverse((object) => {
-      if (object.isMesh && object.material) {
-        if (Array.isArray(object.material)) {
-          object.material.forEach(material => {
-            if (material.emissive) {
-              material.emissiveIntensity = isAR ? 1.5 : 1.0;
-            }
-          });
-        } else if (object.material.emissive) {
-          object.material.emissiveIntensity = isAR ? 1.5 : 1.0;
-        }
-      }
-    });
-  }
+ 
 
   initControls() {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -227,9 +205,9 @@ class CellViewer {
     // Create reticle for AR placement
     const reticleGeometry = new THREE.RingGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2);
     const reticleMaterial = new THREE.MeshBasicMaterial({
-      color: 0xff00ff,
+      color: 0x0000ff,
       transparent: true,
-      opacity: 0.8,
+      opacity: 0.3,
       side: THREE.DoubleSide
     });
     this.reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
@@ -249,7 +227,6 @@ class CellViewer {
       this.isARMode = true;
       this.cellGroup.visible = false; // Hide until placed
       this.modelPlaced = false;
-      this.adjustLighting(true); // Adjust lighting for AR mode
       
       // Disable OrbitControls in AR mode
       if (this.controls) {
@@ -264,7 +241,6 @@ class CellViewer {
       this.cellGroup.position.set(0, 0, 0);
       this.cellGroup.rotation.set(0, 0, 0);
       this.cellGroup.scale.set(1, 1, 1);
-      this.adjustLighting(false); // Restore lighting for 3D mode
       
       // Re-enable OrbitControls in 3D mode
       if (this.controls) {
@@ -301,7 +277,8 @@ class CellViewer {
   
   loadCellModel() {
       const gltfLoader = new GLTFLoader();
-      gltfLoader.setPath('./cellModel/'); // Set the path to the folder containing the .glb file
+      //set current path
+      gltfLoader.setPath('./');
       gltfLoader.load("cell.glb", (gltf) => { // Use the .glb file instead of .gltf
           const object = gltf.scene; // Access the loaded 3D scene
           object.scale.set(0.15, 0.15, 0.15); // Scale the model
