@@ -102,7 +102,6 @@ class CellViewer {
     // Touch interaction properties
     this.touchStartX = 0;
     this.touchStartY = 0;
-    this.touchStartDistance = 0;
     
     // Handle device orientation changes
     window.addEventListener('orientationchange', this.onOrientationChange.bind(this), false);
@@ -133,6 +132,9 @@ class CellViewer {
           // Calculate the rotation based on horizontal movement
           const deltaX = touchX - this.touchStartX;
           this.cellGroup.rotation.y += deltaX * 0.01;
+
+          const deltaY = touchY - this.touchStartY;
+          this.cellGroup.rotation.x += deltaY * 0.01;
           
           // Update the starting position
           this.touchStartX = touchX;
