@@ -286,11 +286,14 @@ class CellViewer {
       
       // Scale the cell group to be more appropriate for AR viewing
       // Making it smaller for better visibility in real-world context
-      this.cellGroup.scale.set(0.12, 0.12, 0.12);
-      
+      this.cellGroup.scale.set(0.05, 0.05, 0.05);
+      //hide the reticle after placing the model
+      this.reticle.visible = false;
       this.cellGroup.visible = true;
       this.modelPlaced = true;
-      this.reticle.visible = false;
+      
+
+
       
     }
   }
