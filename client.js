@@ -113,13 +113,6 @@ class CellViewer {
       if (this.isARMode && this.modelPlaced && event.touches.length > 0) {
         this.touchStartX = event.touches[0].clientX;
         this.touchStartY = event.touches[0].clientY;
-        
-        // For pinch-to-zoom (scaling)
-        if (event.touches.length === 2) {
-          const dx = event.touches[0].clientX - event.touches[1].clientX;
-          const dy = event.touches[0].clientY - event.touches[1].clientY;
-          this.touchStartDistance = Math.sqrt(dx * dx + dy * dy);
-        }
       }
     });
     
@@ -140,27 +133,6 @@ class CellViewer {
           // Update the starting position
           this.touchStartX = touchX;
           this.touchStartY = touchY;
-        }
-        
-        // Two touches for scaling (pinch-to-zoom)
-        else if (event.touches.length === 2) {
-          const dx = event.touches[0].clientX - event.touches[1].clientX;
-          const dy = event.touches[0].clientY - event.touches[1].clientY;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          
-          // Calculate the scale factor
-          const scale = distance / this.touchStartDistance;
-          
-          // Apply scaling within reasonable limits
-          if (scale > 0.5 && scale < 2.0) {
-            const newScale = this.cellGroup.scale.x * scale;
-            if (newScale > 0.1 && newScale < 2.0) {
-              this.cellGroup.scale.set(newScale, newScale, newScale);
-            }
-          }
-          
-          // Update the starting distance
-          this.touchStartDistance = distance;
         }
       }
     }, { passive: false });
@@ -259,18 +231,12 @@ class CellViewer {
     if (this.reticle.visible && !this.modelPlaced) {
       // Place the cell group at the reticle position
       this.cellGroup.position.setFromMatrixPosition(this.reticle.matrix);
-      
-      // Scale the cell group to be more appropriate for AR viewing
-      // Making it smaller for better visibility in real-world context
+
       this.cellGroup.scale.set(0.05, 0.05, 0.05);
       //hide the reticle after placing the model
       this.reticle.visible = false;
       this.cellGroup.visible = true;
       this.modelPlaced = true;
-      
-
-
-      
     }
   }
 
