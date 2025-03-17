@@ -231,6 +231,7 @@ class CellViewer {
     if (this.reticle.visible && !this.modelPlaced) {
       // Place the cell group at the reticle position
       this.cellGroup.position.setFromMatrixPosition(this.reticle.matrix);
+      this.cellGroup.position.y += this.cellRadius;
 
       this.cellGroup.scale.set(0.05, 0.05, 0.05);
       //hide the reticle after placing the model
