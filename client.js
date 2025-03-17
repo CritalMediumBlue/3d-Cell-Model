@@ -222,26 +222,6 @@ class CellViewer {
       domOverlay: { root: document.body }
     });
     
-    // Add button to toggle between AR and 3D mode
-    arButton.style.position = 'absolute';
-    arButton.style.bottom = '20px';
-    arButton.style.right = '20px';
-    arButton.style.padding = '12px 24px';
-    arButton.style.border = 'none';
-    arButton.style.borderRadius = '4px';
-    arButton.style.background = '#00aaff';
-    arButton.style.color = 'white';
-    arButton.style.font = 'bold 13px sans-serif';
-    arButton.style.textAlign = 'center';
-    arButton.style.zIndex = '999';
-    arButton.style.boxShadow = '0 4px 8px rgba(0,0,0,0.3)';
-    arButton.style.cursor = 'pointer';
-    
-    // Add a label to make it clear what the button does
-    if (arButton.textContent === 'START AR') {
-      arButton.textContent = 'View in your space';
-    }
-    
     document.body.appendChild(arButton);
     
     // Create reticle for AR placement
