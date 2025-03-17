@@ -380,7 +380,7 @@ class CellViewer {
       if (frame) {
         const hitTestResults = frame.getHitTestResults(this.hitTestSource);
         
-        if (hitTestResults.length) {
+        if (hitTestResults.length && !this.modelPlaced) { // Only show the reticle if the model is not placed
           const hit = hitTestResults[0];
           const pose = hit.getPose(referenceSpace);
           
