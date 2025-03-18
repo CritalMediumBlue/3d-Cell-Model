@@ -36,9 +36,9 @@ class CellViewer {
     this.initProperties();
     this.loadCellModel();
 
-    this.createParticles(this.viralRadius, 1, 0x0000ff, 500, this.viralParticles, 0, this.cellRadius); // viral molecules
-    this.createParticles(this.proteinRadius, 4, 0x00ff00, 200, this.proteins, this.cellRadius/4, this.cellRadius); // Proteins
-    this.createParticles(this.bacteriaRadius, 5, 0xff0000, 20, this.bacteria, this.cellRadius*1.5, this.cellRadius*3); // Extra cellular molecules
+    this.createParticles(this.viralRadius, 1, 0x0000ff, 500, this.viralParticles, this.cellRadius, this.cellRadius*3); // Viral particles
+    this.createParticles(this.proteinRadius, 1, 0x00ff00, 1000, this.proteins, this.cellRadius/4, this.cellRadius); // Proteins
+    this.createParticles(this.bacteriaRadius, 8, 0xff0000, 20, this.bacteria, this.cellRadius*1.5, this.cellRadius*3); // Extra cellular molecules
     
     this.createCellMembrane();
     this.setupAR();
@@ -98,17 +98,33 @@ class CellViewer {
     //The average human cell is around 20 micrometers in diameter
     //The average covid-19 virus particle is around 0.1 micrometers in diameter
     //The average protein is around 7 nanometers in diameter (assume 10 nanometers, 0.01 micrometers)
-
+    const temperatureKelvin = 310; // Kelvin
+    const waterViscosity = 0.0007;
+    const cytoplasmViscosity = 5*waterViscosity; // Cytoplasm is around 5 times more viscous than water
+    const boltzmannConstant = 1.38e-23; // J/K
+    
     this.proteinRadius = 0.005/1.282; //5 nanometers in radius
     this.viralRadius = 0.05/1.282;  
     this.bacteriaRadius = 0.5/1.282; //500 nanometers in radius (0.5 micrometers)
 
+    this.diffusionCoefficientProtein = boltzmannConstant * temperatureKelvin / (6 * Math.PI * cytoplasmViscosity * this.proteinRadius);
+    this.diffusionCoefficientVirus = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.viralRadius);
+    this.diffusionCoefficientBacteria = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.bacteriaRadius);
     
+    this.timeStep = 10;
 
+    // Calculate standard deviations based on the Stokes-Einstein relation
+    this.proteinSD = Math.sqrt(2*this.diffusionCoefficientProtein*this.timeStep);
+    this.virusSD = Math.sqrt(2*this.diffusionCoefficientVirus*this.timeStep);
+    this.bacteriaSD = Math.sqrt(2*this.diffusionCoefficientBacteria*this.timeStep);
 
-    this.proteinSD = 0.05;
-    this.viralSD = 0.5;
-    this.bacteriaSD = 0.05;
+    //the sd is given in meters, so we need to convert it to micrometers
+
+    this.proteinSD *= 1e6*1.282;
+    this.viralSD *= 1e6*1.282;
+    this.bacteriaSD *= 1e6*1.282;
+
+  
     this.cellRadius = 10/1.282; //10 micrometers in radius
     this.isARMode = false;
     this.reticle = null;
