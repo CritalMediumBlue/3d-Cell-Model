@@ -101,9 +101,9 @@ class CellViewer {
 
 
 
-    this.proteinSpeed = 0.1;
-    this.viralSpeed = 1;
-    this.bacteriaSpeed = 0.05;
+    this.proteinSD = 0.1;
+    this.viralSD = 1;
+    this.bacteriaSD = 0.05;
     this.cellRadius = 7.8;
     this.isARMode = false;
     this.reticle = null;
@@ -226,7 +226,7 @@ class CellViewer {
       this.cellGroup.visible = true;
       this.modelPlaced = true;
       //offset y-axis to avoid clipping with the ground
-      this.cellGroup.position.y += 0.5;
+      this.cellGroup.position.y += 1;
     }
   }
 
@@ -278,6 +278,7 @@ class CellViewer {
   }
 
   brownianMotion(speed, molecules, minRadius, maxRadius) {
+    
     molecules.forEach(molecule => {
       molecule.position.add(new THREE.Vector3(
         (Math.random() - 0.5) * speed,
@@ -294,9 +295,9 @@ class CellViewer {
   }
 
   animate() {
-    this.brownianMotion(this.viralSpeed, this.viralParticles, 0, this.cellRadius);
-    this.brownianMotion(this.proteinSpeed, this.proteins, this.cellRadius/4, this.cellRadius);
-    this.brownianMotion(this.bacteriaSpeed, this.bacteria, this.cellRadius, this.cellRadius*3);
+    this.brownianMotion(this.viralSD, this.viralParticles, 0, this.cellRadius);
+    this.brownianMotion(this.proteinSD, this.proteins, this.cellRadius/4, this.cellRadius);
+    this.brownianMotion(this.bacteriaSD, this.bacteria, this.cellRadius, this.cellRadius*3);
     
     // AR hit testing
     if (this.isARMode) {
