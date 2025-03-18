@@ -36,8 +36,8 @@ class CellViewer {
     this.initProperties();
     this.loadCellModel();
 
-    this.createParticles(this.viralRadius, 1, 0x0000ff, 500, this.viralParticles, this.cellRadius, this.cellRadius*3); // Viral particles
-    this.createParticles(this.proteinRadius, 1, 0x00ff00, 1000, this.proteins, this.cellRadius/4, this.cellRadius); // Proteins
+    this.createParticles(this.viralRadius, 1, 0x0000ff, 200, this.viralParticles, this.cellRadius, this.cellRadius*3); // Viral particles
+    this.createParticles(this.proteinRadius, 1, 0x00ff00, 1000, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
     this.createParticles(this.bacteriaRadius, 8, 0xff0000, 20, this.bacteria, this.cellRadius, this.cellRadius*3); // Extra cellular molecules
     
     this.createCellMembrane();
@@ -104,14 +104,14 @@ class CellViewer {
     const boltzmannConstant = 1.38e-23; // J/K
     
     this.proteinRadius = 0.005/1.282; //5 nanometers in radius
-    this.viralRadius = 0.05/1.282;  
+    this.viralRadius = 0.05/1.282;  //50 nanometers in radius
     this.bacteriaRadius = 0.5/1.282; //500 nanometers in radius (0.5 micrometers)
 
     this.diffusionCoefficientProtein = boltzmannConstant * temperatureKelvin / (6 * Math.PI * cytoplasmViscosity * this.proteinRadius);
     this.diffusionCoefficientVirus = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.viralRadius);
     this.diffusionCoefficientBacteria = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.bacteriaRadius);
     
-    this.timeStep = 10;
+    this.timeStep = 1;
 
     // Calculate standard deviations based on the Stokes-Einstein relation
     this.proteinSD = Math.sqrt(2*this.diffusionCoefficientProtein*this.timeStep);
