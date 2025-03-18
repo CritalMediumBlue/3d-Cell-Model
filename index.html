@@ -38,7 +38,7 @@ class CellViewer {
 
     this.createParticles(this.viralRadius, 1, 0x0000ff, 500, this.viralParticles, this.cellRadius, this.cellRadius*3); // Viral particles
     this.createParticles(this.proteinRadius, 1, 0x00ff00, 1000, this.proteins, this.cellRadius/4, this.cellRadius); // Proteins
-    this.createParticles(this.bacteriaRadius, 8, 0xff0000, 20, this.bacteria, this.cellRadius*1.5, this.cellRadius*3); // Extra cellular molecules
+    this.createParticles(this.bacteriaRadius, 8, 0xff0000, 20, this.bacteria, this.cellRadius, this.cellRadius*3); // Extra cellular molecules
     
     this.createCellMembrane();
     this.setupAR();
@@ -121,7 +121,7 @@ class CellViewer {
     //the sd is given in meters, so we need to convert it to micrometers
 
     this.proteinSD *= 1e6*1.282;
-    this.viralSD *= 1e6*1.282;
+    this.virusSD *= 1e6*1.282;
     this.bacteriaSD *= 1e6*1.282;
 
   
