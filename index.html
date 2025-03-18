@@ -12,7 +12,8 @@ Final Project: Cell Model -->
   {
     "imports": {
       "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+      "d3-random": "https://cdn.jsdelivr.net/npm/d3-random@3.0.1/build/d3-random.min.js"
     }
   }
   </script>
@@ -24,6 +25,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { ARButton } from 'three/addons/webxr/ARButton.js';
+import {randomNormal} from 'd3-random';
 
 class CellViewer {
   constructor() {
@@ -172,19 +174,12 @@ class CellViewer {
     
     // Create reticle for AR placement
     const reticleGeometry = new THREE.RingGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2);
-    const reticleMaterial = new THREE.MeshBasicMaterial({
-      color: 0x00ffff,
-      transparent: true,
-      opacity: 0.3,
-      side: THREE.DoubleSide
-    });
+    const reticleMaterial = new THREE.MeshBasicMaterial({color: 0x00ffff,transparent: true, opacity: 0.3, side: THREE.DoubleSide});
     this.reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
     this.reticle.matrixAutoUpdate = false;
     this.reticle.visible = false;
     this.scene.add(this.reticle);
-    
   
-    
     // Set up controller for AR interaction
     this.controller = this.renderer.xr.getController(0);
     this.controller.addEventListener('select', this.onSelect.bind(this));
@@ -202,16 +197,7 @@ class CellViewer {
       }
     });
     
-    this.renderer.xr.addEventListener('sessionend', () => {
 
-      // Remove any instruction elements that might still be visible
-      if (this.instructionElement) {
-        document.body.removeChild(this.instructionElement);
-        this.instructionElement = null;
-      }
-      this.start();
-
-    });
   }
   
   onSelect() {
@@ -225,8 +211,7 @@ class CellViewer {
       this.reticle.visible = false;
       this.cellGroup.visible = true;
       this.modelPlaced = true;
-      //offset y-axis to avoid clipping with the ground
-      this.cellGroup.position.y += 1;
+      this.cellGroup.position.y += 0.8; // Offset to avoid clipping with the ground
     }
   }
 
@@ -277,7 +262,7 @@ class CellViewer {
     this.cellGroup.add(new THREE.Mesh(geometry, material));
   }
 
-  brownianMotion(speed, molecules, minRadius, maxRadius, minZ, minY) {
+  brownianMotion(sd, molecules, minRadius, maxRadius, minZ, minY) {
     
     molecules.forEach(molecule => {
       molecule.position.add(new THREE.Vector3(
