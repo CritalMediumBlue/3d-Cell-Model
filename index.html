@@ -146,8 +146,22 @@ class CellViewer {
     this.diffusionCoefficientVirus = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.viralRadius);
     this.diffusionCoefficientBacteria = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.bacteriaRadius);
     
-    // Simulation time step (arbitrary units)
-    this.timeStep = 10;
+    /*
+     * TIME STEP IN BROWNIAN MOTION
+     * 
+     * In the context of the Stokes-Einstein and Einstein-Smoluchowski equations,
+     * the time step must have units of seconds (s) to maintain dimensional consistency.
+     * 
+     * Since the diffusion coefficient D has units of m²/s (square meters per second),
+     * and we use it in the equation: SD = √(2·D·Δt)
+     * 
+     * For SD to have units of meters (m), Δt must have units of seconds (s).
+     * 
+     * The value 10 here represents 10 seconds in the simulation.
+     * This is a relatively large time step chosen for visualization purposes.
+     * In a more precise simulation, a smaller time step would be used.
+     */
+    this.timeStep = 10; // seconds
 
     /*
      * EINSTEIN-SMOLUCHOWSKI EQUATION
