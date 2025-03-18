@@ -12,9 +12,9 @@ Final Project: Cell Model -->
   {
     "imports": {
       "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
-      "d3-random": "https://cdn.jsdelivr.net/npm/d3-random@3.0.1/build/d3-random.min.js"
-    }
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      
+  }
   }
   </script>
  
@@ -25,7 +25,6 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { ARButton } from 'three/addons/webxr/ARButton.js';
-import {randomNormal} from 'd3-random';
 
 class CellViewer {
   constructor() {
@@ -266,9 +265,9 @@ class CellViewer {
     
     molecules.forEach(molecule => {
       molecule.position.add(new THREE.Vector3(
-        (Math.random() - 0.5) * speed,
-        (Math.random() - 0.5) * speed,
-        (Math.random() - 0.5) * speed
+        (Math.random() - 0.5) * sd,
+        (Math.random() - 0.5) * sd,
+        (Math.random() - 0.5) * sd
       ));
       if (molecule.position.length() > maxRadius) {
         molecule.position.setLength(maxRadius);
