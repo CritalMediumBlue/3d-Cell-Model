@@ -37,7 +37,7 @@ class CellViewer {
     this.loadCellModel();
 
     this.createParticles(this.viralRadius, 1, 0x0000ff, 50, this.viralParticles, this.cellRadius, this.cellRadius*3); // Viral particles
-    this.createParticles(this.proteinRadius, 1, 0x00ff00, 1000, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
+    this.createParticles(this.proteinRadius, 1, 0x00ff00, 1500, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
     this.createParticles(this.bacteriaRadius, 8, 0xff0000, 20, this.bacteria, this.cellRadius, this.cellRadius*3); // Extra cellular molecules
     
     this.createCellMembrane();
@@ -93,36 +93,84 @@ class CellViewer {
     this.viralParticles = [];
     this.bacteria = [];
 
-  
-//round bacteria are around 1 micrometers in diameter
-    //The average human cell is around 20 micrometers in diameter
-    //The average covid-19 virus particle is around 0.1 micrometers in diameter
-    //The average protein is around 7 nanometers in diameter (assume 10 nanometers, 0.01 micrometers)
-    const temperatureKelvin = 310; // Kelvin
-    const waterViscosity = 0.0007;
-    const cytoplasmViscosity = 5*waterViscosity; // Cytoplasm is around 5 times more viscous than water
-    const boltzmannConstant = 1.38e-23; // J/K
+    /*
+     * BROWNIAN MOTION PHYSICS PARAMETERS
+     * 
+     * Brownian motion is the random movement of particles suspended in a fluid (liquid or gas),
+     * resulting from their bombardment by fast-moving atoms or molecules in the fluid.
+     * 
+     * The key physical parameters that determine Brownian motion are:
+     * 1. Temperature - Higher temperature means more energetic molecular collisions
+     * 2. Viscosity - Higher viscosity means more resistance to movement
+     * 3. Particle size - Smaller particles exhibit more pronounced Brownian motion
+     */
     
-    this.proteinRadius = 0.005/1.282; //5 nanometers in radius
-    this.viralRadius = 0.05/1.282;  //50 nanometers in radius
-    this.bacteriaRadius = 0.5/1.282; //500 nanometers in radius (0.5 micrometers)
+    // Realistic size scales for cellular components
+    // Round bacteria are around 1 micrometer in diameter
+    // The average human cell is around 20 micrometers in diameter
+    // The average virus particle is around 0.1 micrometers in diameter
+    // The average protein is around 7-10 nanometers in diameter (0.01 micrometers)
+    
+    // Physical constants and environmental parameters
+    const temperatureKelvin = 310; // Body temperature in Kelvin (37°C)
+    const waterViscosity = 0.0007; // Water viscosity in Pa·s at body temperature
+    const cytoplasmViscosity = 5 * waterViscosity; // Cytoplasm is more viscous than water
+    
+    // Boltzmann constant (k_B) relates temperature to energy
+    // Units: J/K (Joules per Kelvin)
+    const boltzmannConstant = 1.38e-23; 
+    
+    // Particle radii (with scaling factor for visualization)
+    this.proteinRadius = 0.005/1.282; // 5 nanometers in radius
+    this.viralRadius = 0.05/1.282;    // 50 nanometers in radius
+    this.bacteriaRadius = 0.4/1.282;  // 500 nanometers in radius (0.5 micrometers)
 
+    /*
+     * STOKES-EINSTEIN RELATION
+     * 
+     * The diffusion coefficient (D) is calculated using the Stokes-Einstein equation:
+     * D = k_B·T / (6πηr)
+     * 
+     * Where:
+     * - k_B is Boltzmann's constant (1.38e-23 J/K)
+     * - T is temperature in Kelvin
+     * - η (eta) is the fluid viscosity
+     * - r is the particle radius
+     * 
+     * This equation shows that:
+     * 1. Diffusion increases with temperature (more thermal energy)
+     * 2. Diffusion decreases with viscosity (more resistance)
+     * 3. Diffusion decreases with particle size (larger particles move less)
+     */
     this.diffusionCoefficientProtein = boltzmannConstant * temperatureKelvin / (6 * Math.PI * cytoplasmViscosity * this.proteinRadius);
     this.diffusionCoefficientVirus = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.viralRadius);
     this.diffusionCoefficientBacteria = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.bacteriaRadius);
     
-    this.timeStep = 1;
+    // Simulation time step (arbitrary units)
+    this.timeStep = 10;
 
-    // Calculate standard deviations based on the Stokes-Einstein relation
-    this.proteinSD = Math.sqrt(2*this.diffusionCoefficientProtein*this.timeStep);
-    this.virusSD = Math.sqrt(2*this.diffusionCoefficientVirus*this.timeStep);
-    this.bacteriaSD = Math.sqrt(2*this.diffusionCoefficientBacteria*this.timeStep);
+    /*
+     * EINSTEIN-SMOLUCHOWSKI EQUATION
+     * 
+     * The mean squared displacement (MSD) of a particle undergoing Brownian motion is:
+     * MSD = 2·D·t (in 1D) or MSD = 4·D·t (in 2D) or MSD = 6·D·t (in 3D)
+     * 
+     * For a single step in a random walk, the standard deviation (σ) of displacement is:
+     * σ = √(2·D·Δt) for each dimension
+     * 
+     * This means the displacement in each direction follows a normal distribution with:
+     * - Mean = 0 (random motion has no preferred direction)
+     * - Standard deviation = √(2·D·Δt)
+     */
+    // Calculate standard deviations based on the Einstein-Smoluchowski equation
+    this.proteinSD = Math.sqrt(2 * this.diffusionCoefficientProtein * this.timeStep);
+    this.virusSD = Math.sqrt(2 * this.diffusionCoefficientVirus * this.timeStep);
+    this.bacteriaSD = Math.sqrt(2 * this.diffusionCoefficientBacteria * this.timeStep);
 
-    //the sd is given in meters, so we need to convert it to micrometers
-
-    this.proteinSD *= 1e6*1.282;
-    this.virusSD *= 1e6*1.282;
-    this.bacteriaSD *= 1e6*1.282;
+    // Convert standard deviations from meters to micrometers for visualization
+    this.proteinSD *= 1e6 * 1.282;
+    this.virusSD *= 1e6 * 1.282;
+    this.bacteriaSD *= 1e6 * 1.282;
 
   
     this.cellRadius = 10/1.282; //10 micrometers in radius
@@ -281,55 +329,118 @@ class CellViewer {
     this.cellGroup.add(new THREE.Mesh(geometry, material));
   }
 
+  /*
+   * BOX-MULLER TRANSFORM FOR GAUSSIAN RANDOM NUMBERS
+   * 
+   * Brownian motion requires normally distributed random displacements.
+   * The Box-Muller transform converts uniform random numbers to normally distributed ones.
+   * 
+   * Theory:
+   * If u1 and u2 are uniform random numbers in (0,1), then:
+   * z0 = sqrt(-2·ln(u1))·cos(2π·u2)
+   * z1 = sqrt(-2·ln(u1))·sin(2π·u2)
+   * 
+   * z0 and z1 are independent random variables with standard normal distribution.
+   * 
+   * This implementation uses a polar form of the Box-Muller transform which is more
+   * computationally efficient and avoids trigonometric functions.
+   */
   normalPolar(mean = 0, sd = 1) {
-  let u1, u2, s;
+    let u1, u2, s;
 
-  // Generate two uniform random numbers in the range (-1, 1) until they lie inside the unit circle
-  do {
-    u1 = Math.random() * 2 - 1; // Random number in (-1, 1)
-    u2 = Math.random() * 2 - 1; // Random number in (-1, 1)
-    s = u1 * u1 + u2 * u2; // Compute s = u1^2 + u2^2
-  } while (s >= 1 || s === 0); // Discard if outside the unit circle or s == 0
+    // Generate two uniform random numbers in the range (-1, 1) until they lie inside the unit circle
+    do {
+      u1 = Math.random() * 2 - 1; // Random number in (-1, 1)
+      u2 = Math.random() * 2 - 1; // Random number in (-1, 1)
+      s = u1 * u1 + u2 * u2;      // Compute s = u1^2 + u2^2
+    } while (s >= 1 || s === 0);  // Discard if outside the unit circle or s == 0
 
-  // Compute the scaling factor
-  const factor = Math.sqrt(-2.0 * Math.log(s) / s);
+    // Compute the scaling factor using the polar form of Box-Muller transform
+    const factor = Math.sqrt(-2.0 * Math.log(s) / s);
 
-  // Generate two independent standard normal random variables
-  const z0 = u1 * factor;
-  const z1 = u2 * factor;
+    // Generate two independent standard normal random variables
+    const z0 = u1 * factor;
+    const z1 = u2 * factor;
 
-  // Scale and shift to match the desired mean and standard deviation
-  return [mean + z0 * sd, mean + z1 * sd];
-}
+    // Scale by the desired standard deviation and shift by the mean
+    return [mean + z0 * sd, mean + z1 * sd];
+  }
   
 
+  /*
+   * BROWNIAN MOTION IMPLEMENTATION
+   * 
+   * This function simulates the random walk characteristic of Brownian motion.
+   * Key theoretical aspects:
+   * 
+   * 1. Each step is independent of previous steps (Markov process)
+   * 2. Displacements follow a normal distribution with mean 0
+   * 3. The standard deviation of displacement is determined by:
+   *    - Diffusion coefficient (from Stokes-Einstein)
+   *    - Time step
+   * 
+   * In 3D space, we apply random displacements in all three dimensions.
+   * Boundary conditions are applied to keep particles within realistic regions.
+   * 
+   * Parameters:
+   * - sd: Standard deviation of displacement (calculated from diffusion coefficient)
+   * - molecules: Array of particles to move
+   * - minRadius/maxRadius: Boundary constraints (e.g., cell membrane)
+   * - minZ/minY: Additional boundary constraints if needed
+   */
   brownianMotion(sd, molecules, minRadius, maxRadius, minZ, minY) {
     molecules.forEach(molecule => {
-    const [deltaX, deltaY] = this.normalPolar(0, sd);
-    const deltaZ = this.normalPolar(0, sd)[0];
+      // Generate normally distributed random displacements for X and Y coordinates
+      const [deltaX, deltaY] = this.normalPolar(0, sd);
+      
+      // Generate normally distributed random displacement for Z coordinate
+      const deltaZ = this.normalPolar(0, sd)[0];
+      
+      // Apply the random displacement to the particle position
+      // This is the core of the random walk process
       molecule.position.add(new THREE.Vector3(
         deltaX,
         deltaY,
         deltaZ
       ));
+      
+      // Apply boundary conditions to keep particles within realistic regions
+      
+      // Keep particles within maximum radius (e.g., cell boundary)
       if (molecule.position.length() > maxRadius) {
         molecule.position.setLength(maxRadius);
       }
+      
+      // Keep particles outside minimum radius (e.g., nucleus or other structures)
       if (molecule.position.length() < minRadius) {
         molecule.position.setLength(minRadius);
       }
-      if (molecule.position.z < minZ) {
+      
+      // Additional boundary constraints if specified
+      if (minZ !== undefined && molecule.position.z < minZ) {
         molecule.position.z = minZ;
       }
-      if (molecule.position.y < minY) {
+      
+      if (minY !== undefined && molecule.position.y < minY) {
         molecule.position.y = minY;
       }
     });
   }
 
   animate() {
+    // Apply Brownian motion to different particle types
+    // Note how each particle type has its own standard deviation (SD) based on its size and environment
+    
+    // Viral particles: Larger SD than proteins but smaller than bacteria
+    // Move in extracellular space (between cellRadius and cellRadius*3)
     this.brownianMotion(this.virusSD, this.viralParticles, this.cellRadius, this.cellRadius*3);
-    this.brownianMotion(this.proteinSD, this.proteins, this.cellRadius/3, this.cellRadius, 0,0);
+    
+    // Proteins: Smallest particles, highest diffusion coefficient, but in viscous cytoplasm
+    // Move within the cell (between cellRadius/3 and cellRadius)
+    this.brownianMotion(this.proteinSD, this.proteins, this.cellRadius/3, this.cellRadius, 0, 0);
+    
+    // Bacteria: Largest particles, lowest diffusion coefficient
+    // Move in extracellular space (between cellRadius and cellRadius*3)
     this.brownianMotion(this.bacteriaSD, this.bacteria, this.cellRadius, this.cellRadius*3);
     
     // AR hit testing
