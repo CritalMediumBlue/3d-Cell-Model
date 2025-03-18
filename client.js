@@ -7,28 +7,82 @@ import { ARButton } from 'three/addons/webxr/ARButton.js';
 
 class CellViewer {
   constructor() {
+    // Get UI elements
+    this.loadingElement = document.getElementById('loading');
+    this.arStatusElement = document.getElementById('ar-status');
+    this.arInstructionsElement = document.getElementById('ar-instructions');
+    
+    // Show loading indicator
+    this.showLoading(true);
+    
+    // Initialize the application
     this.initScene();
     this.initLights();
     this.initControls();
     this.initProperties();
     this.createSceneGroup();
 
+    // Load models and create particles
     this.loadCellModel();
     this.createParticles(this.viralRadius, 1, 0x0000ff, 300, this.viralMolecules, this.cellRadius*1.2, this.cellRadius*3); // Viral molecules
-    this.createParticles(this.proteinRadius, 1, 0x00ff00, 800, this.proteins, 0, this.cellRadius); // Proteins
+    this.createParticles(this.proteinRadius, 1, 0x00ff00, 1000, this.proteins,this.cellRadius/3, this.cellRadius); // Proteins
     this.createParticles(this.bacteriaRadius, 8, 0xff0000, 20, this.bacteria, this.cellRadius*1.2, this.cellRadius*3); // Extra cellular molecules
     //round bacteria are around 1 micrometers in diameter
     //The average human cell is around 20 micrometers in diameter
     //The average covid-19 virus particle is around 0.1 micrometers in diameter
-    //The average protein is around 7 nanometers in diameter (0.007 micrometers)
+    //The average protein is around 7 nanometers in diameter (0.007 micrometers) Let's assume 10 nanometers 
     this.createCellMembrane();
+    
+    // Setup AR after everything else is initialized
     this.setupAR();
+    
+    // Start animation loop
     this.animate();
+    
+    // Hide loading indicator after initialization
+    setTimeout(() => this.showLoading(false), 1000);
+  }
+  
+  // UI Helper Methods
+  showLoading(show) {
+    if (this.loadingElement) {
+      this.loadingElement.classList.toggle('hidden', !show);
+    }
+  }
+  
+  showARStatus(message, duration = 3000) {
+    if (this.arStatusElement) {
+      this.arStatusElement.textContent = message;
+      this.arStatusElement.style.display = 'block';
+      
+      if (duration > 0) {
+        setTimeout(() => {
+          this.arStatusElement.style.display = 'none';
+        }, duration);
+      }
+    }
+  }
+  
+  showARInstructions(message, persistent = false) {
+    if (this.arInstructionsElement) {
+      if (message) {
+        this.arInstructionsElement.textContent = message;
+        this.arInstructionsElement.style.display = 'block';
+        
+        if (!persistent) {
+          setTimeout(() => {
+            this.arInstructionsElement.style.display = 'none';
+          }, 8000);
+        }
+      } else {
+        this.arInstructionsElement.style.display = 'none';
+      }
+    }
   }
 
   initScene() {
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.001, 3000);
+    this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.0001, 3000);
     this.camera.position.set(20, 20, 20);
     this.camera.lookAt(0, 0, 0);
 
@@ -95,8 +149,8 @@ class CellViewer {
     const boltzmannConstant = 1.38e-23; // J/K
     
     this.cellRadius = 10*0.78; // Average human cell diameter is around 20 micrometers. Radius is 10
-    this.viralRadius = 0.05*0.78; 
-    this.proteinRadius = 0.01*0.78; 
+    this.viralRadius = 0.05*0.78; //50 nanometers
+    this.proteinRadius = 0.005*0.78; //5 nanometers
     
     this.bacteriaRadius = 1*0.78;
     this.diffusionCoefficientProtein = boltzmannConstant * temperatureKelvin / (6 * Math.PI * cytoplasmViscosity * this.proteinRadius);
@@ -210,29 +264,61 @@ class CellViewer {
   }
   
   setupAR() {
-    // Create AR button
-    const arButton = ARButton.createButton(this.renderer, {
-      requiredFeatures: ['hit-test'],
-      optionalFeatures: ['dom-overlay'],
-      domOverlay: { root: document.body }
-    });
+    // Check if WebXR is supported
+    if ('xr' in navigator) {
+      navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
+        if (supported) {
+          console.log("AR is supported on this device");
+          
+          // Create AR button with more specific options
+          const arButton = ARButton.createButton(this.renderer, {
+            requiredFeatures: ['hit-test'],
+            optionalFeatures: ['dom-overlay'],
+            domOverlay: { root: document.body },
+            // Add session initialization callback
+            onSessionStarted: (session) => {
+              console.log("AR session started");
+              this.showARStatus("AR session started", 2000);
+              this.showARInstructions("Looking for surfaces... Please move your device around slowly.", true);
+            }
+          });
+          
+          document.body.appendChild(arButton);
+        } else {
+          console.warn("AR is not supported on this device");
+          // Create a notification for the user
+          const arNotSupported = document.createElement('div');
+          arNotSupported.style.position = 'absolute';
+          arNotSupported.style.bottom = '20px';
+          arNotSupported.style.width = '100%';
+          arNotSupported.style.textAlign = 'center';
+          arNotSupported.style.backgroundColor = 'rgba(0,0,0,0.5)';
+          arNotSupported.style.color = 'white';
+          arNotSupported.style.padding = '12px';
+          arNotSupported.textContent = 'AR is not supported on this device or browser';
+          document.body.appendChild(arNotSupported);
+        }
+      }).catch(error => {
+        console.error("Error checking AR support:", error);
+        this.showARStatus("Error checking AR support: " + error.message, 5000);
+      });
+    } else {
+      console.warn("WebXR not available in this browser");
+      this.showARStatus("WebXR not available in this browser", 5000);
+    }
     
-    document.body.appendChild(arButton);
-    
-    // Create reticle for AR placement
+    // Create reticle for AR placement with higher visibility
     const reticleGeometry = new THREE.RingGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2);
     const reticleMaterial = new THREE.MeshBasicMaterial({
       color: 0x00ff00,
       transparent: true,
-      opacity: 0.3,
+      opacity: 0.7, // Increased opacity for better visibility
       side: THREE.DoubleSide
     });
     this.reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
     this.reticle.matrixAutoUpdate = false;
     this.reticle.visible = false;
     this.scene.add(this.reticle);
-    
-  
     
     // Set up controller for AR interaction
     this.controller = this.renderer.xr.getController(0);
@@ -241,6 +327,7 @@ class CellViewer {
     
     // Listen for session start/end to toggle between AR and 3D modes
     this.renderer.xr.addEventListener('sessionstart', () => {
+      console.log("XR session started");
       this.isARMode = true;
       this.cellGroup.visible = false; // Hide until placed
       this.modelPlaced = false;
@@ -252,12 +339,17 @@ class CellViewer {
     });
     
     this.renderer.xr.addEventListener('sessionend', () => {
+      console.log("XR session ended");
       this.isARMode = false;
       this.modelPlaced = false;
       this.cellGroup.visible = true;
       this.cellGroup.position.set(0, 0, 0);
       this.cellGroup.rotation.set(0, 0, 0);
       this.cellGroup.scale.set(1, 1, 1);
+      
+      // Hide AR UI elements
+      this.showARInstructions(null);
+      this.showARStatus(null);
       
       // Re-enable OrbitControls in 3D mode
       if (this.controls) {
@@ -273,18 +365,35 @@ class CellViewer {
   }
   
   onSelect() {
+    console.log("Select event triggered");
+    console.log("Reticle visible:", this.reticle.visible);
+    console.log("Model placed:", this.modelPlaced);
+    
     if (this.reticle.visible && !this.modelPlaced) {
+      console.log("Placing model at reticle position");
+      
       // Place the cell group at the reticle position
       this.cellGroup.position.setFromMatrixPosition(this.reticle.matrix);
       
-
+      // Scale the model for AR
       this.cellGroup.scale.set(0.05, 0.05, 0.05);
-      //hide the reticle after placing the model
+      
+      // Hide the reticle after placing the model
       this.reticle.visible = false;
+      
+      // Show the cell group
       this.cellGroup.visible = true;
       this.modelPlaced = true;
-      //offset y-axis to avoid clipping with the ground
+      
+      // Offset y-axis to avoid clipping with the ground
       this.cellGroup.position.y += 0.5;
+      
+      // Show instructions for interaction
+      this.showARInstructions("Model placed! Drag with one finger to rotate.", 5000);
+      this.showARStatus("Cell model placed", 3000);
+    } else if (!this.reticle.visible && !this.modelPlaced) {
+      // If the reticle isn't visible but the user tapped, provide guidance
+      this.showARInstructions("No surface detected. Please move your device to scan the area.", true);
     }
   }
 
@@ -376,13 +485,32 @@ class CellViewer {
       const session = this.renderer.xr.getSession();
       
       if (session) {
-        session.requestReferenceSpace('viewer').then((referenceSpace) => {
-          session.requestHitTestSource({ space: referenceSpace }).then((source) => {
+        // First try to get the 'local' reference space which is more reliable for AR
+        session.requestReferenceSpace('local')
+          .then((referenceSpace) => {
+            console.log("Using 'local' reference space for AR");
+            this.localReferenceSpace = referenceSpace;
+            
+            // Then request the viewer reference space for hit testing
+            return session.requestReferenceSpace('viewer');
+          })
+          .then((viewerReferenceSpace) => {
+            console.log("Requesting hit test source");
+            return session.requestHitTestSource({ space: viewerReferenceSpace });
+          })
+          .then((source) => {
+            console.log("Hit test source created successfully");
             this.hitTestSource = source;
+            this.showARStatus("AR tracking ready", 2000);
+          })
+          .catch((error) => {
+            console.error("Error setting up AR hit test:", error);
+            this.showARStatus("Error setting up AR tracking", 3000);
+            this.showARInstructions("There was a problem with AR tracking. Try restarting the experience.", true);
           });
-        });
         
         session.addEventListener('end', () => {
+          console.log("AR session ended");
           this.hitTestSourceRequested = false;
           this.hitTestSource = null;
         });
@@ -395,21 +523,53 @@ class CellViewer {
       const referenceSpace = this.renderer.xr.getReferenceSpace();
       const frame = this.renderer.xr.getFrame();
       
-      if (frame) {
+      if (frame && referenceSpace) {
         const hitTestResults = frame.getHitTestResults(this.hitTestSource);
         
-        if (hitTestResults.length && !this.modelPlaced) { // Only show the reticle if the model is not placed
-          const hit = hitTestResults[0];
-          const pose = hit.getPose(referenceSpace);
+        // Debug counter to log hit test results periodically
+        if (!this.frameCounter) this.frameCounter = 0;
+        this.frameCounter++;
+        
+        if (this.frameCounter % 60 === 0) { // Log every ~1 second (assuming 60fps)
+          console.log(`Hit test results: ${hitTestResults.length}`);
+        }
+        
+        if (hitTestResults.length) {
+          // If this is the first time we've found hit test results, show a message
+          if (!this.hitTestResultsFound && !this.modelPlaced) {
+            console.log("First hit test results found");
+            this.hitTestResultsFound = true;
+            this.showARStatus("Surface detected", 2000);
+            this.showARInstructions("Tap on the green circle to place the cell model", true);
+          }
           
-          if (pose) {
-            this.reticle.visible = true;
-            this.reticle.matrix.fromArray(pose.transform.matrix);
+          if (!this.modelPlaced) { // Only show the reticle if the model is not placed
+            const hit = hitTestResults[0];
+            const pose = hit.getPose(referenceSpace);
+            
+            if (pose) {
+              this.reticle.visible = true;
+              this.reticle.matrix.fromArray(pose.transform.matrix);
+            }
           }
         } else {
-          this.reticle.visible = false;
+          // Only hide the reticle if the model hasn't been placed yet
+          if (!this.modelPlaced) {
+            if (this.reticle.visible) {
+              console.log("Lost tracking, hiding reticle");
+            }
+            this.reticle.visible = false;
+            
+            // If we previously had hit test results but now don't, show a message
+            if (this.hitTestResultsFound) {
+              this.showARInstructions("Surface lost. Please move your device to find a surface.", true);
+            }
+          }
         }
       }
+    } else if (this.isARMode && !this.hitTestSourceRequested) {
+      // If we're in AR mode but haven't requested a hit test source yet, try again
+      this.hitTestSourceRequested = false;
     }
   }
 }
