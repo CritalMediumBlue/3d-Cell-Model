@@ -27,15 +27,19 @@ import { ARButton } from 'three/addons/webxr/ARButton.js';
 
 class CellViewer {
   constructor() {
+    this.start();
+  }
+
+  start(){
     this.initScene();
     this.initProperties();
     this.loadCellModel();
 
-    this.createParticles(0.05, 1, 0x0000ff, 500, this.waterMolecules, 0, this.cellRadius); // Water molecules
+    this.createParticles(0.05, 1, 0x0000ff, 500, this.viralParticles, 0, this.cellRadius); // viral molecules
     this.createParticles(0.1, 4, 0x00ff00, 200, this.proteins, this.cellRadius/4, this.cellRadius); // Proteins
-    this.createParticles(1, 5, 0xff0000, 20, this.extraCellularMolecules, this.cellRadius*1.5, this.cellRadius*3); // Extra cellular molecules
+    this.createParticles(1, 5, 0xff0000, 20, this.bacteria, this.cellRadius*1.5, this.cellRadius*3); // Extra cellular molecules
     //round bacteria are around 1 micrometers in diameter
-    //The average human cell is around 25 micrometers in diameter
+    //The average human cell is around 20 micrometers in diameter
     //The average covid-19 virus particle is around 0.1 micrometers in diameter
     //The average protein is around 7 nanometers in diameter (0.007 micrometers)
     this.createCellMembrane();
@@ -88,11 +92,18 @@ class CellViewer {
 
   initProperties() {
     this.proteins = [];
-    this.waterMolecules = [];
-    this.extraCellularMolecules = [];
+    this.viralParticles = [];
+    this.bacteria = [];
+
+  
+
+
+
+
+
     this.proteinSpeed = 0.1;
-    this.waterSpeed = 1;
-    this.extraCellularSpeed = 0.05;
+    this.viralSpeed = 1;
+    this.bacteriaSpeed = 0.05;
     this.cellRadius = 7.8;
     this.isARMode = false;
     this.reticle = null;
@@ -192,23 +203,14 @@ class CellViewer {
     });
     
     this.renderer.xr.addEventListener('sessionend', () => {
-      this.isARMode = false;
-      this.modelPlaced = false;
-      this.cellGroup.visible = true;
-      this.cellGroup.position.set(0, 0, 0);
-      this.cellGroup.rotation.set(0, 0, 0);
-      this.cellGroup.scale.set(1, 1, 1);
-      
-      // Re-enable OrbitControls in 3D mode
-      if (this.controls) {
-        this.controls.enabled = true;
-      }
-      
+
       // Remove any instruction elements that might still be visible
       if (this.instructionElement) {
         document.body.removeChild(this.instructionElement);
         this.instructionElement = null;
       }
+      this.start();
+
     });
   }
   
@@ -292,9 +294,9 @@ class CellViewer {
   }
 
   animate() {
-    this.brownianMotion(this.waterSpeed, this.waterMolecules, 0, this.cellRadius);
+    this.brownianMotion(this.viralSpeed, this.viralParticles, 0, this.cellRadius);
     this.brownianMotion(this.proteinSpeed, this.proteins, this.cellRadius/4, this.cellRadius);
-    this.brownianMotion(this.extraCellularSpeed, this.extraCellularMolecules, this.cellRadius, this.cellRadius*3);
+    this.brownianMotion(this.bacteriaSpeed, this.bacteria, this.cellRadius, this.cellRadius*3);
     
     // AR hit testing
     if (this.isARMode) {
