@@ -277,7 +277,7 @@ class CellViewer {
     this.cellGroup.add(new THREE.Mesh(geometry, material));
   }
 
-  brownianMotion(speed, molecules, minRadius, maxRadius) {
+  brownianMotion(speed, molecules, minRadius, maxRadius, minZ, minY) {
     
     molecules.forEach(molecule => {
       molecule.position.add(new THREE.Vector3(
@@ -291,12 +291,18 @@ class CellViewer {
       if (molecule.position.length() < minRadius) {
         molecule.position.setLength(minRadius);
       }
+      if (molecule.position.z < minZ) {
+        molecule.position.z = minZ;
+      }
+      if (molecule.position.y < minY) {
+        molecule.position.y = minY;
+      }
     });
   }
 
   animate() {
-    this.brownianMotion(this.viralSD, this.viralParticles, 0, this.cellRadius);
-    this.brownianMotion(this.proteinSD, this.proteins, this.cellRadius/4, this.cellRadius);
+    this.brownianMotion(this.viralSD, this.viralParticles, this.cellRadius, this.cellRadius*3);
+    this.brownianMotion(this.proteinSD, this.proteins, this.cellRadius/3, this.cellRadius, 0,0);
     this.brownianMotion(this.bacteriaSD, this.bacteria, this.cellRadius, this.cellRadius*3);
     
     // AR hit testing
