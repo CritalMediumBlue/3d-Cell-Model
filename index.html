@@ -182,9 +182,9 @@ class CellViewer {
     this.bacteriaSD = Math.sqrt(2 * this.diffusionCoefficientBacteria * this.timeStep);
 
     // Convert standard deviations from meters to micrometers for visualization
-    this.proteinSD *= 1e6 * 1.282;
-    this.virusSD *= 1e6 * 1.282;
-    this.bacteriaSD *= 1e6 * 1.282;
+    this.proteinSD *= 1e6 / 1.282;
+    this.virusSD *= 1e6 / 1.282;
+    this.bacteriaSD *= 1e6 / 1.282;
 
   
     this.cellRadius = 10/1.282; //10 micrometers in radius
