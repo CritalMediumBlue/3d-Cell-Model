@@ -37,7 +37,7 @@ class CellViewer {
     this.loadCellModel();
 
     this.createParticles(this.viralRadius, 1, 0x0000ff, 50, this.viralParticles, this.cellRadius, this.cellRadius*3); // Viral particles
-    this.createParticles(this.proteinRadius, 1, 0x00ff00, 1500, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
+    this.createParticles(this.proteinRadius, 1, 0x00ff00, 500, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
     this.createParticles(this.bacteriaRadius, 8, 0xff0000, 20, this.bacteria, this.cellRadius, this.cellRadius*3); // Extra cellular molecules
     
     this.createCellMembrane();
@@ -114,16 +114,16 @@ class CellViewer {
     // Physical constants and environmental parameters
     const temperatureKelvin = 310; // Body temperature in Kelvin (37°C)
     const waterViscosity = 0.0008; // Water viscosity in Pa·s at body temperature
-    const cytoplasmViscosity = 5 * waterViscosity; // Cytoplasm is more viscous than water
+    const cytoplasmViscosity = 6 * waterViscosity; // Cytoplasm is more viscous than water (about 5.5 times)
     
     // Boltzmann constant (k_B) relates temperature to energy
     // Units: J/K (Joules per Kelvin)
     const boltzmannConstant = 1.38e-23; 
     
-    // Particle radii (with scaling factor for visualization)
-    this.proteinRadius = 0.005; // 5 nanometers in radius
-    this.viralRadius = 0.05;    // 50 nanometers in radius
-    this.bacteriaRadius = 0.4;  // 500 nanometers in radius (0.5 micrometers)
+    // Particle radii (We need to convert these to meters for the Stokes-Einstein equation)
+    this.proteinRadius = 0.006; // 6 nanometers in radius. 12 nanometers in diameter 
+    this.viralRadius = 0.05;    // 50 nanometers in radius (0.05 micrometers)
+    this.bacteriaRadius = 0.5;  // 500 nanometers in radius (0.5 micrometers)
 
     /*
      * STOKES-EINSTEIN RELATION
@@ -155,13 +155,13 @@ class CellViewer {
      * Since the diffusion coefficient D has units of m²/s (square meters per second),
      * and we use it in the equation: SD = √(2·D·Δt)
      * 
-     * For SD to have units of meters (m), Δt must have units of seconds (s).
+     * For SD to have units of meters (m), the time step Δt must have units of seconds (s).
      * 
      * The value 10 here represents 10 seconds in the simulation.
      * This is a relatively large time step chosen for visualization purposes.
      * In a more precise simulation, a smaller time step would be used.
      */
-    this.timeStep = 0.005; // seconds
+    this.timeStep = 0.0001; // seconds
 
     /*
      * EINSTEIN-SMOLUCHOWSKI EQUATION
@@ -181,7 +181,7 @@ class CellViewer {
     this.virusSD = Math.sqrt(2 * this.diffusionCoefficientVirus * this.timeStep);
     this.bacteriaSD = Math.sqrt(2 * this.diffusionCoefficientBacteria * this.timeStep);
 
-    // Convert standard deviations from meters to micrometers for visualization
+    // Convert standard deviations from meters to micrometers and then to the scale of the scene
     this.proteinSD *= 1e6 /0.641;
     this.virusSD *= 1e6 /0.641;
     this.bacteriaSD *= 1e6 /0.641;
