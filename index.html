@@ -113,7 +113,7 @@ class CellViewer {
     
     // Physical constants and environmental parameters
     const temperatureKelvin = 310; // Body temperature in Kelvin (37°C)
-    const waterViscosity = 0.0007; // Water viscosity in Pa·s at body temperature
+    const waterViscosity = 0.0008; // Water viscosity in Pa·s at body temperature
     const cytoplasmViscosity = 5 * waterViscosity; // Cytoplasm is more viscous than water
     
     // Boltzmann constant (k_B) relates temperature to energy
@@ -121,9 +121,9 @@ class CellViewer {
     const boltzmannConstant = 1.38e-23; 
     
     // Particle radii (with scaling factor for visualization)
-    this.proteinRadius = 0.005/0.641; // 5 nanometers in radius
-    this.viralRadius = 0.05/0.641;    // 50 nanometers in radius
-    this.bacteriaRadius = 0.4/0.641;  // 500 nanometers in radius (0.5 micrometers)
+    this.proteinRadius = 0.005; // 5 nanometers in radius
+    this.viralRadius = 0.05;    // 50 nanometers in radius
+    this.bacteriaRadius = 0.4;  // 500 nanometers in radius (0.5 micrometers)
 
     /*
      * STOKES-EINSTEIN RELATION
@@ -134,17 +134,17 @@ class CellViewer {
      * Where:
      * - k_B is Boltzmann's constant (1.38e-23 J/K)
      * - T is temperature in Kelvin
-     * - η (eta) is the fluid viscosity
-     * - r is the particle radius
+     * - η (eta) is the fluid viscosity in Pa·s
+     * - r is the particle radius in meters
      * 
      * This equation shows that:
      * 1. Diffusion increases with temperature (more thermal energy)
      * 2. Diffusion decreases with viscosity (more resistance)
      * 3. Diffusion decreases with particle size (larger particles move less)
      */
-    this.diffusionCoefficientProtein = boltzmannConstant * temperatureKelvin / (6 * Math.PI * cytoplasmViscosity * this.proteinRadius);
-    this.diffusionCoefficientVirus = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.viralRadius);
-    this.diffusionCoefficientBacteria = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.bacteriaRadius);
+    this.diffusionCoefficientProtein = boltzmannConstant * temperatureKelvin / (6 * Math.PI * cytoplasmViscosity * this.proteinRadius*(1/1e6));
+    this.diffusionCoefficientVirus = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.viralRadius*(1/1e6));
+    this.diffusionCoefficientBacteria = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.bacteriaRadius*(1/1e6));
     
     /*
      * TIME STEP IN BROWNIAN MOTION
@@ -161,7 +161,7 @@ class CellViewer {
      * This is a relatively large time step chosen for visualization purposes.
      * In a more precise simulation, a smaller time step would be used.
      */
-    this.timeStep = 1; // seconds
+    this.timeStep = 0.005; // seconds
 
     /*
      * EINSTEIN-SMOLUCHOWSKI EQUATION
@@ -182,9 +182,9 @@ class CellViewer {
     this.bacteriaSD = Math.sqrt(2 * this.diffusionCoefficientBacteria * this.timeStep);
 
     // Convert standard deviations from meters to micrometers for visualization
-    this.proteinSD *= 1e7 /0.641;
-    this.virusSD *= 1e7 /0.641;
-    this.bacteriaSD *= 1e7 /0.641;
+    this.proteinSD *= 1e6 /0.641;
+    this.virusSD *= 1e6 /0.641;
+    this.bacteriaSD *= 1e6 /0.641;
 
   
     this.cellRadius = 5/0.641; //10 micrometers in diameter
