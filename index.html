@@ -121,9 +121,9 @@ class CellViewer {
     const boltzmannConstant = 1.38e-23; 
     
     // Particle radii (with scaling factor for visualization)
-    this.proteinRadius = 0.005/1.282; // 5 nanometers in radius
-    this.viralRadius = 0.05/1.282;    // 50 nanometers in radius
-    this.bacteriaRadius = 0.4/1.282;  // 500 nanometers in radius (0.5 micrometers)
+    this.proteinRadius = 0.005/0.641; // 5 nanometers in radius
+    this.viralRadius = 0.05/0.641;    // 50 nanometers in radius
+    this.bacteriaRadius = 0.4/0.641;  // 500 nanometers in radius (0.5 micrometers)
 
     /*
      * STOKES-EINSTEIN RELATION
@@ -187,7 +187,7 @@ class CellViewer {
     this.bacteriaSD *= 1e6 / 1.282;
 
   
-    this.cellRadius = 10/1.282; //10 micrometers in radius
+    this.cellRadius = 5/0.641; //10 micrometers in diameter
     this.isARMode = false;
     this.reticle = null;
     this.hitTestSource = null;
