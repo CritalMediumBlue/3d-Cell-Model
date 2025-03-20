@@ -161,7 +161,7 @@ class CellViewer {
      * This is a relatively large time step chosen for visualization purposes.
      * In a more precise simulation, a smaller time step would be used.
      */
-    this.timeStep = 10; // seconds
+    this.timeStep = 1; // seconds
 
     /*
      * EINSTEIN-SMOLUCHOWSKI EQUATION
@@ -182,9 +182,9 @@ class CellViewer {
     this.bacteriaSD = Math.sqrt(2 * this.diffusionCoefficientBacteria * this.timeStep);
 
     // Convert standard deviations from meters to micrometers for visualization
-    this.proteinSD *= 1e6 / 1.282;
-    this.virusSD *= 1e6 / 1.282;
-    this.bacteriaSD *= 1e6 / 1.282;
+    this.proteinSD *= 1e7 /0.641;
+    this.virusSD *= 1e7 /0.641;
+    this.bacteriaSD *= 1e7 /0.641;
 
   
     this.cellRadius = 5/0.641; //10 micrometers in diameter
