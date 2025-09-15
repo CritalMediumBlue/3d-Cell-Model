@@ -33,11 +33,11 @@ export class CellViewer {
   }
 
   initComponents() {
-    // Initialize particle system
-    this.particleSystem = new ParticleSystem(this.cellGroup);
-    
-    // Initialize physics
+    // Initialize physics first
     this.brownianMotion = new BrownianMotion();
+    
+    // Initialize particle system with brownian motion reference
+    this.particleSystem = new ParticleSystem(this.cellGroup, this.brownianMotion);
     
     // Initialize AR controller
     this.arController = new ARController(this.renderer, this.scene, this.cellGroup);
@@ -56,7 +56,7 @@ export class CellViewer {
 
   setupParticles() {
     // Initialize all particles
-    this.particleSystem.initializeAllParticles(this.brownianMotion.proteinRadius, this.brownianMotion.viralRadius, this.brownianMotion.bacteriaRadius);
+    this.particleSystem.initializeAllParticles();
     
     // Get references to particle arrays for physics simulation
     this.proteins = this.particleSystem.proteins;

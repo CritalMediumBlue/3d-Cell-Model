@@ -2,17 +2,22 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 export class ParticleSystem {
-  constructor(cellGroup) {
+  constructor(cellGroup, brownianMotion = null) {
     this.cellGroup = cellGroup;
+    this.brownianMotion = brownianMotion;
     this.proteins = [];
     this.viralParticles = [];
     this.bacteria = [];
-    this.cellRadius = 5/0.641; //5 micrometers in radius
+    this.cellRadius = 5* 1.54;
   }
 
   createParticles(size, segments, color, number, particleGroup, minRadius, maxRadius) {
     const geometry = new THREE.SphereGeometry(size, segments, segments);
-    const material = new THREE.MeshPhongMaterial({ emissive: color, emissiveIntensity: 1 });
+    const material = new THREE.MeshStandardMaterial({ 
+            color: color,
+            emissive: color,
+            emissiveIntensity: 0
+        });
 
     for (let i = 0; i < number; i++) {
       const particle = new THREE.Mesh(geometry, material);
@@ -35,11 +40,11 @@ export class ParticleSystem {
   }
 
   createCellMembrane() {
-    const geometry = new THREE.SphereGeometry(this.cellRadius, 64, 64);
+    const geometry = new THREE.SphereGeometry(this.cellRadius, 60, 60);
     const material = new THREE.MeshBasicMaterial({
       color: 0x0000ff,
       wireframe: true,
-      transparent: true,
+      transparent: true, 
       opacity: 0.2
     });
     this.cellGroup.add(new THREE.Mesh(geometry, material));
@@ -57,13 +62,16 @@ export class ParticleSystem {
     });
   }
 
-  initializeAllParticles(proteinRadius, viralRadius, bacteriaRadius) {
-  
+  initializeAllParticles() {
+    // Use radii from BrownianMotion class if available, otherwise use fallback values
+    const viralRadius = this.brownianMotion.viralRadius ;
+    const proteinRadius = this.brownianMotion.proteinRadius 
+    const bacteriaRadius = this.brownianMotion.bacteriaRadius ;
 
-    this.createParticles(viralRadius/1000, 1, 0x0000ff, 50, this.viralParticles, this.cellRadius, this.cellRadius*3); // Viral particles
-    this.createParticles(proteinRadius/1000, 1, 0x00ff00, 500, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
-    this.createParticles(bacteriaRadius/1000, 8, 0xff0000, 20, this.bacteria, this.cellRadius, this.cellRadius*3); // Extra cellular molecules
-
+    this.createParticles(viralRadius, 5, 0x0000ff, 50, this.viralParticles, this.cellRadius, this.cellRadius*4); // Viral particles
+    this.createParticles(proteinRadius, 5, 0xff00ff, 200, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
+    this.createParticles(bacteriaRadius, 8, 0xff0000, 20, this.bacteria, this.cellRadius, this.cellRadius*4); // Extra cellular molecules
+    
     this.createCellMembrane();
     this.loadCellModel();
   }

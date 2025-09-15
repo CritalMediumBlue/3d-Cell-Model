@@ -16,7 +16,7 @@ export class SceneSetup {
     this.camera.lookAt(0, 0, 0);
 
     this.renderer = new THREE.WebGLRenderer({ 
-      antialias: true,
+      antialias: false, // true means smoother edges, but may impact performance
       alpha: true // Transparent background for AR
     });
     this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -31,8 +31,8 @@ export class SceneSetup {
     
     const lights = [
       { color: 0xFFFFFF, intensity: 2.0, position: [3, 10, 3] },
-      { color: 0xFFFFFF, intensity: 2.5, position: [0, -5, -1] },
-      { color: 0xFFFFFF, intensity: 2.50, position: [-10, 0, 0] }
+      { color: 0xFFFFFF, intensity: 2.0, position: [0, -5, -1] },
+      { color: 0xFFFFFF, intensity: 2.0, position: [-10, 0, 0] }
     ];
     
     lights.forEach(({ color, intensity, position }) => {

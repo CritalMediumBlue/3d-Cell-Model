@@ -12,27 +12,22 @@ export class BrownianMotion {
     const cytoplasmViscosity = 5 * waterViscosity; // Cytoplasm is more viscous than water (about 5 times)
     const boltzmannConstant = 1.380649e-23;  //J/K (Joules per Kelvin)
     
-    this.proteinRadius = 5; // 5 nanometers in radius. 
-    this.viralRadius = 50;    // 50 nanometers in radius (0.05 micrometers)
-    this.bacteriaRadius = 500;  // 500 nanometers in radius (0.5 micrometers)
+    this.proteinRadius = 0.005; // micrometers in radius
+    this.viralRadius = 0.05;    // micrometers in radius
+    this.bacteriaRadius = 0.5;  // micrometers in radius
 
     // Calculate diffusion coefficients using the Stokes-Einstein equation
-    this.diffusionCoefficientProtein = boltzmannConstant * temperatureKelvin / (6 * Math.PI * cytoplasmViscosity * this.proteinRadius*(1/1e9)); // units: m²/s
-    this.diffusionCoefficientVirus = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.viralRadius*(1/1e9)); // units: m²/s
-    this.diffusionCoefficientBacteria = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.bacteriaRadius*(1/1e9)); // units: m²/s
+    this.diffusionCoefficientProtein = boltzmannConstant * temperatureKelvin / (6 * Math.PI * cytoplasmViscosity * this.proteinRadius*(1/1e6)); // units: m²/s
+    this.diffusionCoefficientVirus = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.viralRadius*(1/1e6)); // units: m²/s
+    this.diffusionCoefficientBacteria = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.bacteriaRadius*(1/1e6)); // units: m²/s
 
     this.timeStep = 0.0001; // seconds
 
-
     // Calculate standard deviations based on the Einstein-Smoluchowski equation
-    this.proteinSD = Math.sqrt(2 * this.diffusionCoefficientProtein * this.timeStep);
-    this.virusSD = Math.sqrt(2 * this.diffusionCoefficientVirus * this.timeStep);
-    this.bacteriaSD = Math.sqrt(2 * this.diffusionCoefficientBacteria * this.timeStep);
+    this.proteinSD = Math.sqrt(2 * this.diffusionCoefficientProtein * this.timeStep)*1e6 ; // units: micrometers
+    this.virusSD = Math.sqrt(2 * this.diffusionCoefficientVirus * this.timeStep)*1e6 ; // units: micrometers
+    this.bacteriaSD = Math.sqrt(2 * this.diffusionCoefficientBacteria * this.timeStep)*1e6 ; // units: micrometers
 
-    // Convert standard deviations from meters to micrometers and then to the scale of the scene
-    this.proteinSD *= 1e6 ; // units: micrometers 
-    this.virusSD *= 1e6 ; // units: micrometers 
-    this.bacteriaSD *= 1e6 ; // units: micrometers 
   }
 
 
@@ -59,7 +54,7 @@ export class BrownianMotion {
 
   applyBrownianMotion(sd, molecules, minRadius, maxRadius, minZ, minY) {
     molecules.forEach(molecule => {
-      // Generate normally distributed random displacements for X and Y coordinates
+        
       const [deltaX, deltaY] = this.normalPolar(0, sd);
       
       // Generate normally distributed random displacement for Z coordinate

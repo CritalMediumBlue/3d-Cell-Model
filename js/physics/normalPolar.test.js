@@ -45,7 +45,7 @@ describe('BrownianMotion', () => {
     it('should respect the mean parameter', () => {
       const mean = 5;
       const sd = 1;
-      const samples = 100000;
+      const samples = 10000000;
       let sum = 0; 
 
       // Generate many samples and calculate average
@@ -53,11 +53,11 @@ describe('BrownianMotion', () => {
         const [x, y] = brownianMotion.normalPolar(mean, sd);
         sum += x + y;
       }
-
+ 
       const average = sum / (samples * 2);
       
       // The average should be close to the specified mean (within 0.1 for large sample size)
-      expect(average).toBeCloseTo(mean, 2);
+      expect(average).toBeCloseTo(mean, 3);
     });
 
     it('should respect the standard deviation parameter', () => {
@@ -73,7 +73,7 @@ describe('BrownianMotion', () => {
       }
 
       const variance = sumSquared / (samples * 2);
-      const calculatedSD = Math.sqrt(variance);
+      const calculatedSD = Math.sqrt(variance); 
       
       // The calculated standard deviation should be close to the specified one
       expect(calculatedSD).toBeCloseTo(sd, 1);
