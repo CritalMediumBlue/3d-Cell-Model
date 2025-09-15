@@ -7,7 +7,7 @@ export class ParticleSystem {
     this.proteins = [];
     this.viralParticles = [];
     this.bacteria = [];
-    this.cellRadius = 5/0.641; //10 micrometers in diameter
+    this.cellRadius = 5; //5 micrometers in radius
   }
 
   createParticles(size, segments, color, number, particleGroup, minRadius, maxRadius) {
@@ -57,16 +57,13 @@ export class ParticleSystem {
     });
   }
 
-  initializeAllParticles() {
-    // Create different types of particles based on physics properties
-    const viralRadius = 0.05;
-    const proteinRadius = 0.006;
-    const bacteriaRadius = 0.5;
+  initializeAllParticles(proteinRadius, viralRadius, bacteriaRadius) {
+  
 
-    this.createParticles(viralRadius, 1, 0x0000ff, 50, this.viralParticles, this.cellRadius, this.cellRadius*3); // Viral particles
-    this.createParticles(proteinRadius, 1, 0x00ff00, 500, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
-    this.createParticles(bacteriaRadius, 8, 0xff0000, 20, this.bacteria, this.cellRadius, this.cellRadius*3); // Extra cellular molecules
-    
+    this.createParticles(viralRadius/1000, 1, 0x0000ff, 50, this.viralParticles, this.cellRadius, this.cellRadius*3); // Viral particles
+    this.createParticles(proteinRadius/1000, 1, 0x00ff00, 500, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
+    this.createParticles(bacteriaRadius/1000, 8, 0xff0000, 20, this.bacteria, this.cellRadius, this.cellRadius*3); // Extra cellular molecules
+
     this.createCellMembrane();
     this.loadCellModel();
   }

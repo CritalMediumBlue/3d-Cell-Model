@@ -56,7 +56,7 @@ export class CellViewer {
 
   setupParticles() {
     // Initialize all particles
-    this.particleSystem.initializeAllParticles();
+    this.particleSystem.initializeAllParticles(this.brownianMotion.proteinRadius, this.brownianMotion.viralRadius, this.brownianMotion.bacteriaRadius);
     
     // Get references to particle arrays for physics simulation
     this.proteins = this.particleSystem.proteins;
