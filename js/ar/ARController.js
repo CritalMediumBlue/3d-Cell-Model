@@ -36,7 +36,7 @@ export class ARController {
     
     // Create reticle for AR placement
     const reticleGeometry = new THREE.RingGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2);
-    const reticleMaterial = new THREE.MeshBasicMaterial({color: 0x00ffff,transparent: true, opacity: 0.3, side: THREE.DoubleSide});
+    const reticleMaterial = new THREE.MeshBasicMaterial({color: 0xff00ff,transparent: true, opacity: 0.3, side: THREE.DoubleSide});
     this.reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
     this.reticle.matrixAutoUpdate = false;
     this.reticle.visible = false;
