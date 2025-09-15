@@ -12,6 +12,7 @@ export class ARController {
     this.hitTestSourceRequested = false;
     this.modelPlaced = false;
     this.controller = null;
+    this.onModelPlaced = null; // Callback function for when model is placed
     
     this.setupAR();
   }
@@ -66,6 +67,11 @@ export class ARController {
       this.cellGroup.visible = true;
       this.modelPlaced = true;
       this.cellGroup.position.y += 0.8; // Offset to avoid clipping with the ground
+      
+      // Trigger the callback if it exists
+      if (this.onModelPlaced && typeof this.onModelPlaced === 'function') {
+        this.onModelPlaced();
+      }
     }
   }
 
