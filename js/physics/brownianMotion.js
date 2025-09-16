@@ -47,7 +47,6 @@ export class BrownianMotion {
     const z0 = u1 * factor;
     const z1 = u2 * factor;
 
-    // Scale by the desired standard deviation and shift by the mean
     return [mean + z0 * sd, mean + z1 * sd];
   }
   
@@ -63,7 +62,7 @@ export class BrownianMotion {
       // Apply the random displacement to the particle position
       // This is the core of the random walk process
       molecule.position.add(new THREE.Vector3(
-        deltaX, // Adjust for scene scale
+        deltaX, 
         deltaY,
         deltaZ
       ));

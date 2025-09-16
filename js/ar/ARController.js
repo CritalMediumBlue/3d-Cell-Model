@@ -40,7 +40,7 @@ export class ARController {
     
     // Create reticle for AR placement
     const reticleGeometry = new THREE.RingGeometry(0.18, 0.25, 32).rotateX(-Math.PI / 2); //0.25 are 0.25 meters in the real world
-    const reticleMaterial = new THREE.MeshBasicMaterial({color: 0xff00ff,transparent: true, opacity: 0.5, side: THREE.DoubleSide});
+    const reticleMaterial = new THREE.MeshBasicMaterial({color: 0x0000ff,transparent: true, opacity: 0.5, side: THREE.DoubleSide});
     this.reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
     this.reticle.matrixAutoUpdate = false;
     this.reticle.visible = false;
@@ -84,7 +84,7 @@ export class ARController {
       this.reticle.visible = false;
       this.cellGroup.visible = true;
       this.modelPlaced = true;
-      this.cellGroup.position.y += this.cellGroup.cellRadius * 0.1; // Offset to avoid clipping with the ground
+      this.cellGroup.position.y += 0.77; // cell radius is 7.7, so 0.77 in scaled down model
       
       // Trigger the callback if it exists
       if (this.onModelPlaced && typeof this.onModelPlaced === 'function') {
