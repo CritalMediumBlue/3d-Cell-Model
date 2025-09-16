@@ -59,10 +59,22 @@ export class TouchHandler {
           
           // Calculate the rotation based on horizontal movement
           const deltaX = touchX - this.touchStartX;
+          const deltaY = touchY - this.touchStartY;
+          //remember the original rotatation of the helper grid. We do not want it to rotate with the cell
+          const originalRotationY = this.cellGroup.gridHelperSmall.rotation.y;
+          const originalRotationX = this.cellGroup.gridHelperSmall.rotation.x;
+          
           this.cellGroup.rotation.y += deltaX * 0.005;
 
-          const deltaY = touchY - this.touchStartY;
+          
           this.cellGroup.rotation.x += deltaY * 0.005;
+
+          // Reset the helper grid rotation to keep it stable
+          this.cellGroup.gridHelperSmall.rotation.y = originalRotationY;
+          this.cellGroup.gridHelperSmall.rotation.x = originalRotationX;
+          
+          this.cellGroup.gridHelperBig.rotation.y = originalRotationY;
+          this.cellGroup.gridHelperBig.rotation.x = originalRotationX;
 
           // Update the starting position
           this.touchStartX = touchX;
