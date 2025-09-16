@@ -8,10 +8,9 @@ export class TouchHandler {
     
     // Scaling properties
     this.initialPinchDistance = 0;
-    this.initialScale = this.cellGroup.scale.x; // Read actual initial scale
-    this.currentScale = this.cellGroup.scale.x; // Read actual current scale
-    this.minScale = 0.01;
-    this.maxScale = 10;
+    this.initialScale = 0.1;
+    this.currentScale = 0.1;
+
     
     this.setupTouchInteraction();
   }
@@ -74,11 +73,9 @@ export class TouchHandler {
           
           // Calculate scale factor based on distance change
           const scaleChange = currentPinchDistance / this.initialPinchDistance;
-          this.currentScale = this.initialScale * scaleChange;
+          this.currentScale = this.initialScale + scaleChange - 1;
           
-          // Clamp the scale within min and max bounds
-          this.currentScale = Math.max(this.minScale, Math.min(this.maxScale, this.currentScale));
-          
+    
           // Apply the scale to the cell group
           this.cellGroup.scale.set(this.currentScale, this.currentScale, this.currentScale);
         }
