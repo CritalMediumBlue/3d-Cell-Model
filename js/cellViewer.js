@@ -39,7 +39,7 @@ export class CellViewer {
     
     this.arController = new ARController(this.renderer, this.scene, this.cellGroup);
     
-    this.touchHandler = new TouchHandler(this.cellGroup);
+    this.touchHandler = new TouchHandler(this.cellGroup, this.arController);
   }
 
   setupPhysics() {

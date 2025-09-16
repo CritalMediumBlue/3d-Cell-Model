@@ -81,7 +81,7 @@ export class ARController {
       this.cellGroup.position.y += 0.77
       this.cellGroup.scale.set(0.1, 0.1, 0.1);
       //hide the reticle after placing the model
-      this.reticle.visible = false;
+      this.reticle.visible = true;
       this.cellGroup.visible = true;
       this.modelPlaced = true;
       
@@ -132,9 +132,7 @@ export class ARController {
             this.reticle.visible = true;
             this.reticle.matrix.fromArray(pose.transform.matrix);
           }
-        } else {
-          this.reticle.visible = false;
-        }
+      
       }
     }
   }

@@ -1,6 +1,7 @@
 export class TouchHandler {
-  constructor(cellGroup) {
+  constructor(cellGroup, arController) {
     this.cellGroup = cellGroup;
+    this.arController = arController;
     this.touchStartX = 0;
     this.touchStartY = 0;
     this.isARMode = false;
@@ -78,7 +79,8 @@ export class TouchHandler {
     
           // Apply the scale to the cell group
           this.cellGroup.scale.set(this.currentScale, this.currentScale, this.currentScale);
-          this.cellGroup.position.y = 0.77 * this.currentScale;
+          this.cellGroup.position.setFromMatrixPosition(this.arController.reticle.matrix);
+          this.cellGroup.position.y += 7.7 * this.currentScale;
         }
       }
     }, { passive: false });
