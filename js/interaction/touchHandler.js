@@ -10,8 +10,8 @@ export class TouchHandler {
     this.initialPinchDistance = 0;
     this.initialScale = 1;
     this.currentScale = 1;
-    this.minScale = 0.1;
-    this.maxScale = 5.0;
+    this.minScale = 0.01;
+    this.maxScale = 10;
     
     this.setupTouchInteraction();
   }
