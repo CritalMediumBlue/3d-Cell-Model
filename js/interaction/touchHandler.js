@@ -6,6 +6,13 @@ export class TouchHandler {
     this.isARMode = false;
     this.modelPlaced = false;
     
+    // Scaling properties
+    this.initialPinchDistance = 0;
+    this.initialScale = 1;
+    this.currentScale = 1;
+    this.minScale = 0.1;
+    this.maxScale = 5.0;
+    
     this.setupTouchInteraction();
   }
 
@@ -16,13 +23,27 @@ export class TouchHandler {
   setModelPlaced(modelPlaced) {
     this.modelPlaced = modelPlaced;
   }
+
+  // Helper method to calculate distance between two touch points
+  getTouchDistance(touch1, touch2) {
+    const dx = touch1.clientX - touch2.clientX;
+    const dy = touch1.clientY - touch2.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
   
   setupTouchInteraction() {
     // Touch events for rotating and scaling the model in AR mode
     document.addEventListener('touchstart', (event) => {
       if (this.isARMode && this.modelPlaced && event.touches.length > 0) {
-        this.touchStartX = event.touches[0].clientX;
-        this.touchStartY = event.touches[0].clientY;
+        if (event.touches.length === 1) {
+          // Single touch - prepare for rotation
+          this.touchStartX = event.touches[0].clientX;
+          this.touchStartY = event.touches[0].clientY;
+        } else if (event.touches.length === 2) {
+          // Two touches - prepare for scaling
+          this.initialPinchDistance = this.getTouchDistance(event.touches[0], event.touches[1]);
+          this.initialScale = this.currentScale;
+        }
       }
     });
     
@@ -46,6 +67,20 @@ export class TouchHandler {
           // Update the starting position
           this.touchStartX = touchX;
           this.touchStartY = touchY;
+        }
+        // Two touches for scaling (pinch-to-zoom)
+        else if (event.touches.length === 2) {
+          const currentPinchDistance = this.getTouchDistance(event.touches[0], event.touches[1]);
+          
+          // Calculate scale factor based on distance change
+          const scaleChange = currentPinchDistance / this.initialPinchDistance;
+          this.currentScale = this.initialScale * scaleChange;
+          
+          // Clamp the scale within min and max bounds
+          this.currentScale = Math.max(this.minScale, Math.min(this.maxScale, this.currentScale));
+          
+          // Apply the scale to the cell group
+          this.cellGroup.scale.set(this.currentScale, this.currentScale, this.currentScale);
         }
       }
     }, { passive: false });

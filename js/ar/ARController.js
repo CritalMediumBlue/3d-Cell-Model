@@ -71,7 +71,7 @@ export class ARController {
     // Restore fog when exiting AR mode
     if (this.originalFog) {
       this.scene.fog = this.originalFog;
-    }
+    } 
   }
 
   onSelect() {
