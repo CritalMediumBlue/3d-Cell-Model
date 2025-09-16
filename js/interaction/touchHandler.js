@@ -38,11 +38,11 @@ export class TouchHandler {
           
           // Calculate the rotation based on horizontal movement
           const deltaX = touchX - this.touchStartX;
-          this.cellGroup.rotation.y += deltaX * 0.01;
+          this.cellGroup.rotation.y += deltaX * 0.005;
 
           const deltaY = touchY - this.touchStartY;
-          this.cellGroup.rotation.x += deltaY * 0.01;
-          
+          this.cellGroup.rotation.x += deltaY * 0.005;
+
           // Update the starting position
           this.touchStartX = touchX;
           this.touchStartY = touchY;
