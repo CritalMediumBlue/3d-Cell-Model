@@ -33,16 +33,12 @@ export class CellViewer {
   }
 
   initComponents() {
-    // Initialize physics first
     this.brownianMotion = new BrownianMotion();
     
-    // Initialize particle system with brownian motion reference
     this.particleSystem = new ParticleSystem(this.cellGroup, this.brownianMotion);
     
-    // Initialize AR controller
     this.arController = new ARController(this.renderer, this.scene, this.cellGroup);
     
-    // Initialize touch handler
     this.touchHandler = new TouchHandler(this.cellGroup);
   }
 
@@ -58,7 +54,6 @@ export class CellViewer {
     // Initialize all particles
     this.particleSystem.initializeAllParticles();
     
-    // Get references to particle arrays for physics simulation
     this.proteins = this.particleSystem.proteins;
     this.viralParticles = this.particleSystem.viralParticles;
     this.bacteria = this.particleSystem.bacteria;
@@ -89,22 +84,11 @@ export class CellViewer {
   }
 
   animate() {
-    // Apply Brownian motion to different particle types
-    // Note how each particle type has its own standard deviation (SD) based on its size and environment
     
-    // Viral particles: Larger SD than proteins but smaller than bacteria
-    // Move in extracellular space (between cellRadius and cellRadius*3)
     this.brownianMotion.applyBrownianMotion(this.virusSD, this.viralParticles, this.cellRadius, this.cellRadius*3);
-    
-    // Proteins: Smallest particles, highest diffusion coefficient, but in viscous cytoplasm
-    // Move within the cell (between cellRadius/3 and cellRadius)
     this.brownianMotion.applyBrownianMotion(this.proteinSD, this.proteins, this.cellRadius/3, this.cellRadius, 0, 0);
-    
-    // Bacteria: Largest particles, lowest diffusion coefficient
-    // Move in extracellular space (between cellRadius and cellRadius*3)
     this.brownianMotion.applyBrownianMotion(this.bacteriaSD, this.bacteria, this.cellRadius, this.cellRadius*3);
     
-    // AR hit testing
     if (this.arController.isARMode) {
       this.arController.handleARHitTest();
     }
