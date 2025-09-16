@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
 export class ParticleSystem {
   constructor(cellGroup, brownianMotion = null) {
@@ -8,15 +9,13 @@ export class ParticleSystem {
     this.proteins = [];
     this.viralParticles = [];
     this.bacteria = [];
-    this.cellRadius = 7.7;
+    this.cellRadius = 7.7; //15.4 micrometers in diameter
   }
 
   createParticles(size, segments, color, number, particleGroup, minRadius, maxRadius) {
     const geometry = new THREE.SphereGeometry(size, segments, segments);
     const material = new THREE.MeshStandardMaterial({ 
             color: color,
-            emissive: color,
-            emissiveIntensity: 0
         });
 
     for (let i = 0; i < number; i++) {
@@ -43,22 +42,35 @@ export class ParticleSystem {
     const geometry = new THREE.SphereGeometry(this.cellRadius, 60, 60);
     const material = new THREE.MeshBasicMaterial({
       color: 0x0000ff,
-      wireframe: true,
+      wireframe: false,
       transparent: true, 
       opacity: 0.2
     });
-    this.cellGroup.add(new THREE.Mesh(geometry, material));
+    const membrane = new THREE.Mesh(geometry, material);
+    membrane.position.set(0, 0, 0); // Center the membrane
+    this.cellGroup.add(membrane);
   }
 
   loadCellModel() {
     const gltfLoader = new GLTFLoader();
-    //set current path
+    
+    // Set up DRACO loader for compressed models
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+    gltfLoader.setDRACOLoader(dracoLoader);
+    
+    // Set current path
     gltfLoader.setPath('./');
-    gltfLoader.load("./cellModel/cell.glb", (gltf) => { // Use the .glb file instead of .gltf
-        const object = gltf.scene; // Access the loaded 3D scene
-        object.scale.set(0.15, 0.15, 0.15); // Scale the model
-        object.position.set(0.2, -7.95, 0.2); // Position the model
-        this.cellGroup.add(object); // Add the model to the cell group
+    gltfLoader.load("./cellModel/output.glb", (gltf) => {
+        const object = gltf.scene;
+        object.scale.set(0.15, 0.15, 0.15);
+        object.position.set(0.2, -7.95, 0.2);
+        this.cellGroup.add(object);
+        
+        // Clean up DRACO loader
+        dracoLoader.dispose();
+    }, undefined, (error) => {
+        console.error('Error loading cell model:', error);
     });
   }
 
@@ -68,9 +80,9 @@ export class ParticleSystem {
     const proteinRadius = this.brownianMotion.proteinRadius 
     const bacteriaRadius = this.brownianMotion.bacteriaRadius ;
 
-    this.createParticles(viralRadius, 5, 0x0000ff, 50, this.viralParticles, this.cellRadius, this.cellRadius*4); // Viral particles
-    this.createParticles(proteinRadius, 5, 0xff00ff, 200, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
-    this.createParticles(bacteriaRadius, 8, 0xff0000, 20, this.bacteria, this.cellRadius, this.cellRadius*4); // Extra cellular molecules
+    this.createParticles(viralRadius, 5, 0x00ffff, 50, this.viralParticles, this.cellRadius, this.cellRadius*4); // Viral particles
+    this.createParticles(proteinRadius, 5, 0xffffff, 200, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
+    this.createParticles(bacteriaRadius, 8, 0xff00ff, 20, this.bacteria, this.cellRadius, this.cellRadius*4); // Extra cellular molecules
     
     this.createCellMembrane();
     this.loadCellModel();

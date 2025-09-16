@@ -11,7 +11,7 @@ export class SceneSetup {
 
   initScene() {
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.001, 3000);
+    this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.0001, 3000);
     this.camera.position.set(20, 20, 20);
     this.camera.lookAt(0, 0, 0);
 
@@ -30,9 +30,12 @@ export class SceneSetup {
     this.scene.add(this.lightGroup);
     
     const lights = [
-      { color: 0xFFFFFF, intensity: 2.0, position: [3, 10, 3] },
-      { color: 0xFFFFFF, intensity: 2.0, position: [0, -5, -1] },
-      { color: 0xFFFFFF, intensity: 2.0, position: [-10, 0, 0] }
+      { color: 0xFFFF00, intensity: 2.0, position: [5, 20, 0] },
+      { color: 0xFF00FF, intensity: 2.0, position: [0, 5, 20] },
+      { color: 0x00FFFF, intensity: 2.0, position: [20, 0, 5] },
+      { color: 0xFFFF00, intensity: 2.0, position: [-5, -20, 0] },
+      { color: 0xFF00FF, intensity: 2.0, position: [0, -5, -20] },
+      { color: 0x00FFFF, intensity: 2.0, position: [-20, 0, -5] }
     ];
     
     lights.forEach(({ color, intensity, position }) => {
