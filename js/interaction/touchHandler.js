@@ -8,8 +8,8 @@ export class TouchHandler {
     
     // Scaling properties
     this.initialPinchDistance = 0;
-    this.initialScale = 1;
-    this.currentScale = 1;
+    this.initialScale = this.cellGroup.scale.x; // Read actual initial scale
+    this.currentScale = this.cellGroup.scale.x; // Read actual current scale
     this.minScale = 0.01;
     this.maxScale = 10;
     
