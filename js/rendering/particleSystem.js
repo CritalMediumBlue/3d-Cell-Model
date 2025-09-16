@@ -38,7 +38,7 @@ export class ParticleSystem {
     }
   }
 
-  createTextLabel(text, color = 0xffffff, size = 0.5) {
+  createTextLabel(text, color = 0xffffff, size = 0.4) {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     canvas.width = 256;
@@ -94,7 +94,7 @@ export class ParticleSystem {
     for (let i = -20; i <= 20; i += 10) {
         const label = i;
         const label1um = this.createTextLabel(
-          label + " μm", 0x000000, 0.3
+          label + " μm", 0x000000
         );
         label1um.position.set(
           i, -this.cellRadius - 1, 0
@@ -102,7 +102,7 @@ export class ParticleSystem {
         this.cellGroup.add(label1um);
         if (i !== 0) { // Avoid duplicating the zero label
           const labelNeg = this.createTextLabel(
-            (-i) + " μm", 0x000000, 0.3
+            (-i) + " μm", 0x000000
           );
           labelNeg.position.set(
             0, -this.cellRadius - 1, i

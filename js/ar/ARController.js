@@ -61,7 +61,7 @@ export class ARController {
       // Place the cell group at the reticle position
       this.cellGroup.position.setFromMatrixPosition(this.reticle.matrix);
       
-      this.cellGroup.scale.set(0.05, 0.05, 0.05);
+      this.cellGroup.scale.set(1, 1, 0.05);
       //hide the reticle after placing the model
       this.reticle.visible = false;
       this.cellGroup.visible = true;
