@@ -6,6 +6,15 @@ export class ParticleSystem {
   constructor(cellGroup, brownianMotion = null) {
     this.cellGroup = cellGroup;
     this.brownianMotion = brownianMotion;
+    
+    // Create separate groups for different transformation behaviors
+    this.rotatableGroup = new THREE.Group(); // For particles, membrane, cell model
+    this.staticGroup = new THREE.Group();    // For helper grids (rotation-resistant)
+    
+    // Add both groups to the main cellGroup
+    this.cellGroup.add(this.rotatableGroup);
+    this.cellGroup.add(this.staticGroup);
+    
     this.proteins = [];
     this.viralParticles = [];
     this.bacteria = [];
@@ -33,7 +42,8 @@ export class ParticleSystem {
         randomPosition().y,
         randomPosition().z
       );
-      this.cellGroup.add(particle);
+      // Add particles to the rotatable group instead of cellGroup
+      this.rotatableGroup.add(particle);
       particleGroup.push(particle);
     }
   }
@@ -75,21 +85,25 @@ export class ParticleSystem {
     });
     const membrane = new THREE.Mesh(geometry, material);
     membrane.position.set(0, 0, 0); // Center the membrane
-    this.cellGroup.add(membrane);
-
- 
+    // Add membrane to rotatable group
+    this.rotatableGroup.add(membrane);
   }
 
   createHelperGrid(){
    // Add a plane grid helper to represent the 1 μm scale
     const gridHelperSmall = new THREE.GridHelper(40, 40, 0xff0000, 0x00ffff);
     gridHelperSmall.position.y = -this.cellRadius; // Position it at the bottom of the cell
-    this.cellGroup.add(gridHelperSmall);
+    // Add grids to static group (won't rotate)
+    this.staticGroup.add(gridHelperSmall);
 
     // Add a larger grid helper to represent the 10 μm scale
     const gridHelperBig = new THREE.GridHelper(40, 4, 0xff0000, 0xff0000);
     gridHelperBig.position.y = -this.cellRadius ; // Position it at the bottom of the cell
-    this.cellGroup.add(gridHelperBig); 
+    this.staticGroup.add(gridHelperBig); 
+
+    // Store references for TouchHandler compatibility
+    this.cellGroup.gridHelperSmall = gridHelperSmall;
+    this.cellGroup.gridHelperBig = gridHelperBig;
 
     // Add labels to the grid helpers to indicate 1 μm steps and 10 μm steps
     for (let i = -20; i <= 20; i += 1) {
@@ -101,7 +115,7 @@ export class ParticleSystem {
         label1um.position.set(
           i, -this.cellRadius , 0
         );
-        this.cellGroup.add(label1um);
+        this.staticGroup.add(label1um);
         if (i !== 0) { // Avoid duplicating the zero label
           const labelNeg = this.createTextLabel(
             (-i) , 0x000000, 0.2
@@ -109,7 +123,7 @@ export class ParticleSystem {
           labelNeg.position.set(
             0, -this.cellRadius , i
           );
-          this.cellGroup.add(labelNeg);
+          this.staticGroup.add(labelNeg);
         }
 
     }
@@ -124,7 +138,7 @@ export class ParticleSystem {
         label1um.position.set(
           i, -this.cellRadius , 0
         );
-        this.cellGroup.add(label1um);
+        this.staticGroup.add(label1um);
         if (i !== 0) { // Avoid duplicating the zero label
           const labelNeg = this.createTextLabel(
             (-i) + " μm", 0x000000
@@ -132,12 +146,12 @@ export class ParticleSystem {
           labelNeg.position.set(
             0, -this.cellRadius , i
           );
-          this.cellGroup.add(labelNeg);
+          this.staticGroup.add(labelNeg);
         }
 
     }
     const axesHelper = new THREE.AxesHelper(20);
-    this.cellGroup.add(axesHelper);
+    this.staticGroup.add(axesHelper);
 
   }
 
@@ -155,7 +169,8 @@ export class ParticleSystem {
         const object = gltf.scene;
         object.scale.set(0.15, 0.15, 0.15);
         object.position.set(0.2, -7.95, 0.2);
-        this.cellGroup.add(object);
+        // Add cell model to rotatable group
+        this.rotatableGroup.add(object);
         
         // Clean up DRACO loader
         dracoLoader.dispose();

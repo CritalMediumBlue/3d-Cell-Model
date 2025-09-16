@@ -40,6 +40,9 @@ export class CellViewer {
     this.arController = new ARController(this.renderer, this.scene, this.cellGroup);
     
     this.touchHandler = new TouchHandler(this.cellGroup, this.arController);
+    
+    // Pass the rotatable group reference to TouchHandler
+    this.touchHandler.rotatableGroup = this.particleSystem.rotatableGroup;
   }
 
   setupPhysics() {
