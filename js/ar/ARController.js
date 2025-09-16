@@ -132,7 +132,7 @@ export class ARController {
             this.reticle.visible = true;
             this.reticle.matrix.fromArray(pose.transform.matrix);
           }
-      
+        }
       }
     }
   }
