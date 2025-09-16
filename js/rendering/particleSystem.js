@@ -8,7 +8,7 @@ export class ParticleSystem {
     this.proteins = [];
     this.viralParticles = [];
     this.bacteria = [];
-    this.cellRadius = 5* 1.54;
+    this.cellRadius = 7.7;
   }
 
   createParticles(size, segments, color, number, particleGroup, minRadius, maxRadius) {
