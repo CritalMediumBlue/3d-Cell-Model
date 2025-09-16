@@ -14,6 +14,9 @@ export class ARController {
     this.controller = null;
     this.onModelPlaced = null; // Callback function for when model is placed
     
+    // Store original fog settings to preserve them during AR
+    this.originalFog = this.scene.fog;
+    
     this.setupAR();
   }
 
@@ -48,14 +51,29 @@ export class ARController {
     this.controller.addEventListener('select', this.onSelect.bind(this));
     this.scene.add(this.controller);
     
-    // Listen for session start/end to toggle between AR and 3D modes
-    this.renderer.xr.addEventListener('sessionstart', () => {
-      this.isARMode = true;
-      this.cellGroup.visible = false; // Hide until placed
-      this.modelPlaced = false;
-    });
+    // Add event listeners to preserve fog during AR sessions
+    this.renderer.xr.addEventListener('sessionstart', this.onARSessionStart.bind(this));
+    this.renderer.xr.addEventListener('sessionend', this.onARSessionEnd.bind(this));
   }
-  
+
+  onARSessionStart() {
+    this.isARMode = true;
+    this.cellGroup.visible = false; // Hide until placed
+    this.modelPlaced = false;
+    // Ensure fog is preserved when entering AR mode
+    if (this.originalFog && !this.scene.fog) {
+      this.scene.fog = this.originalFog;
+    }
+  }
+
+  onARSessionEnd() {
+    this.isARMode = false;
+    // Restore fog when exiting AR mode
+    if (this.originalFog) {
+      this.scene.fog = this.originalFog;
+    }
+  }
+
   onSelect() {
     if (this.reticle.visible && !this.modelPlaced) {
       // Place the cell group at the reticle position
@@ -76,6 +94,11 @@ export class ARController {
   }
 
   handleARHitTest() {
+    // Ensure fog is maintained during AR session
+    if (this.isARMode && this.originalFog && !this.scene.fog) {
+      this.scene.fog = this.originalFog;
+    }
+    
     if (!this.hitTestSourceRequested) {
       const session = this.renderer.xr.getSession();
       
