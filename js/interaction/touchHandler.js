@@ -73,12 +73,12 @@ export class TouchHandler {
           
           // Calculate scale factor based on distance change
           const scaleChange = currentPinchDistance / this.initialPinchDistance;
-          this.currentScale = this.initialScale + (scaleChange - 1) * 0.1;
+          this.currentScale = this.initialScale + (scaleChange - 1) * 0.05;
           
     
           // Apply the scale to the cell group
           this.cellGroup.scale.set(this.currentScale, this.currentScale, this.currentScale);
-          this.cellGroup.position.y = 7.7 * this.currentScale;
+          this.cellGroup.position.y = 0.77 * this.currentScale;
         }
       }
     }, { passive: false });
