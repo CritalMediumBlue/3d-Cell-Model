@@ -16,8 +16,7 @@ export class SceneSetup {
     this.camera.lookAt(0, 0, 0);
 
     this.scene.fog = new THREE.FogExp2(0xffffff, 0.02);
-    const axesHelper = new THREE.AxesHelper(20);
-    this.scene.add(axesHelper);
+
 
     this.renderer = new THREE.WebGLRenderer({ 
       antialias: false, // true means smoother edges, but may impact performance

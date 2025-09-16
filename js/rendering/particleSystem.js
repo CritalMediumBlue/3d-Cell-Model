@@ -111,6 +111,8 @@ export class ParticleSystem {
         }
 
     }
+    const axesHelper = new THREE.AxesHelper(20);
+    this.cellGroup.add(axesHelper);
 
   }
 
