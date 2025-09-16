@@ -83,12 +83,12 @@ export class ParticleSystem {
   createHelperGrid(){
    // Add a plane grid helper to represent the 1 μm scale
     const gridHelperSmall = new THREE.GridHelper(40, 40, 0xff0000, 0x00ffff);
-    gridHelperSmall.position.y = -this.cellRadius - 1; // Position it at the bottom of the cell
+    gridHelperSmall.position.y = -this.cellRadius; // Position it at the bottom of the cell
     this.cellGroup.add(gridHelperSmall);
 
     // Add a larger grid helper to represent the 10 μm scale
     const gridHelperBig = new THREE.GridHelper(40, 4, 0xff0000, 0xff0000);
-    gridHelperBig.position.y = -this.cellRadius - 1; // Position it at the bottom of the cell
+    gridHelperBig.position.y = -this.cellRadius ; // Position it at the bottom of the cell
     this.cellGroup.add(gridHelperBig); 
 
     // Add labels to the grid helpers to indicate 1 μm steps and 10 μm steps
@@ -99,7 +99,7 @@ export class ParticleSystem {
           label , 0x000000, 0.2
         );
         label1um.position.set(
-          i, -this.cellRadius - 1, 0
+          i, -this.cellRadius , 0
         );
         this.cellGroup.add(label1um);
         if (i !== 0) { // Avoid duplicating the zero label
@@ -107,7 +107,7 @@ export class ParticleSystem {
             (-i) , 0x000000, 0.2
           );
           labelNeg.position.set(
-            0, -this.cellRadius - 1, i
+            0, -this.cellRadius , i
           );
           this.cellGroup.add(labelNeg);
         }
@@ -122,7 +122,7 @@ export class ParticleSystem {
           label + " μm", 0x000000
         );
         label1um.position.set(
-          i, -this.cellRadius - 1, 0
+          i, -this.cellRadius , 0
         );
         this.cellGroup.add(label1um);
         if (i !== 0) { // Avoid duplicating the zero label
@@ -130,7 +130,7 @@ export class ParticleSystem {
             (-i) + " μm", 0x000000
           );
           labelNeg.position.set(
-            0, -this.cellRadius - 1, i
+            0, -this.cellRadius , i
           );
           this.cellGroup.add(labelNeg);
         }

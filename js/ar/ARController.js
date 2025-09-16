@@ -78,13 +78,12 @@ export class ARController {
     if (this.reticle.visible && !this.modelPlaced) {
       // Place the cell group at the reticle position
       this.cellGroup.position.setFromMatrixPosition(this.reticle.matrix);
-      
+      this.cellGroup.position.y += 7.7
       this.cellGroup.scale.set(0.1, 0.1, 0.1);
       //hide the reticle after placing the model
       this.reticle.visible = false;
       this.cellGroup.visible = true;
       this.modelPlaced = true;
-      this.cellGroup.position.y += 0.77; // cell radius is 7.7, so 0.77 in scaled down model
       
       // Trigger the callback if it exists
       if (this.onModelPlaced && typeof this.onModelPlaced === 'function') {
