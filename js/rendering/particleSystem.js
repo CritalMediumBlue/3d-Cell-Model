@@ -38,6 +38,33 @@ export class ParticleSystem {
     }
   }
 
+  createTextLabel(text, color = 0xffffff, size = 0.5) {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = 256;
+    canvas.height = 64;
+    
+    // Clear canvas with transparent background
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    
+    context.fillStyle = `#${color.toString(16).padStart(6, '0')}`;
+    context.font = '80px Arial';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillText(text, canvas.width / 2, canvas.height / 2);
+    
+    const texture = new THREE.CanvasTexture(canvas);
+    const material = new THREE.SpriteMaterial({ 
+      map: texture, 
+      transparent: true,
+      alphaTest: 0
+    });
+    const sprite = new THREE.Sprite(material);
+    sprite.scale.set(size * 4, size, 1);
+    
+    return sprite;
+  }
+
   createCellMembrane() {
     const geometry = new THREE.SphereGeometry(this.cellRadius, 60, 60);
     const material = new THREE.MeshBasicMaterial({
@@ -49,6 +76,42 @@ export class ParticleSystem {
     const membrane = new THREE.Mesh(geometry, material);
     membrane.position.set(0, 0, 0); // Center the membrane
     this.cellGroup.add(membrane);
+
+ 
+  }
+
+  createHelperGrid(){
+   // Add a plane grid helper to represent the 1 μm scale
+    const gridHelperSmall = new THREE.GridHelper(40, 40, 0xff0000, 0x00ffff);
+    gridHelperSmall.position.y = -this.cellRadius - 1; // Position it at the bottom of the cell
+    this.cellGroup.add(gridHelperSmall);
+    
+    const gridHelperBig = new THREE.GridHelper(40, 4, 0xff0000, 0xff0000);
+    gridHelperBig.position.y = -this.cellRadius - 1; // Position it at the bottom of the cell
+    this.cellGroup.add(gridHelperBig); 
+    
+    // Add labels to the grid helpers to indicate 1 μm steps and 10 μm steps
+    for (let i = -20; i <= 20; i += 10) {
+        const label = i;
+        const label1um = this.createTextLabel(
+          label + " μm", 0x000000, 0.3
+        );
+        label1um.position.set(
+          i, -this.cellRadius - 1, 0
+        );
+        this.cellGroup.add(label1um);
+        if (i !== 0) { // Avoid duplicating the zero label
+          const labelNeg = this.createTextLabel(
+            (-i) + " μm", 0x000000, 0.3
+          );
+          labelNeg.position.set(
+            0, -this.cellRadius - 1, i
+          );
+          this.cellGroup.add(labelNeg);
+        }
+
+    }
+
   }
 
   loadCellModel() {
@@ -85,6 +148,7 @@ export class ParticleSystem {
     this.createParticles(bacteriaRadius, 8, 0xff00ff, 20, this.bacteria, this.cellRadius, this.cellRadius*4); // Extra cellular molecules
     
     this.createCellMembrane();
+    this.createHelperGrid();
     this.loadCellModel();
   }
 }

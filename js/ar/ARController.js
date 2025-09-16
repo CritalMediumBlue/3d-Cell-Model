@@ -66,7 +66,7 @@ export class ARController {
       this.reticle.visible = false;
       this.cellGroup.visible = true;
       this.modelPlaced = true;
-      this.cellGroup.position.y += 0.8; // Offset to avoid clipping with the ground
+      this.cellGroup.position.y += 1; // Offset to avoid clipping with the ground
       
       // Trigger the callback if it exists
       if (this.onModelPlaced && typeof this.onModelPlaced === 'function') {
