@@ -60,18 +60,7 @@ export class ParticleSystem {
       trailLines: []
     };
     
-    for (let i = 0; i < this.trailLength; i++) {
-      const trailGeometry = new THREE.SphereGeometry(particle.geometry.parameters.radius , 6, 6);
-      const trailMaterial = new THREE.MeshStandardMaterial({
-        color: baseColor,
-      });
-      
-      const trailMesh = new THREE.Mesh(trailGeometry, trailMaterial);
-      trailMesh.visible = false; // Initially hidden
-      this.rotatableGroup.add(trailMesh);
-      
-      trailData.trailMeshes.push(trailMesh);
-    }
+
     
     // Create connecting lines between trail points
     for (let i = 0; i < this.trailLength; i++) {
