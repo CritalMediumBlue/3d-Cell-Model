@@ -65,7 +65,7 @@ export class TouchHandler {
           // Helper grids will remain unrotated automatically!
           if (this.rotatableGroup) {
             this.rotatableGroup.rotation.y += deltaX * 0.005;
-            this.rotatableGroup.rotation.x += deltaY * 0.005;
+            this.cellGroup.rotation.x += deltaY * 0.005;
           }
 
           // Update the starting position
