@@ -56,7 +56,6 @@ export class ParticleSystem {
   initializeParticleTrail(particle, baseColor) {
     const trailData = {
       positions: [],
-      trailMeshes: [],
       trailLines: []
     };
     
@@ -96,17 +95,7 @@ export class ParticleSystem {
         trailData.positions.shift();
       }
       
-      // Update trail mesh positions and visibility
-      for (let i = 0; i < trailData.trailMeshes.length; i++) {
-        const trailMesh = trailData.trailMeshes[i];
-        const positionIndex = trailData.positions.length - 2 - i; // -2 to skip current position
-        
-        if (positionIndex >= 0 && positionIndex < trailData.positions.length) {
-          const trailPosition = trailData.positions[positionIndex];
-          trailMesh.position.copy(trailPosition);
-          trailMesh.visible = true;
-        } 
-      }
+
       
       // Update connecting lines
       for (let i = 0; i < trailData.trailLines.length; i++) {

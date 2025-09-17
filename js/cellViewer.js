@@ -120,7 +120,7 @@ export class CellViewer {
     }
 
     // Update FPS display every 1000ms
-    if (currentTime - this.lastFPSUpdate > 1000) {
+    if (currentTime - this.lastFPSUpdate > 2000) {
       // Instantaneous FPS
       const instantFPS = 1000 / deltaTime;
       

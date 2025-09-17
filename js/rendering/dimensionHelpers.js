@@ -43,6 +43,7 @@ export class DimensionHelpers {
       color: 0x0000ff,
       wireframe: false,
       transparent: true, 
+      side: THREE.DoubleSide,
       opacity: 0.2
     });
     const membrane = new THREE.Mesh(geometry, material);
