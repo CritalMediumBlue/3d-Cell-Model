@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { SceneSetup } from './rendering/sceneSetup.js';
 import { ParticleSystem } from './rendering/particleSystem.js';
+import { DimensionHelpers } from './rendering/dimensionHelpers.js';
 import { BrownianMotion } from './physics/brownianMotion.js';
 import { ARController } from './ar/ARController.js';
 import { TouchHandler } from './interaction/touchHandler.js';
@@ -14,7 +15,7 @@ export class CellViewer {
     this.initScene();
     this.initComponents();
     this.setupPhysics();
-    this.setupParticles();
+    this.setupParticlesAndDimensions();
     this.setupInteractions();
     this.animate();
   }
@@ -47,6 +48,13 @@ export class CellViewer {
 
     this.particleSystem = new ParticleSystem(this.cellGroup, this.brownianMotion);
     
+    this.dimensionHelpers = new DimensionHelpers(
+      this.particleSystem.rotatableGroup, 
+      this.particleSystem.staticGroup, 
+      this.cellGroup, 
+      this.particleSystem.cellRadius
+    );
+    
     this.arController = new ARController(this.renderer, this.scene, this.cellGroup);
     
     this.touchHandler = new TouchHandler(this.cellGroup, this.arController);
@@ -63,9 +71,12 @@ export class CellViewer {
     this.cellRadius = this.particleSystem.cellRadius;
   }
 
-  setupParticles() {
+  setupParticlesAndDimensions() {
     // Initialize all particles
     this.particleSystem.initializeAllParticles();
+    
+    // Initialize dimension helpers (grids, membrane, 3D model)
+    this.dimensionHelpers.initializeAllDimensions();
     
     this.proteins = this.particleSystem.proteins;
     this.viralParticles = this.particleSystem.viralParticles;
