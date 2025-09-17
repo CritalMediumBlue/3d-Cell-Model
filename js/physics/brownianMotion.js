@@ -1,11 +1,11 @@
 import * as THREE from 'three';
 
 export class BrownianMotion {
-  constructor() {
-    this.initPhysicsProperties();
+  constructor(timeStep) {
+    this.initPhysicsProperties(timeStep);
   }
 
-  initPhysicsProperties() {
+  initPhysicsProperties(timeStep) {
 
     const temperatureKelvin = 310.15; // Body temperature in Kelvin (37°C)
     const waterViscosity = 0.0006913; // Water viscosity in Pa·s at body temperature (0.691 mPa·s)
@@ -21,7 +21,7 @@ export class BrownianMotion {
     this.diffusionCoefficientVirus = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.viralRadius*(1/1e6)); // units: m²/s
     this.diffusionCoefficientBacteria = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.bacteriaRadius*(1/1e6)); // units: m²/s
 
-    this.timeStep = 0.0001; // seconds
+    this.timeStep = timeStep; // seconds
 
     // Calculate standard deviations based on the Einstein-Smoluchowski equation
     this.proteinSD = Math.sqrt(2 * this.diffusionCoefficientProtein * this.timeStep)*1e6 ; // units: micrometers

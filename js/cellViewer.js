@@ -33,8 +33,18 @@ export class CellViewer {
   }
 
   initComponents() {
-    this.brownianMotion = new BrownianMotion();
+    this.simulationTimeStep = 0.01666; // Approx 60 FPS
+    this.currentSimulationtime = 0;
     
+    // Frame rate monitoring variables
+    this.frameCount = 0;
+    this.lastFrameTime = performance.now();
+    this.lastFPSUpdate = performance.now();
+    this.currentFPS = 0;
+    this.frameTimeHistory = [];
+    
+    this.brownianMotion = new BrownianMotion(this.simulationTimeStep);
+
     this.particleSystem = new ParticleSystem(this.cellGroup, this.brownianMotion);
     
     this.arController = new ARController(this.renderer, this.scene, this.cellGroup);
@@ -86,7 +96,48 @@ export class CellViewer {
     };
   }
 
+  // Frame rate monitoring methods
+  calculateFPS(currentTime) {
+    this.frameCount++;
+    const deltaTime = currentTime - this.lastFrameTime; // un
+    this.lastFrameTime = currentTime;
+    
+    // Store frame time for average calculation
+    this.frameTimeHistory.push(deltaTime);
+    if (this.frameTimeHistory.length > 60) {
+      this.frameTimeHistory.shift(); // Keep only last 60 frames
+    }
+
+    // Update FPS display every 1000ms
+    if (currentTime - this.lastFPSUpdate > 1000) {
+      // Instantaneous FPS
+      const instantFPS = 1000 / deltaTime;
+      
+      // Average FPS over last 60 frames
+      const avgFrameTime = this.frameTimeHistory.reduce((a, b) => a + b, 0) / this.frameTimeHistory.length;
+      const avgFPS = 1000 / avgFrameTime;
+      
+      this.currentFPS = avgFPS;
+      
+      console.log(`📊 Frame Rate Analysis:
+      🎯 Current FPS: ${instantFPS.toFixed(1)}
+      📈 Average FPS: ${avgFPS.toFixed(1)} 
+      ⏱️  Frame Time: ${deltaTime.toFixed(2)}ms
+      📊 Avg Frame Time: ${avgFrameTime.toFixed(2)}ms
+      🎬 Total Frames: ${this.frameCount}
+      ⏰ Runtime: ${(currentTime / 1000).toFixed(1)}s`);
+      
+      this.lastFPSUpdate = currentTime;
+    }
+    
+    return this.currentFPS;
+  }
+
   animate() {
+    const currentFrameTime = performance.now(); // current runtime in milliseconds
+    
+    // Calculate and monitor frame rate
+    this.calculateFPS(currentFrameTime);
     
     this.brownianMotion.applyBrownianMotion(this.virusSD, this.viralParticles, this.cellRadius, this.cellRadius*3);
     this.brownianMotion.applyBrownianMotion(this.proteinSD, this.proteins, this.cellRadius/3, this.cellRadius, 0, 0);
@@ -98,5 +149,8 @@ export class CellViewer {
     
     this.renderer.setAnimationLoop(this.animate.bind(this));
     this.renderer.render(this.scene, this.camera);
+    this.currentSimulationtime += this.simulationTimeStep;
+    
+    
   }
 }

@@ -91,13 +91,13 @@ export class ParticleSystem {
 
   createHelperGrid(){
    // Add a plane grid helper to represent the 1 μm scale
-    const gridHelperSmall = new THREE.GridHelper(40, 40, 0xff0000, 0x00ffff);
+    const gridHelperSmall = new THREE.GridHelper(30, 30, 0xff0000, 0x00ffff);
     gridHelperSmall.position.y = -this.cellRadius; // Position it at the bottom of the cell
     // Add grids to static group (won't rotate)
     this.staticGroup.add(gridHelperSmall);
 
     // Add a larger grid helper to represent the 10 μm scale
-    const gridHelperBig = new THREE.GridHelper(40, 4, 0xff0000, 0xff0000);
+    const gridHelperBig = new THREE.GridHelper(30, 6, 0xff0000, 0xff0000);
     gridHelperBig.position.y = -this.cellRadius ; // Position it at the bottom of the cell
     this.staticGroup.add(gridHelperBig); 
 
@@ -105,31 +105,10 @@ export class ParticleSystem {
     this.cellGroup.gridHelperSmall = gridHelperSmall;
     this.cellGroup.gridHelperBig = gridHelperBig;
 
-    // Add labels to the grid helpers to indicate 1 μm steps and 10 μm steps
-    for (let i = -20; i <= 20; i += 1) {
-        if (i % 10 === 0) continue; // Skip every 10 to avoid overlap with larger grid labels
-        const label = i;
-        const label1um = this.createTextLabel(
-          label , 0x000000, 0.2
-        );
-        label1um.position.set(
-          i, -this.cellRadius , 0
-        );
-        this.staticGroup.add(label1um);
-        if (i !== 0) { // Avoid duplicating the zero label
-          const labelNeg = this.createTextLabel(
-            (-i) , 0x000000, 0.2
-          );
-          labelNeg.position.set(
-            0, -this.cellRadius , i
-          );
-          this.staticGroup.add(labelNeg);
-        }
-
-    }
+ 
     
     // Add labels to the grid helpers to indicate 1 μm steps and 10 μm steps
-    for (let i = -20; i <= 20; i += 10) {
+    for (let i = -15; i <= 15; i += 5) {
         
         const label = i;
         const label1um = this.createTextLabel(
