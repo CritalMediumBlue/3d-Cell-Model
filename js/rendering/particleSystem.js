@@ -19,6 +19,10 @@ export class ParticleSystem {
     this.viralParticles = [];
     this.bacteria = [];
     this.cellRadius = 7.7; //15.4 micrometers in diameter
+    
+    // Trail configuration
+    this.trailLength = 3; // Number of trail points per particle
+    this.particleTrails = new Map(); // Store trail data for each particle
   }
 
   createParticles(size, segments, color, number, particleGroup, minRadius, maxRadius) {
@@ -45,7 +49,57 @@ export class ParticleSystem {
       // Add particles to the rotatable group instead of cellGroup
       this.rotatableGroup.add(particle);
       particleGroup.push(particle);
+      
+      // Initialize trail for this particle
+      this.initializeParticleTrail(particle, color);
     }
+  }
+
+  initializeParticleTrail(particle, baseColor) {
+    const trailData = {
+      positions: [],
+      trailMeshes: [],
+      trailLines: []
+    };
+    
+    // Create trail points (smaller spheres with decreasing opacity)
+    for (let i = 0; i < this.trailLength; i++) {
+      const trailGeometry = new THREE.SphereGeometry(particle.geometry.parameters.radius , 6, 6);
+      const opacity = (this.trailLength - i) / (this.trailLength + 1); // Decreasing opacity
+      const trailMaterial = new THREE.MeshStandardMaterial({
+        color: baseColor,
+        transparent: true,
+        opacity: opacity * 0.6
+      });
+      
+      const trailMesh = new THREE.Mesh(trailGeometry, trailMaterial);
+      trailMesh.visible = false; // Initially hidden
+      this.rotatableGroup.add(trailMesh);
+      
+      trailData.trailMeshes.push(trailMesh);
+    }
+    
+    // Create connecting lines between trail points
+    for (let i = 0; i < this.trailLength; i++) {
+      const lineGeometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(6); // 2 points × 3 coordinates
+      lineGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      
+      const lineMaterial = new THREE.LineBasicMaterial({
+        color: baseColor,
+      });
+      
+      const line = new THREE.Line(lineGeometry, lineMaterial);
+      line.visible = false; // Initially hidden
+      this.rotatableGroup.add(line);
+      
+      trailData.trailLines.push(line);
+    }
+    
+    // Store initial position
+    trailData.positions.push(particle.position.clone());
+    
+    this.particleTrails.set(particle, trailData);
   }
 
   createTextLabel(text, color = 0xffffff, size = 0.4) {
@@ -73,6 +127,62 @@ export class ParticleSystem {
     sprite.scale.set(size * 4, size, 1);
     
     return sprite;
+  }
+
+  updateParticleTrails() {
+    // Update trails for all particles
+    this.particleTrails.forEach((trailData, particle) => {
+      // Add current position to trail history
+      trailData.positions.push(particle.position.clone());
+      
+      // Remove oldest position if trail is too long
+      if (trailData.positions.length > this.trailLength + 1) {
+        trailData.positions.shift();
+      }
+      
+      // Update trail mesh positions and visibility
+      for (let i = 0; i < trailData.trailMeshes.length; i++) {
+        const trailMesh = trailData.trailMeshes[i];
+        const positionIndex = trailData.positions.length - 2 - i; // -2 to skip current position
+        
+        if (positionIndex >= 0 && positionIndex < trailData.positions.length) {
+          const trailPosition = trailData.positions[positionIndex];
+          trailMesh.position.copy(trailPosition);
+          trailMesh.visible = true;
+        } else {
+          trailMesh.visible = false;
+        }
+      }
+      
+      // Update connecting lines
+      for (let i = 0; i < trailData.trailLines.length; i++) {
+        const line = trailData.trailLines[i];
+        const startPosIndex = trailData.positions.length - 1 - i; // Start from current/previous position
+        const endPosIndex = trailData.positions.length - 2 - i;   // End at next trail point
+        
+        if (startPosIndex >= 0 && endPosIndex >= 0 && 
+            startPosIndex < trailData.positions.length && 
+            endPosIndex < trailData.positions.length) {
+          
+          const startPos = trailData.positions[startPosIndex];
+          const endPos = trailData.positions[endPosIndex];
+          
+          // Update line geometry
+          const positions = line.geometry.attributes.position.array;
+          positions[0] = startPos.x;
+          positions[1] = startPos.y;
+          positions[2] = startPos.z;
+          positions[3] = endPos.x;
+          positions[4] = endPos.y;
+          positions[5] = endPos.z;
+          
+          line.geometry.attributes.position.needsUpdate = true;
+          line.visible = true;
+        } else {
+          line.visible = false;
+        }
+      }
+    });
   }
 
   createCellMembrane() {
@@ -164,9 +274,9 @@ export class ParticleSystem {
     const proteinRadius = this.brownianMotion.proteinRadius 
     const bacteriaRadius = this.brownianMotion.bacteriaRadius ;
 
-    this.createParticles(viralRadius, 5, 0x00ffff, 50, this.viralParticles, this.cellRadius, this.cellRadius*4); // Viral particles
-    this.createParticles(proteinRadius, 5, 0xffffff, 200, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
-    this.createParticles(bacteriaRadius, 8, 0xff00ff, 20, this.bacteria, this.cellRadius, this.cellRadius*4); // Extra cellular molecules
+    this.createParticles(viralRadius, 5, 0x00ffff, 10, this.viralParticles, this.cellRadius, this.cellRadius*3); // Viral particles
+    this.createParticles(proteinRadius, 5, 0xffffff, 10, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
+    this.createParticles(bacteriaRadius, 8, 0xff00ff, 10, this.bacteria, this.cellRadius, this.cellRadius*3); // Extra cellular molecules
     
     this.createCellMembrane();
     this.createHelperGrid();

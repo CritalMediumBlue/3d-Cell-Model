@@ -139,9 +139,12 @@ export class CellViewer {
     // Calculate and monitor frame rate
     this.calculateFPS(currentFrameTime);
     
-    this.brownianMotion.applyBrownianMotion(this.virusSD, this.viralParticles, this.cellRadius, this.cellRadius*3);
+    this.brownianMotion.applyBrownianMotion(this.virusSD, this.viralParticles, this.cellRadius, this.cellRadius*2);
     this.brownianMotion.applyBrownianMotion(this.proteinSD, this.proteins, this.cellRadius/3, this.cellRadius, 0, 0);
-    this.brownianMotion.applyBrownianMotion(this.bacteriaSD, this.bacteria, this.cellRadius, this.cellRadius*3);
+    this.brownianMotion.applyBrownianMotion(this.bacteriaSD, this.bacteria, this.cellRadius, this.cellRadius*2);
+    
+    // Update particle trails after movement
+    this.particleSystem.updateParticleTrails();
     
     if (this.arController.isARMode) {
       this.arController.handleARHitTest();
