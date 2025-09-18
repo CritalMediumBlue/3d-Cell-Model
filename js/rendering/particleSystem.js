@@ -19,7 +19,7 @@ export class ParticleSystem {
     this.cellRadius = 7.7; //15.4 micrometers in diameter
     
     // Trail configuration
-    this.trailLength = 2; // Number of trail points per particle
+    this.trailLength = 7; // Number of trail points per particle
     this.particleTrails = new Map(); // Store trail data for each particle
   }
 
