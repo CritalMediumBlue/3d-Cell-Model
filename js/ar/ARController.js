@@ -2,10 +2,10 @@ import * as THREE from 'three';
 import { ARButton } from 'three/addons/webxr/ARButton.js';
 
 export class ARController {
-  constructor(renderer, scene, cellGroup) {
+  constructor(renderer, scene, wholeSceneGroup) {
     this.renderer = renderer;
     this.scene = scene;
-    this.cellGroup = cellGroup;
+    this.wholeSceneGroup = wholeSceneGroup;
     this.isARMode = false;
     this.reticle = null;
     this.hitTestSource = null;
@@ -58,7 +58,7 @@ export class ARController {
 
   onARSessionStart() {
     this.isARMode = true;
-    this.cellGroup.visible = false; // Hide until placed
+    this.wholeSceneGroup.visible = false; // Hide until placed
     this.modelPlaced = false;
     // Ensure fog is preserved when entering AR mode
     if (this.originalFog && !this.scene.fog) {
@@ -77,12 +77,12 @@ export class ARController {
   onSelect() {
     if (this.reticle.visible && !this.modelPlaced) {
       // Place the cell group at the reticle position
-      this.cellGroup.position.setFromMatrixPosition(this.reticle.matrix);
-      this.cellGroup.position.y += 0.77
-      this.cellGroup.scale.set(0.1, 0.1, 0.1);
+      this.wholeSceneGroup.position.setFromMatrixPosition(this.reticle.matrix);
+      this.wholeSceneGroup.position.y += 0.77
+      this.wholeSceneGroup.scale.set(0.1, 0.1, 0.1);
       //hide the reticle after placing the model
       this.reticle.visible = true;
-      this.cellGroup.visible = true;
+      this.wholeSceneGroup.visible = true;
       this.modelPlaced = true;
       
       // Trigger the callback if it exists

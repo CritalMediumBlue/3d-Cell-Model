@@ -1,17 +1,17 @@
 import * as THREE from 'three';
 
 export class ParticleSystem {
-  constructor(cellGroup, brownianMotion = null) {
-    this.cellGroup = cellGroup;
+  constructor(wholeSceneGroup, brownianMotion = null) {
+    this.wholeSceneGroup = wholeSceneGroup;
     this.brownianMotion = brownianMotion;
     
     // Create separate groups for different transformation behaviors
     this.rotatableGroup = new THREE.Group(); // For particles, membrane, cell model
     this.staticGroup = new THREE.Group();    // For helper grids (rotation-resistant)
     
-    // Add both groups to the main cellGroup
-    this.cellGroup.add(this.rotatableGroup);
-    this.cellGroup.add(this.staticGroup);
+    // Add both groups to the main wholeSceneGroup
+    this.wholeSceneGroup.add(this.rotatableGroup);
+    this.wholeSceneGroup.add(this.staticGroup);
     
     this.proteins = [];
     this.viralParticles = [];
@@ -44,7 +44,7 @@ export class ParticleSystem {
         randomPosition().y,
         randomPosition().z
       );
-      // Add particles to the rotatable group instead of cellGroup
+      // Add particles to the rotatable group instead of wholeSceneGroup
       this.rotatableGroup.add(particle);
       particleGroup.push(particle);
       
@@ -64,7 +64,7 @@ export class ParticleSystem {
     // Create connecting lines between trail points
     for (let i = 0; i < this.trailLength; i++) {
       const lineGeometry = new THREE.BufferGeometry();
-      const positions = new Float32Array(6); // 2 points × 3 coordinates
+      const positions = new Float32Array(6); // 2 points (start and end) * 3 coordinates
       lineGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       
       const lineMaterial = new THREE.LineBasicMaterial({
@@ -72,7 +72,7 @@ export class ParticleSystem {
       });
       
       const line = new THREE.Line(lineGeometry, lineMaterial);
-      line.visible = false; // Initially hidden
+      line.visible = true; 
       this.rotatableGroup.add(line);
       
       trailData.trailLines.push(line);

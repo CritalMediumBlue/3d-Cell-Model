@@ -1,6 +1,6 @@
 export class TouchHandler {
-  constructor(cellGroup, arController) {
-    this.cellGroup = cellGroup;
+  constructor(wholeSceneGroup, arController) {
+    this.wholeSceneGroup = wholeSceneGroup;
     this.arController = arController;
     this.touchStartX = 0;
     this.touchStartY = 0;
@@ -61,10 +61,9 @@ export class TouchHandler {
           const deltaX = touchX - this.touchStartX;
           const deltaY = touchY - this.touchStartY;
           
-          // Rotate only the rotatable group (particles, membrane, cell model)
-          // Helper grids will remain unrotated automatically!
+          
           if (this.rotatableGroup) {
-            this.cellGroup.rotation.y += deltaX * 0.005;
+            this.wholeSceneGroup.rotation.y += deltaX * 0.005;
             this.rotatableGroup.rotation.x += deltaY * 0.005;
           }
 
@@ -85,9 +84,9 @@ export class TouchHandler {
           
     
           // Apply the scale to the cell group
-          this.cellGroup.scale.set(this.currentScale, this.currentScale, this.currentScale);
-          this.cellGroup.position.setFromMatrixPosition(this.arController.reticle.matrix);
-          this.cellGroup.position.y += 7.7 * this.currentScale;
+          this.wholeSceneGroup.scale.set(this.currentScale, this.currentScale, this.currentScale);
+          this.wholeSceneGroup.position.setFromMatrixPosition(this.arController.reticle.matrix);
+          this.wholeSceneGroup.position.y += 7.7 * this.currentScale;
         }
       }
     }, { passive: false });

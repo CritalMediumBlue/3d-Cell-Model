@@ -6,10 +6,11 @@ export class BrownianMotion {
   }
 
   initPhysicsProperties(timeStep) {
-
-    const temperatureKelvin = 310.15; // Body temperature in Kelvin (37°C)
-    const waterViscosity = 0.0006913; // Water viscosity in Pa·s at body temperature (0.691 mPa·s)
+    const temperatureCelsius = 20; // Room temperature in Celsius
+    const temperatureKelvin = temperatureCelsius + 273.15; // Convert to Kelvin
+    const waterViscosity = 0.001002; // Water viscosity in Pa·s at body temperature (0.691 mPa·s)
     const cytoplasmViscosity = 5 * waterViscosity; // Cytoplasm is more viscous than water (about 5 times)
+    const plasmaViscosity = 1.8 * waterViscosity; // Blood plasma viscosity (about 1.2 times water)
     const boltzmannConstant = 1.380649e-23;  //J/K (Joules per Kelvin)
     
     this.proteinRadius = 0.005; // micrometers in radius
@@ -18,8 +19,8 @@ export class BrownianMotion {
 
     // Calculate diffusion coefficients using the Stokes-Einstein equation
     this.diffusionCoefficientProtein = boltzmannConstant * temperatureKelvin / (6 * Math.PI * cytoplasmViscosity * this.proteinRadius*(1/1e6)); // units: m²/s
-    this.diffusionCoefficientVirus = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.viralRadius*(1/1e6)); // units: m²/s
-    this.diffusionCoefficientBacteria = boltzmannConstant * temperatureKelvin / (6 * Math.PI * waterViscosity * this.bacteriaRadius*(1/1e6)); // units: m²/s
+    this.diffusionCoefficientVirus = boltzmannConstant * temperatureKelvin / (6 * Math.PI * plasmaViscosity * this.viralRadius*(1/1e6)); // units: m²/s
+    this.diffusionCoefficientBacteria = boltzmannConstant * temperatureKelvin / (6 * Math.PI * plasmaViscosity * this.bacteriaRadius*(1/1e6)); // units: m²/s
 
     this.timeStep = timeStep; // seconds
 

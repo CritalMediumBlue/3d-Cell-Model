@@ -29,8 +29,8 @@ export class CellViewer {
     this.controls = this.sceneSetup.controls;
 
     // Create a group to hold all cell-related objects for easier manipulation in AR
-    this.cellGroup = new THREE.Group();
-    this.scene.add(this.cellGroup);
+    this.wholeSceneGroup = new THREE.Group();
+    this.scene.add(this.wholeSceneGroup);
   }
 
   initComponents() {
@@ -46,18 +46,18 @@ export class CellViewer {
     
     this.brownianMotion = new BrownianMotion(this.simulationTimeStep);
 
-    this.particleSystem = new ParticleSystem(this.cellGroup, this.brownianMotion);
+    this.particleSystem = new ParticleSystem(this.wholeSceneGroup, this.brownianMotion);
     
     this.dimensionHelpers = new DimensionHelpers(
       this.particleSystem.rotatableGroup, 
       this.particleSystem.staticGroup, 
-      this.cellGroup, 
+      this.wholeSceneGroup, 
       this.particleSystem.cellRadius
     );
     
-    this.arController = new ARController(this.renderer, this.scene, this.cellGroup);
+    this.arController = new ARController(this.renderer, this.scene, this.wholeSceneGroup);
     
-    this.touchHandler = new TouchHandler(this.cellGroup, this.arController);
+    this.touchHandler = new TouchHandler(this.wholeSceneGroup, this.arController);
     
     // Pass the rotatable group reference to TouchHandler
     this.touchHandler.rotatableGroup = this.particleSystem.rotatableGroup;

@@ -3,10 +3,10 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
 export class DimensionHelpers {
-  constructor(rotatableGroup, staticGroup, cellGroup, cellRadius) {
+  constructor(rotatableGroup, staticGroup, wholeSceneGroup, cellRadius) {
     this.rotatableGroup = rotatableGroup;
     this.staticGroup = staticGroup;
-    this.cellGroup = cellGroup;
+    this.wholeSceneGroup = wholeSceneGroup;
     this.cellRadius = cellRadius;
   }
 
@@ -60,13 +60,13 @@ export class DimensionHelpers {
     this.staticGroup.add(gridHelperSmall);
 
     // Add a larger grid helper to represent the 10 μm scale
-    const gridHelperBig = new THREE.GridHelper(30, 6, 0xff0000, 0xff0000);
+    const gridHelperBig = new THREE.GridHelper(30, 6, 0xff0000, 0xff00ff);
     gridHelperBig.position.y = -this.cellRadius; // Position it at the bottom of the cell
     this.staticGroup.add(gridHelperBig); 
 
     // Store references for TouchHandler compatibility
-    this.cellGroup.gridHelperSmall = gridHelperSmall;
-    this.cellGroup.gridHelperBig = gridHelperBig;
+    this.wholeSceneGroup.gridHelperSmall = gridHelperSmall;
+    this.wholeSceneGroup.gridHelperBig = gridHelperBig;
 
     // Add labels to the grid helpers to indicate 1 μm steps and 10 μm steps
     for (let i = -15; i <= 15; i += 5) {
