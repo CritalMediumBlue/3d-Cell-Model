@@ -99,7 +99,7 @@ export class TouchHandler {
         else if (event.touches.length === 3) {
           const currentY = (event.touches[0].clientY + event.touches[1].clientY + event.touches[2].clientY) / 3;
           const deltaY = currentY - this.touchStartY;
-          const threshold = 5; // Minimum movement to consider
+          const threshold = 3; // Minimum movement to consider
           
           if (deltaY > threshold) {
             // Speed up simulation
