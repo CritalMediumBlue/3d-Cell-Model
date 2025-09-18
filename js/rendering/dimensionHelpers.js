@@ -116,10 +116,10 @@ export class DimensionHelpers {
     }
 
     const deltaTime = 1 / frameRate;
-    const timeRate = (deltaTime / simulationTimeStep).toFixed(5);
+    const timeRate = (simulationTimeStep / deltaTime).toFixed(5);
 
     // Create new time label
-    this.currentTimeLabel = this.createTextLabel("Simulation Rate: " + timeRate + "x real-time", 0x000000, 1, 5 * 256, 5 * 64);
+    this.currentTimeLabel = this.createTextLabel("Simulation speed: " + timeRate + "x real-time", 0x000000, 1, 5 * 256, 5 * 64);
     this.currentTimeLabel.position.set(0, this.cellRadius + 1, 0);
     this.currentTimeStepLabel = this.createTextLabel("Simulation Step: " + simulationTimeStep.toFixed(5) + "s", 0x000000, 1, 5 * 256, 5 * 64);
     this.currentTimeStepLabel.position.set(0, this.cellRadius + 0.5, 0);
