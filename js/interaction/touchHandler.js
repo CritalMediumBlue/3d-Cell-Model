@@ -103,10 +103,10 @@ export class TouchHandler {
           
           if (deltaY > threshold) {
             // Speed up simulation
-            this.simulationTimeStep *= 1.05; // Increase speed by 10%
+            this.simulationTimeStep *= 1.05; // Increase speed by 5%
           } else if (deltaY < -threshold) {
             // Slow down simulation
-            this.simulationTimeStep /= 1.05; // Decrease speed by 10%
+            this.simulationTimeStep /= 1.05; // Decrease speed by 5%
           }
           
           this.touchStartY = currentY;

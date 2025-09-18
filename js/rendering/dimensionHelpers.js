@@ -9,6 +9,7 @@ export class DimensionHelpers {
     this.wholeSceneGroup = wholeSceneGroup;
     this.cellRadius = cellRadius;
     this.currentTimeLabel = null; // Store reference to current time label
+    this.currentTimeStepLabel = null; // Store reference to current time step label
   }
 
   createTextLabel(text, color = 0xffffff, size = 0.4, width = 256, height = 64) {
@@ -94,7 +95,7 @@ export class DimensionHelpers {
     this.staticGroup.add(axesHelper);
   }
 
-  updateTimeLabels(frameRate) {
+  updateTimeLabels(frameRate, simulationTimeStep) {
     // Remove previous time label if it exists
     if (this.currentTimeLabel) {
       this.staticGroup.remove(this.currentTimeLabel);
@@ -105,14 +106,25 @@ export class DimensionHelpers {
       this.currentTimeLabel.material.dispose();
     }
 
+    if (this.currentTimeStepLabel) {
+      this.staticGroup.remove(this.currentTimeStepLabel);
+      // Dispose of the material and texture to free memory
+      if (this.currentTimeStepLabel.material.map) {
+        this.currentTimeStepLabel.material.map.dispose();
+      }
+      this.currentTimeStepLabel.material.dispose();
+    }
+
     const deltaTime = 1 / frameRate;
-    const simulationTimeStep = 0.01666; // Example simulation time step
     const timeRate = (deltaTime / simulationTimeStep).toFixed(5);
 
     // Create new time label
     this.currentTimeLabel = this.createTextLabel("Simulation Rate: " + timeRate + "x real-time", 0x000000, 1, 5 * 256, 5 * 64);
     this.currentTimeLabel.position.set(0, this.cellRadius + 1, 0);
+    this.currentTimeStepLabel = this.createTextLabel("Simulation Step: " + simulationTimeStep.toFixed(5) + "s", 0x000000, 1, 5 * 256, 5 * 64);
+    this.currentTimeStepLabel.position.set(0, this.cellRadius + 0.5, 0);
     this.staticGroup.add(this.currentTimeLabel);
+    this.staticGroup.add(this.currentTimeStepLabel);
   }
 
   loadCellModel() {

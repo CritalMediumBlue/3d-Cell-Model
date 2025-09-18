@@ -169,7 +169,7 @@ export class CellViewer {
     this.setupPhysics();
 
     if(this.frameCount % 120 === 0) {
-      this.dimensionHelpers.updateTimeLabels(this.currentFPS);
+      this.dimensionHelpers.updateTimeLabels(this.currentFPS, this.simulationTimeStep);
     }
   }
 }
