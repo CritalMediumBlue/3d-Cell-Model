@@ -176,7 +176,7 @@ export class CellViewer {
     this.currentSimulationtime += this.simulationTimeStep;
     this.setupPhysics();
 
-    if(this.frameCount % 120 === 0) {
+    if(this.frameCount % 60 === 0) {
       this.dimensionHelpers.updateTimeLabels(this.currentFPS, this.simulationTimeStep);
     }
   }

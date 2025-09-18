@@ -113,18 +113,14 @@ export class TouchHandler {
               newTimeStep = this.simulationTimeStep * 1.05;
             }
             
-            // Apply bounds: min 0.001s (1000x slower), max 0.1s (6x faster at 60fps)
-            newTimeStep = Math.max(0.001, Math.min(0.1, newTimeStep));
             
-            // Only update if there's a meaningful change
-            if (Math.abs(newTimeStep - this.simulationTimeStep) > 0.0001) {
               this.simulationTimeStep = newTimeStep;
               
               // Notify CellViewer of the change
               if (this.onTimeStepChange) {
                 this.onTimeStepChange(newTimeStep);
               }
-            }
+            
             
             this.touchStartY = currentY;
           }
