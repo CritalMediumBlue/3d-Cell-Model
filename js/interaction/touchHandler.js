@@ -1,11 +1,14 @@
 export class TouchHandler {
-  constructor(wholeSceneGroup, arController) {
+  constructor(wholeSceneGroup, rotatableGroup, arController, simulationTimeStep) {
     this.wholeSceneGroup = wholeSceneGroup;
+    this.rotatableGroup = rotatableGroup;
     this.arController = arController;
+    this.simulationTimeStep = simulationTimeStep;
     this.touchStartX = 0;
     this.touchStartY = 0;
     this.isARMode = false;
     this.modelPlaced = false;
+
     
     // Scaling properties
     this.initialPinchDistance = 0;
@@ -43,6 +46,10 @@ export class TouchHandler {
           // Two touches - prepare for scaling
           this.initialPinchDistance = this.getTouchDistance(event.touches[0], event.touches[1]);
           this.initialScale = this.currentScale;
+        }
+        else if (event.touches.length === 3) {
+          // Three touches - prepare for speed control (not implemented)
+          this.touchStartY = (event.touches[0].clientY + event.touches[1].clientY + event.touches[2].clientY) / 3;
         }
       }
     });
@@ -88,7 +95,23 @@ export class TouchHandler {
           this.wholeSceneGroup.position.setFromMatrixPosition(this.arController.reticle.matrix);
           this.wholeSceneGroup.position.y += 7.7 * this.currentScale;
         }
+        // Three touches for speed control (not implemented)
+        else if (event.touches.length === 3) {
+          const currentY = (event.touches[0].clientY + event.touches[1].clientY + event.touches[2].clientY) / 3;
+          const deltaY = currentY - this.touchStartY;
+          const threshold = 5; // Minimum movement to consider
+          
+          if (deltaY > threshold) {
+            // Speed up simulation
+            this.simulationTimeStep *= 1.05; // Increase speed by 10%
+          } else if (deltaY < -threshold) {
+            // Slow down simulation
+            this.simulationTimeStep /= 1.05; // Decrease speed by 10%
+          }
+          
+          this.touchStartY = currentY;
       }
+    }
     }, { passive: false });
   }
 }

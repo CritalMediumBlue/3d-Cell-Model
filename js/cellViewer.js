@@ -56,19 +56,16 @@ export class CellViewer {
     );
     
     this.arController = new ARController(this.renderer, this.scene, this.wholeSceneGroup);
-    
-    this.touchHandler = new TouchHandler(this.wholeSceneGroup, this.arController);
-    
+
+    this.touchHandler = new TouchHandler(this.wholeSceneGroup, this.particleSystem.rotatableGroup, this.arController, this.simulationTimeStep);
+
     // Pass the rotatable group reference to TouchHandler
     this.touchHandler.rotatableGroup = this.particleSystem.rotatableGroup;
   }
 
   setupPhysics() {
-    // Get physics properties from brownian motion module
-    const timeStep = 0.01666; // Approx 60 FPS
-    this.simulationTimeStep = timeStep;
-    this.brownianMotion.simulationTimeStep = timeStep;
-    this.brownianMotion.updatePhysicsProperties(timeStep);
+    this.brownianMotion.simulationTimeStep = this.simulationTimeStep;
+    this.brownianMotion.updatePhysicsProperties(this.simulationTimeStep);
     this.proteinSD = this.brownianMotion.proteinSD;
     this.virusSD = this.brownianMotion.virusSD;
     this.bacteriaSD = this.brownianMotion.bacteriaSD;
