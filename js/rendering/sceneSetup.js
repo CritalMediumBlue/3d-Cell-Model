@@ -33,12 +33,9 @@ export class SceneSetup {
     this.scene.add(this.lightGroup);
     
     const lights = [
-      { color: 0xFFFF00, intensity: 2.0, position: [5, 20, 0] },
-      { color: 0xFF00FF, intensity: 2.0, position: [0, 5, 20] },
-      { color: 0x00FFFF, intensity: 2.0, position: [20, 0, 5] },
-      { color: 0xFFFF00, intensity: 2.0, position: [-5, -20, 0] },
-      { color: 0xFF00FF, intensity: 2.0, position: [0, -5, -20] },
-      { color: 0x00FFFF, intensity: 2.0, position: [-20, 0, -5] }
+      { color: 0xFFFF00, intensity: 2.0, position: [10, 20, 0] },
+      { color: 0x00FFFF, intensity: 2.0, position: [20, 0, 10] },
+      { color: 0xFF00FF, intensity: 2.0, position: [0, 10, 20] },
     ];
     
     lights.forEach(({ color, intensity, position }) => {
