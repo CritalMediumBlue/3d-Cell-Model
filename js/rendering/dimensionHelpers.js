@@ -8,14 +8,16 @@ export class DimensionHelpers {
     this.staticGroup = staticGroup;
     this.wholeSceneGroup = wholeSceneGroup;
     this.cellRadius = cellRadius;
+    this.currentTimeLabel = null; // Store reference to current time label
+    this.parameterLabel = null; // Store reference to parameter label
   }
 
-  createTextLabel(text, color = 0xffffff, size = 0.4) {
+  createTextLabel(text, color = 0xffffff, size = 0.4, width = 256, height = 64) {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-    canvas.width = 256;
-    canvas.height = 64;
-    
+    canvas.width = width;
+    canvas.height = height;
+
     // Clear canvas with transparent background
     context.clearRect(0, 0, canvas.width, canvas.height);
     
@@ -89,8 +91,38 @@ export class DimensionHelpers {
       }
     }
     
-    const axesHelper = new THREE.AxesHelper(20);
+    const axesHelper = new THREE.AxesHelper(this.cellRadius +1/2);
     this.staticGroup.add(axesHelper);
+  }
+  showParameters(temperature, viscosity, proteinRadius, virusRadius, bacteriaRadius) {
+   
+
+   
+    // Create new time label
+    this.currentTimeLabel = this.createTextLabel("Simulation Rate: " + timeRate + "x real-time", 0x000000, 1, 5 * 256, 5 * 64);
+    this.currentTimeLabel.position.set(0, this.cellRadius + 1, 0);
+    this.staticGroup.add(this.currentTimeLabel);
+  }
+
+  updateTimeLabels(frameRate) {
+    // Remove previous time label if it exists
+    if (this.currentTimeLabel) {
+      this.staticGroup.remove(this.currentTimeLabel);
+      // Dispose of the material and texture to free memory
+      if (this.currentTimeLabel.material.map) {
+        this.currentTimeLabel.material.map.dispose();
+      }
+      this.currentTimeLabel.material.dispose();
+    }
+
+    const deltaTime = 1 / frameRate;
+    const simulationTimeStep = 0.01666; // Example simulation time step
+    const timeRate = (deltaTime / simulationTimeStep).toFixed(5);
+
+    // Create new time label
+    this.currentTimeLabel = this.createTextLabel("Simulation Rate: " + timeRate + "x real-time", 0x000000, 1, 5 * 256, 5 * 64);
+    this.currentTimeLabel.position.set(0, this.cellRadius + 1, 0);
+    this.staticGroup.add(this.currentTimeLabel);
   }
 
   loadCellModel() {

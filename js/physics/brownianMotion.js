@@ -31,6 +31,14 @@ export class BrownianMotion {
 
   }
 
+  updatePhysicsProperties(timeStep=this.timeStep) {
+    this.timeStep = timeStep;
+    // Recalculate standard deviations based on the Einstein-Smoluchowski equation
+    this.proteinSD = Math.sqrt(2 * this.diffusionCoefficientProtein * this.timeStep)*1e6 ; // units: micrometers
+    this.virusSD = Math.sqrt(2 * this.diffusionCoefficientVirus * this.timeStep)*1e6 ; // units: micrometers
+    this.bacteriaSD = Math.sqrt(2 * this.diffusionCoefficientBacteria * this.timeStep)*1e6 ; // units: micrometers
+  }
+
 
   normalPolar(mean = 0, sd = 1) {
     let u1, u2, s;
