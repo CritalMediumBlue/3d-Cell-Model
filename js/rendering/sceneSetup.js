@@ -22,9 +22,16 @@ export class SceneSetup {
       antialias: false, // true means smoother edges, but may impact performance
       alpha: true // Transparent background for AR
     });
+    const ratio = 0.7;
     this.renderer.setPixelRatio(window.devicePixelRatio);
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setSize(window.innerWidth*ratio, window.innerHeight*ratio, false);
+    // Stretch the output to fill the screen
+    this.renderer.domElement.style.width = '100vw';
+    this.renderer.domElement.style.height = '100vh';
+    this.renderer.domElement.style.display = 'block'; // Remove any default margin/padding
+
     this.renderer.xr.enabled = true; // Enable WebXR
+
     document.body.appendChild(this.renderer.domElement);
   }
 
