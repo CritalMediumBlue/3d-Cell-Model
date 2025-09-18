@@ -73,7 +73,6 @@ export class CellViewer {
     this.virusSD = this.brownianMotion.virusSD;
     this.bacteriaSD = this.brownianMotion.bacteriaSD;
     this.cellRadius = this.particleSystem.cellRadius;
-    this.dimensionHelpers.updateTimeLabels(this.currentFPS);
   }
 
   setupParticlesAndDimensions() {
@@ -171,7 +170,9 @@ export class CellViewer {
     this.renderer.render(this.scene, this.camera);
     this.currentSimulationtime += this.simulationTimeStep;
     this.setupPhysics();
-    
-    
+
+    if(this.frameCount % 120 === 0) {
+      this.dimensionHelpers.updateTimeLabels(this.currentFPS);
+    }
   }
 }
