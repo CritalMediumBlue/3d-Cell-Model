@@ -57,14 +57,22 @@ export class CellViewer {
     
     this.arController = new ARController(this.renderer, this.scene, this.wholeSceneGroup);
 
-    this.touchHandler = new TouchHandler(this.wholeSceneGroup, this.particleSystem.rotatableGroup, this.arController, this.simulationTimeStep);
-
-    // Pass the rotatable group reference to TouchHandler
-    this.touchHandler.rotatableGroup = this.particleSystem.rotatableGroup;
+    this.touchHandler = new TouchHandler(
+      this.wholeSceneGroup, 
+      this.particleSystem.rotatableGroup, 
+      this.arController, 
+      this.simulationTimeStep,
+      (newTimeStep) => {
+        // Callback to update simulation time step
+        this.simulationTimeStep = newTimeStep;
+        // Also update physics properties when time step changes
+        this.setupPhysics();
+      }
+    );
   }
 
   setupPhysics() {
-    this.brownianMotion.simulationTimeStep = this.simulationTimeStep;
+    this.brownianMotion.simulationTimeStep = this.simulationTimeStep;  // this.simulationTimeStep will be dynamically adjustable by user through finger gestures in AR mode
     this.brownianMotion.updatePhysicsProperties(this.simulationTimeStep);
     this.proteinSD = this.brownianMotion.proteinSD;
     this.virusSD = this.brownianMotion.virusSD;

@@ -1,9 +1,10 @@
 export class TouchHandler {
-  constructor(wholeSceneGroup, rotatableGroup, arController, simulationTimeStep) {
+  constructor(wholeSceneGroup, rotatableGroup, arController, simulationTimeStep, onTimeStepChange) {
     this.wholeSceneGroup = wholeSceneGroup;
     this.rotatableGroup = rotatableGroup;
     this.arController = arController;
     this.simulationTimeStep = simulationTimeStep;
+    this.onTimeStepChange = onTimeStepChange; // Callback for time step changes
     this.touchStartX = 0;
     this.touchStartY = 0;
     this.isARMode = false;
@@ -95,22 +96,39 @@ export class TouchHandler {
           this.wholeSceneGroup.position.setFromMatrixPosition(this.arController.reticle.matrix);
           this.wholeSceneGroup.position.y += 7.7 * this.currentScale;
         }
-        // Three touches for speed control (not implemented)
+        // Three touches for speed control
         else if (event.touches.length === 3) {
           const currentY = (event.touches[0].clientY + event.touches[1].clientY + event.touches[2].clientY) / 3;
           const deltaY = currentY - this.touchStartY;
-          const threshold = 3; // Minimum movement to consider
+          const threshold = 5; // Minimum movement to consider
           
-          if (deltaY > threshold) {
-            // Speed up simulation
-            this.simulationTimeStep *= 1.05; // Increase speed by 5%
-          } else if (deltaY < -threshold) {
-            // Slow down simulation
-            this.simulationTimeStep /= 1.05; // Decrease speed by 5%
+          if (Math.abs(deltaY) > threshold) {
+            let newTimeStep = this.simulationTimeStep;
+            
+            if (deltaY > 0) {
+              // Swipe down - slow down simulation (decrease time step)
+              newTimeStep = this.simulationTimeStep * 0.95;
+            } else {
+              // Swipe up - speed up simulation (increase time step)
+              newTimeStep = this.simulationTimeStep * 1.05;
+            }
+            
+            // Apply bounds: min 0.001s (1000x slower), max 0.1s (6x faster at 60fps)
+            newTimeStep = Math.max(0.001, Math.min(0.1, newTimeStep));
+            
+            // Only update if there's a meaningful change
+            if (Math.abs(newTimeStep - this.simulationTimeStep) > 0.0001) {
+              this.simulationTimeStep = newTimeStep;
+              
+              // Notify CellViewer of the change
+              if (this.onTimeStepChange) {
+                this.onTimeStepChange(newTimeStep);
+              }
+            }
+            
+            this.touchStartY = currentY;
           }
-          
-          this.touchStartY = currentY;
-      }
+        }
     }
     }, { passive: false });
   }
