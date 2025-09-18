@@ -60,10 +60,8 @@ export class ARController {
     this.isARMode = true;
     this.wholeSceneGroup.visible = false; // Hide until placed
     this.modelPlaced = false;
-    // Ensure fog is preserved when entering AR mode
-    if (this.originalFog && !this.scene.fog) {
-      this.scene.fog = this.originalFog;
-    }
+   
+    this.renderer.xr.setFramebufferScaleFactor(0.7);
   }
 
   onARSessionEnd() {
@@ -84,6 +82,7 @@ export class ARController {
       this.reticle.visible = true;
       this.wholeSceneGroup.visible = true;
       this.modelPlaced = true;
+      
       
       // Trigger the callback if it exists
       if (this.onModelPlaced && typeof this.onModelPlaced === 'function') {
