@@ -72,8 +72,6 @@ export class CellViewer {
     this.proteinSD = this.brownianMotion.proteinSD;
     this.virusSD = this.brownianMotion.virusSD;
     this.bacteriaSD = this.brownianMotion.bacteriaSD;
-    this.cellRadius = this.particleSystem.cellRadius;
-    this.dimensionHelpers.updateTimeLabels(this.currentFPS);
   }
 
   setupParticlesAndDimensions() {
@@ -151,6 +149,7 @@ export class CellViewer {
 
   animate() {
     
+
     const currentFrameTime = performance.now(); // current runtime in milliseconds
     
     // Calculate and monitor frame rate
@@ -171,6 +170,9 @@ export class CellViewer {
     this.renderer.render(this.scene, this.camera);
     this.currentSimulationtime += this.simulationTimeStep;
     this.setupPhysics();
+    if (this.frameCount % 60 === 0) {
+        this.dimensionHelpers.updateTimeLabels(this.currentFPS);
+    }
     
     
   }
