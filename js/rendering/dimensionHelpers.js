@@ -9,10 +9,9 @@ export class DimensionHelpers {
     this.wholeSceneGroup = wholeSceneGroup;
     this.cellRadius = cellRadius;
     this.currentTimeLabel = null; // Store reference to current time label
-    this.parameterLabel = null; // Store reference to parameter label
   }
 
-  createTextLabel(text, color = 0xffffff, size = 0.4, width = 256, height = 64, centered = true) {
+  createTextLabel(text, color = 0xffffff, size = 0.4, width = 256, height = 64) {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     canvas.width = width;
@@ -23,11 +22,10 @@ export class DimensionHelpers {
     
     context.fillStyle = `#${color.toString(16).padStart(6, '0')}`;
     context.font = '80px Arial';
-    context.textAlign = centered ? 'center' : 'left';
+    context.textAlign = 'center';
     context.textBaseline = 'middle';
-    const xPos = centered ? canvas.width / 2 : 10; // 10px padding for left-aligned text
-    context.fillText(text, xPos, canvas.height / 2);
-
+    context.fillText(text, canvas.width / 2, canvas.height / 2);
+    
     const texture = new THREE.CanvasTexture(canvas);
     const material = new THREE.SpriteMaterial({ 
       map: texture, 
@@ -95,39 +93,6 @@ export class DimensionHelpers {
     const axesHelper = new THREE.AxesHelper(this.cellRadius +1/2);
     this.staticGroup.add(axesHelper);
   }
-  showParameters(temperature, intracellularViscosity, extracellularViscosity, proteinRadius, virusRadius, bacteriaRadius) {
-   
-
-    // Create new temperature label
-    this.temperatureLabel = this.createTextLabel("Temperature: " + temperature + "°C", 0x000000, 1, 5 * 256, 5 * 64, false);
-    this.temperatureLabel.position.set(0, this.cellRadius + 1.7, 0);
-    this.staticGroup.add(this.temperatureLabel);
-
-    // Create new intracellular viscosity label
-    this.intracellularViscosityLabel = this.createTextLabel("Intracellular viscosity: " + intracellularViscosity + " Pa·s", 0x000000, 1, 5 * 256, 5 * 64, false);
-    this.intracellularViscosityLabel.position.set(0, this.cellRadius + 2, 0);
-    this.staticGroup.add(this.intracellularViscosityLabel);
-
-    // Create new viscosity label
-    this.viscosityLabel = this.createTextLabel("Extracellular viscosity: " + extracellularViscosity + " Pa·s", 0x000000, 1, 5 * 256, 5 * 64, false);
-    this.viscosityLabel.position.set(0, this.cellRadius + 2.3, 0);
-    this.staticGroup.add(this.viscosityLabel);
-
-    // Create new protein radius label
-    this.proteinRadiusLabel = this.createTextLabel("Protein Radius: " + proteinRadius + " nm", 0x000000, 1, 5 * 256, 5 * 64, false);
-    this.proteinRadiusLabel.position.set(0, this.cellRadius + 2.6, 0);
-    this.staticGroup.add(this.proteinRadiusLabel);
-
-    // Create new virus radius label
-    this.virusRadiusLabel = this.createTextLabel("Virus Radius: " + virusRadius + " nm", 0x000000, 1, 5 * 256, 5 * 64, false);
-    this.virusRadiusLabel.position.set(0, this.cellRadius + 2.9, 0);
-    this.staticGroup.add(this.virusRadiusLabel);
-
-    // Create new bacteria radius label
-    this.bacteriaRadiusLabel = this.createTextLabel("Bacteria Radius: " + bacteriaRadius + " nm", 0x000000, 1, 5 * 256, 5 * 64, false);
-    this.bacteriaRadiusLabel.position.set(0, this.cellRadius + 3.2, 0);
-    this.staticGroup.add(this.bacteriaRadiusLabel);
-  }
 
   updateTimeLabels(frameRate) {
     // Remove previous time label if it exists
@@ -178,6 +143,5 @@ export class DimensionHelpers {
     this.createCellMembrane();
     this.createHelperGrid();
     this.loadCellModel();
-    this.showParameters(20, 0.005, 0.0018, 5, 50, 500); // Example parameters
   }
 }
