@@ -40,7 +40,6 @@ export class CellViewer {
     // Frame rate monitoring variables
     this.frameCount = 0;
     this.lastFrameTime = performance.now();
-    this.lastFPSUpdate = performance.now();
     this.currentFPS = 0;
     this.frameTimeHistory = [];
     
@@ -122,8 +121,9 @@ export class CellViewer {
   }
 
   // Frame rate monitoring methods
-  calculateFPS(currentTime) {
+  calculateFPS() {
     this.frameCount++;
+    const currentTime = performance.now(); // current runtime in milliseconds
     const deltaTime = currentTime - this.lastFrameTime; // un
     this.lastFrameTime = currentTime;
     
@@ -134,36 +134,24 @@ export class CellViewer {
     }
 
     // Update FPS display every 1000ms
-    if (currentTime - this.lastFPSUpdate > 2000) {
-      // Instantaneous FPS
-      const instantFPS = 1000 / deltaTime;
+    if(this.frameCount % 60 === 0) {
       
-      // Average FPS over last 60 frames
       const avgFrameTime = this.frameTimeHistory.reduce((a, b) => a + b, 0) / this.frameTimeHistory.length;
       const avgFPS = 1000 / avgFrameTime;
       
       this.currentFPS = avgFPS;
       
-      console.log(`📊 Frame Rate Analysis:
-      🎯 Current FPS: ${instantFPS.toFixed(1)}
-      📈 Average FPS: ${avgFPS.toFixed(1)} 
-      ⏱️  Frame Time: ${deltaTime.toFixed(2)}ms
-      📊 Avg Frame Time: ${avgFrameTime.toFixed(2)}ms
-      🎬 Total Frames: ${this.frameCount}
-      ⏰ Runtime: ${(currentTime / 1000).toFixed(1)}s`);
       
-      this.lastFPSUpdate = currentTime;
+      console.log(`📊 Frame Rate Analysis:
+      📈 Average FPS: ${avgFPS.toFixed(1)}`);
     }
     
-    return this.currentFPS;
   }
 
   animate() {
     
-    const currentFrameTime = performance.now(); // current runtime in milliseconds
     
-    // Calculate and monitor frame rate
-    this.calculateFPS(currentFrameTime);
+    this.calculateFPS();
     
     if (!this.isPaused) {
       this.brownianMotion.applyBrownianMotion(this.virusSD, this.viralParticles, this.cellRadius, this.cellRadius*2);

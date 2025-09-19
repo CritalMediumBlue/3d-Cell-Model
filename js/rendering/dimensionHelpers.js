@@ -11,9 +11,10 @@ export class DimensionHelpers {
     this.currentTimeLabel = null; // Store reference to current time label
     this.currentTimeStepLabel = null; // Store reference to current time step label
     this.currentFPSLabel = null; // Store reference to current FPS label
+    this.frameLengthLabel = null; // Store reference to frame length label
   }
 
-  createTextLabel(text, color = 0xffffff, size = 0.4, width = 256, height = 64) {
+  createTextLabel(text, color = 0xffffff, size = 0.8, width = 256*2, height = 64*2, centered = true) {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     canvas.width = width;
@@ -24,10 +25,12 @@ export class DimensionHelpers {
     
     context.fillStyle = `#${color.toString(16).padStart(6, '0')}`;
     context.font = '80px Arial';
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    context.fillText(text, canvas.width / 2, canvas.height / 2);
     
+    context.textAlign = centered ? 'center' : 'left';
+    context.textBaseline = 'middle';
+    const xPos = centered ? canvas.width / 2+100 : 100; // 10px padding if not centered
+    context.fillText(text, xPos, canvas.height / 2);
+
     const texture = new THREE.CanvasTexture(canvas);
     const material = new THREE.SpriteMaterial({ 
       map: texture, 
@@ -113,20 +116,29 @@ export class DimensionHelpers {
     this.disposeLabel(this.currentTimeLabel);
     this.disposeLabel(this.currentTimeStepLabel);
     this.disposeLabel(this.currentFPSLabel);
+    this.disposeLabel(this.frameLengthLabel);
+
+    // Calculate frame length in milliseconds
+    const frameLength = (1 / frameRate) ; // in s
+
+    // Create new frame length label
+    this.frameLengthLabel = this.createTextLabel("Duration of animation frame: " + frameLength.toFixed(5) + " s", 0x000000, 2, 6 * 256, 6 * 64, false);
+    this.frameLengthLabel.position.set(0, this.cellRadius + 1.5, 0);
+    this.staticGroup.add(this.frameLengthLabel);
 
     // Create new FPS label
-    this.currentFPSLabel = this.createTextLabel("FPS: " + frameRate.toFixed(2), 0x000000, 1, 3 * 256, 3 * 64);
-    this.currentFPSLabel.position.set(0, this.cellRadius + 1.5, 0);
+    this.currentFPSLabel = this.createTextLabel("FPS: " + frameRate.toFixed(2), 0x000000, 2, 6 * 256, 6 * 64, false);
+    this.currentFPSLabel.position.set(0, this.cellRadius + 2, 0);
     this.staticGroup.add(this.currentFPSLabel);
 
     const deltaTime = 1 / frameRate;
     const timeRate = (simulationTimeStep / deltaTime).toFixed(5);
 
     // Create new time label
-    this.currentTimeLabel = this.createTextLabel("Simulation speed: " + timeRate + "x real-time", 0x000000, 1.5,7 * 256, 7 * 64);
-    this.currentTimeLabel.position.set(0, this.cellRadius + 1, 0);
-    this.currentTimeStepLabel = this.createTextLabel("Simulation Step: " + simulationTimeStep.toFixed(5) + "s", 0x000000, 1, 5 * 256, 5 * 64);
-    this.currentTimeStepLabel.position.set(0, this.cellRadius + 0.5, 0);
+    this.currentTimeLabel = this.createTextLabel("Simulation speed: " + timeRate + "x real-time", 0x000000, 2,6 * 256, 6 * 64, false);
+    this.currentTimeLabel.position.set(0, this.cellRadius + 0.5, 0);
+    this.currentTimeStepLabel = this.createTextLabel("Simulation time step: " + simulationTimeStep.toFixed(5) + "s", 0x000000, 2, 6* 256, 6 * 64, false);
+    this.currentTimeStepLabel.position.set(0, this.cellRadius + 1, 0);
 
     this.staticGroup.add(this.currentTimeLabel);
     this.staticGroup.add(this.currentTimeStepLabel);
