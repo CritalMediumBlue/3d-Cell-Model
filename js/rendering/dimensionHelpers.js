@@ -10,6 +10,7 @@ export class DimensionHelpers {
     this.cellRadius = cellRadius;
     this.currentTimeLabel = null; // Store reference to current time label
     this.currentTimeStepLabel = null; // Store reference to current time step label
+    this.currentFPSLabel = null; // Store reference to current FPS label
   }
 
   createTextLabel(text, color = 0xffffff, size = 0.4, width = 256, height = 64) {
@@ -115,6 +116,20 @@ export class DimensionHelpers {
       this.currentTimeStepLabel.material.dispose();
     }
 
+    if (this.currentFPSLabel) {
+      this.staticGroup.remove(this.currentFPSLabel);
+      // Dispose of the material and texture to free memory
+      if (this.currentFPSLabel.material.map) {
+        this.currentFPSLabel.material.map.dispose();
+      }
+      this.currentFPSLabel.material.dispose();
+    }
+
+    // Create new FPS label
+    this.currentFPSLabel = this.createTextLabel("FPS: " + frameRate.toFixed(2), 0x000000, 1, 3 * 256, 3 * 64);
+    this.currentFPSLabel.position.set(0, this.cellRadius + 1.5, 0);
+    this.staticGroup.add(this.currentFPSLabel);
+
     const deltaTime = 1 / frameRate;
     const timeRate = (simulationTimeStep / deltaTime).toFixed(5);
 
@@ -123,6 +138,7 @@ export class DimensionHelpers {
     this.currentTimeLabel.position.set(0, this.cellRadius + 1, 0);
     this.currentTimeStepLabel = this.createTextLabel("Simulation Step: " + simulationTimeStep.toFixed(5) + "s", 0x000000, 1, 5 * 256, 5 * 64);
     this.currentTimeStepLabel.position.set(0, this.cellRadius + 0.5, 0);
+
     this.staticGroup.add(this.currentTimeLabel);
     this.staticGroup.add(this.currentTimeStepLabel);
   }
