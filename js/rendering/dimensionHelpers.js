@@ -55,6 +55,18 @@ export class DimensionHelpers {
     this.rotatableGroup.add(membrane);
   }
 
+  // Helper method to dispose of a label and remove it from the scene
+  disposeLabel(label) {
+    if (label) {
+      this.staticGroup.remove(label);
+      // Dispose of the material and texture to free memory
+      if (label.material.map) {
+        label.material.map.dispose();
+      }
+      label.material.dispose();
+    }
+  }
+
   createHelperGrid() {
     // Add a plane grid helper to represent the 1 μm scale
     const gridHelperSmall = new THREE.GridHelper(30, 30, 0xff0000, 0x00ffff);
@@ -97,33 +109,10 @@ export class DimensionHelpers {
   }
 
   updateTimeLabels(frameRate, simulationTimeStep) {
-    // Remove previous time label if it exists
-    if (this.currentTimeLabel) {
-      this.staticGroup.remove(this.currentTimeLabel);
-      // Dispose of the material and texture to free memory
-      if (this.currentTimeLabel.material.map) {
-        this.currentTimeLabel.material.map.dispose();
-      }
-      this.currentTimeLabel.material.dispose();
-    }
-
-    if (this.currentTimeStepLabel) {
-      this.staticGroup.remove(this.currentTimeStepLabel);
-      // Dispose of the material and texture to free memory
-      if (this.currentTimeStepLabel.material.map) {
-        this.currentTimeStepLabel.material.map.dispose();
-      }
-      this.currentTimeStepLabel.material.dispose();
-    }
-
-    if (this.currentFPSLabel) {
-      this.staticGroup.remove(this.currentFPSLabel);
-      // Dispose of the material and texture to free memory
-      if (this.currentFPSLabel.material.map) {
-        this.currentFPSLabel.material.map.dispose();
-      }
-      this.currentFPSLabel.material.dispose();
-    }
+    // Dispose of all existing labels
+    this.disposeLabel(this.currentTimeLabel);
+    this.disposeLabel(this.currentTimeStepLabel);
+    this.disposeLabel(this.currentFPSLabel);
 
     // Create new FPS label
     this.currentFPSLabel = this.createTextLabel("FPS: " + frameRate.toFixed(2), 0x000000, 1, 3 * 256, 3 * 64);

@@ -84,7 +84,7 @@ export class BrownianMotion {
       }
       
       // Keep particles outside minimum radius (e.g., nucleus or other structures)
-      if (molecule.position.length() < minRadius) {
+      if (molecule.position.length() < minRadius + this.bacteriaRadius) {
         molecule.position.setLength(minRadius);
       }
       

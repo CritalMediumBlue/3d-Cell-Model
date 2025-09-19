@@ -19,7 +19,7 @@ export class ParticleSystem {
     this.cellRadius = 7.7; //15.4 micrometers in diameter
     
     // Trail configuration
-    this.trailLength = 7; // Number of trail points per particle
+    this.trailLength = 10; // Number of trail points per particle
     this.particleTrails = new Map(); // Store trail data for each particle
   }
 
@@ -59,8 +59,6 @@ export class ParticleSystem {
       trailLines: []
     };
     
-
-    
     // Create connecting lines between trail points
     for (let i = 0; i < this.trailLength; i++) {
       const lineGeometry = new THREE.BufferGeometry();
@@ -72,7 +70,11 @@ export class ParticleSystem {
       });
       
       const line = new THREE.Line(lineGeometry, lineMaterial);
-      line.visible = true; 
+      line.visible = false;
+      
+      // Fix: Disable frustum culling to prevent lines from disappearing
+      line.frustumCulled = false;
+      
       this.rotatableGroup.add(line);
       
       trailData.trailLines.push(line);
@@ -120,6 +122,9 @@ export class ParticleSystem {
           positions[5] = endPos.z;
           
           line.geometry.attributes.position.needsUpdate = true;
+          
+ 
+          
           line.visible = true;
         }
       }
@@ -132,8 +137,8 @@ export class ParticleSystem {
     const proteinRadius = this.brownianMotion.proteinRadius 
     const bacteriaRadius = this.brownianMotion.bacteriaRadius ;
 
-    this.createParticles(viralRadius, 5, 0x00ffff, 10, this.viralParticles, this.cellRadius, this.cellRadius*3); // Viral particles
-    this.createParticles(proteinRadius, 5, 0xffffff, 10, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
-    this.createParticles(bacteriaRadius, 8, 0xff00ff, 10, this.bacteria, this.cellRadius, this.cellRadius*3); // Extra cellular molecules
+    this.createParticles(viralRadius, 5, 0x00ffff, 5, this.viralParticles, this.cellRadius, this.cellRadius*3); // Viral particles
+    this.createParticles(proteinRadius, 5, 0xffffff, 5, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
+    this.createParticles(bacteriaRadius, 8, 0xff00ff, 5, this.bacteria, this.cellRadius, this.cellRadius*3); // Extra cellular molecules
   }
 }
