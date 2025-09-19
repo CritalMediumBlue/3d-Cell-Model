@@ -1,15 +1,21 @@
 export class TouchHandler {
-  constructor(wholeSceneGroup, rotatableGroup, arController, simulationTimeStep, onTimeStepChange) {
+  constructor(wholeSceneGroup, rotatableGroup, arController, simulationTimeStep, onTimeStepChange, onPause) {
     this.wholeSceneGroup = wholeSceneGroup;
     this.rotatableGroup = rotatableGroup;
     this.arController = arController;
     this.simulationTimeStep = simulationTimeStep;
     this.onTimeStepChange = onTimeStepChange; // Callback for time step changes
+    this.onPause = onPause; // Callback for pause events
     this.touchStartX = 0;
     this.touchStartY = 0;
     this.isARMode = false;
     this.modelPlaced = false;
 
+    // Tap gesture detection properties
+    this.tapStartTime = 0;
+    this.tapThreshold = 200; // Maximum duration for a tap (ms)
+    this.tapMovementThreshold = 10; // Maximum movement for a tap (pixels)
+    this.hasMoved = false;
     
     // Scaling properties
     this.initialPinchDistance = 0;
@@ -40,16 +46,18 @@ export class TouchHandler {
     document.addEventListener('touchstart', (event) => {
       if (this.isARMode && this.modelPlaced && event.touches.length > 0) {
         if (event.touches.length === 1) {
-          // Single touch - prepare for rotation
+          // Single touch - prepare for rotation or tap detection
           this.touchStartX = event.touches[0].clientX;
           this.touchStartY = event.touches[0].clientY;
+          this.tapStartTime = performance.now();
+          this.hasMoved = false;
         } else if (event.touches.length === 2) {
           // Two touches - prepare for scaling
           this.initialPinchDistance = this.getTouchDistance(event.touches[0], event.touches[1]);
           this.initialScale = this.currentScale;
         }
         else if (event.touches.length === 3) {
-          // Three touches - prepare for speed control (not implemented)
+          // Three touches - prepare for speed control
           this.touchStartY = (event.touches[0].clientY + event.touches[1].clientY + event.touches[2].clientY) / 3;
         }
       }
@@ -65,19 +73,25 @@ export class TouchHandler {
           const touchX = event.touches[0].clientX;
           const touchY = event.touches[0].clientY;
           
-          // Calculate the rotation based on horizontal movement
+          // Calculate the movement from start position
           const deltaX = touchX - this.touchStartX;
           const deltaY = touchY - this.touchStartY;
+          const totalMovement = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
           
-          
-          if (this.rotatableGroup) {
-            this.wholeSceneGroup.rotation.y += deltaX * 0.005;
-            this.rotatableGroup.rotation.x += deltaY * 0.005;
-          }
+          // Check if movement exceeds tap threshold
+          if (totalMovement > this.tapMovementThreshold) {
+            this.hasMoved = true;
+            
+            // Apply rotation only if moved significantly
+            if (this.rotatableGroup) {
+              this.wholeSceneGroup.rotation.y += deltaX * 0.005;
+              this.rotatableGroup.rotation.x += deltaY * 0.005;
+            }
 
-          // Update the starting position
-          this.touchStartX = touchX;
-          this.touchStartY = touchY;
+            // Update the starting position for continuous rotation
+            this.touchStartX = touchX;
+            this.touchStartY = touchY;
+          }
         }
         // Two touches for scaling (pinch-to-zoom)
         else if (event.touches.length === 2) {
@@ -127,5 +141,23 @@ export class TouchHandler {
         }
     }
     }, { passive: false });
+    
+    // Touch end event for tap detection
+    document.addEventListener('touchend', (event) => {
+      if (this.isARMode && this.modelPlaced && event.changedTouches.length > 0) {
+        // Check if this was a single finger tap
+        if (event.changedTouches.length === 1 && event.touches.length === 0) {
+          const tapDuration = performance.now() - this.tapStartTime;
+          
+          // If touch was short enough and didn't move much, consider it a tap
+          if (tapDuration <= this.tapThreshold && !this.hasMoved) {
+            // Call the pause callback
+            if (this.onPause) {
+              this.onPause();
+            }
+          }
+        }
+      }
+    });
   }
 }

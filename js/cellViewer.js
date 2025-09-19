@@ -67,6 +67,11 @@ export class CellViewer {
         this.simulationTimeStep = newTimeStep;
         // Also update physics properties when time step changes
         this.setupPhysics();
+
+      },
+      () => {
+        // Callback for pause events
+        this.isPaused = !this.isPaused;
       }
     );
   }
@@ -160,12 +165,15 @@ export class CellViewer {
     // Calculate and monitor frame rate
     this.calculateFPS(currentFrameTime);
     
-    this.brownianMotion.applyBrownianMotion(this.virusSD, this.viralParticles, this.cellRadius, this.cellRadius*2);
-    this.brownianMotion.applyBrownianMotion(this.proteinSD, this.proteins, this.cellRadius/3, this.cellRadius, 0, 0);
-    this.brownianMotion.applyBrownianMotion(this.bacteriaSD, this.bacteria, this.cellRadius, this.cellRadius*2);
-    
-    // Update particle trails after movement
-    this.particleSystem.updateParticleTrails();
+    if (!this.isPaused) {
+      this.brownianMotion.applyBrownianMotion(this.virusSD, this.viralParticles, this.cellRadius, this.cellRadius*2);
+      this.brownianMotion.applyBrownianMotion(this.proteinSD, this.proteins, this.cellRadius/3, this.cellRadius, 0, 0);
+      this.brownianMotion.applyBrownianMotion(this.bacteriaSD, this.bacteria, this.cellRadius, this.cellRadius*2);
+
+      this.particleSystem.updateParticleTrails();
+      this.currentSimulationtime += this.simulationTimeStep;
+
+    }
     
     if (this.arController.isARMode) {
       this.arController.handleARHitTest();
@@ -173,8 +181,6 @@ export class CellViewer {
     
     this.renderer.setAnimationLoop(this.animate.bind(this));
     this.renderer.render(this.scene, this.camera);
-    this.currentSimulationtime += this.simulationTimeStep;
-    this.setupPhysics();
 
     if(this.frameCount % 60 === 0) {
       this.dimensionHelpers.updateTimeLabels(this.currentFPS, this.simulationTimeStep);

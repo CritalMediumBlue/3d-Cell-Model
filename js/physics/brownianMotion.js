@@ -61,6 +61,7 @@ export class BrownianMotion {
   
 
   applyBrownianMotion(sd, molecules, minRadius, maxRadius, minZ, minY) {
+    
     molecules.forEach(molecule => {
         
       const [deltaX, deltaY] = this.normalPolar(0, sd);
