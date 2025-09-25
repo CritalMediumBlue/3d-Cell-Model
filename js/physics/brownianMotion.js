@@ -8,7 +8,7 @@ export class BrownianMotion {
   initPhysicsProperties(timeStep) {
     const temperatureCelsius = 20; // Room temperature in Celsius
     const temperatureKelvin = temperatureCelsius + 273.15; // Convert to Kelvin
-    const waterViscosity = 0.001002; // Water viscosity in Pa·s at body temperature (0.691 mPa·s)
+    const waterViscosity = 0.001000; // Water viscosity in Pa·s at body temperature (0.691 mPa·s)
     const cytoplasmViscosity = 5 * waterViscosity; // Cytoplasm is more viscous than water (about 5 times)
     const plasmaViscosity = 1.8 * waterViscosity; // Blood plasma viscosity (about 1.2 times water)
     const boltzmannConstant = 1.380649e-23;  //J/K (Joules per Kelvin)
@@ -22,6 +22,9 @@ export class BrownianMotion {
     this.diffusionCoefficientVirus = boltzmannConstant * temperatureKelvin / (6 * Math.PI * plasmaViscosity * this.viralRadius*(1/1e6)); // units: m²/s
     this.diffusionCoefficientBacteria = boltzmannConstant * temperatureKelvin / (6 * Math.PI * plasmaViscosity * this.bacteriaRadius*(1/1e6)); // units: m²/s
 
+    console.log("Diffusion Coefficient Protein (m²/s): ", this.diffusionCoefficientProtein);
+    console.log("Diffusion Coefficient Virus (m²/s): ", this.diffusionCoefficientVirus);
+    console.log("Diffusion Coefficient Bacteria (m²/s): ", this.diffusionCoefficientBacteria);
     this.timeStep = timeStep; // seconds
 
     // Calculate standard deviations based on the Einstein-Smoluchowski equation

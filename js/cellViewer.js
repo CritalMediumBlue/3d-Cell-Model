@@ -142,8 +142,6 @@ export class CellViewer {
       this.currentFPS = avgFPS;
       
       
-      console.log(`📊 Frame Rate Analysis:
-      📈 Average FPS: ${avgFPS.toFixed(1)}`);
     }
     
   }
@@ -172,6 +170,8 @@ export class CellViewer {
 
     if(this.frameCount % 60 === 0) {
       this.dimensionHelpers.updateTimeLabels(this.currentFPS, this.simulationTimeStep);
+      //this.particleSystem.calculateMSD(this.viralParticles); // Calculate MSD for viral particles only
+
     }
   }
 }

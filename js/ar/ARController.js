@@ -81,7 +81,7 @@ export class ARController {
       this.wholeSceneGroup.position.y += 1.5; // Adjust height to sit on the surface
       this.wholeSceneGroup.scale.set(0.1, 0.1, 0.1);
       //hide the reticle after placing the model
-      this.reticle.visible = true;
+      this.reticle.visible = false;
       this.wholeSceneGroup.visible = true;
       this.modelPlaced = true;
       

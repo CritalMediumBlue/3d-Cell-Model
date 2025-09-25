@@ -86,6 +86,34 @@ export class ParticleSystem {
     this.particleTrails.set(particle, trailData);
   }
 
+  calculateMSD(particles) {
+    particles.forEach(particle => {
+      const trailData = this.particleTrails.get(particle);
+      let msd = 0;
+
+      if (trailData && trailData.positions.length > 1) {
+        const trailLength = trailData.positions.length;
+        for (let i = 1; i < trailLength; i++) {
+          const startPos = trailData.positions[trailLength - 1 - i];
+          const endPos = trailData.positions[trailLength - i];
+          const displacement = new THREE.Vector3().subVectors(endPos, startPos);
+          const squaredDisplacement = displacement.lengthSq();
+          msd += squaredDisplacement;
+        }
+        msd /= (trailLength - 1);
+      }
+
+      particle.msd = msd; // Store MSD value in the particle for external access
+    });
+
+    let averageMSD = 0;
+    averageMSD = particles.reduce((sum, p) => sum + p.msd, 0) / particles.length;
+    console.log("Average MSD:", averageMSD);
+   
+
+
+  }
+
   updateParticleTrails() {
     // Update trails for all particles
     this.particleTrails.forEach((trailData, particle) => {
@@ -100,11 +128,11 @@ export class ParticleSystem {
 
       
       // Update connecting lines
-      for (let i = 0; i < trailData.trailLines.length; i++) {
+      for (let i = 0; i < trailData.trailLines.length-1; i++) {
         const line = trailData.trailLines[i];
         const startPosIndex = trailData.positions.length - 1 - i; // Start from current/previous position
         const endPosIndex = trailData.positions.length - 2 - i;   // End at next trail point
-        
+     
         if (startPosIndex >= 0 && endPosIndex >= 0 && 
             startPosIndex < trailData.positions.length && 
             endPosIndex < trailData.positions.length) {
@@ -128,6 +156,9 @@ export class ParticleSystem {
           line.visible = true;
         }
       }
+
+
+
     });
   }
 
@@ -137,8 +168,8 @@ export class ParticleSystem {
     const proteinRadius = this.brownianMotion.proteinRadius 
     const bacteriaRadius = this.brownianMotion.bacteriaRadius ;
 
-    this.createParticles(viralRadius, 5, 0x00ffff, 5, this.viralParticles, this.cellRadius, this.cellRadius*3); // Viral particles
+    this.createParticles(viralRadius, 5, 0x00ffff, 10, this.viralParticles, this.cellRadius, this.cellRadius*3); // Viral particles
     this.createParticles(proteinRadius, 5, 0xffffff, 5, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
-    this.createParticles(bacteriaRadius, 8, 0xff00ff, 5, this.bacteria, this.cellRadius, this.cellRadius*3); // Extra cellular molecules
+    this.createParticles(bacteriaRadius, 7, 0xff00ff, 10, this.bacteria, this.cellRadius, this.cellRadius*3); // Extra cellular molecules
   }
 }
