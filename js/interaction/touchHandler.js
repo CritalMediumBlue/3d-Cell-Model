@@ -108,7 +108,7 @@ export class TouchHandler {
           // Apply the scale to the cell group
           this.wholeSceneGroup.scale.set(this.currentScale, this.currentScale, this.currentScale);
           this.wholeSceneGroup.position.setFromMatrixPosition(this.arController.reticle.matrix);
-          this.wholeSceneGroup.position.y += 7.7 * this.currentScale;
+          this.wholeSceneGroup.position.y += 15 * this.currentScale;
         }
         // Three touches for speed control
         else if (event.touches.length === 3) {
