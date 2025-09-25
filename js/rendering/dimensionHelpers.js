@@ -74,17 +74,26 @@ export class DimensionHelpers {
     // Add a plane grid helper to represent the 1 μm scale
     const gridHelperSmall = new THREE.GridHelper(30, 30, 0xff0000, 0x00ffff);
     gridHelperSmall.position.y = -this.cellRadius; // Position it at the bottom of the cell
+    gridHelperSmall.position.set(0, -15, 0); // Position it at the bottom of the cell
     // Add grids to static group (won't rotate)
     this.staticGroup.add(gridHelperSmall);
 
     // Add a larger grid helper to represent the 10 μm scale
     const gridHelperBig = new THREE.GridHelper(30, 6, 0xff0000, 0xff00ff);
     gridHelperBig.position.y = -this.cellRadius; // Position it at the bottom of the cell
+    gridHelperBig.position.set(0, -15, 0); // Position it at the bottom of the cell
     this.staticGroup.add(gridHelperBig); 
+
+    // Add a small-grid vertical grid helper on the back. We can copy the small grid and rotate it.
+    const gridHelperSmallVertical = gridHelperSmall.clone();
+    gridHelperSmallVertical.rotation.x = Math.PI / 2; // Rotate to vertical\
+    gridHelperSmallVertical.position.set(0, 0, -15); // Position it at the back
+    this.staticGroup.add(gridHelperSmallVertical);
 
     // Store references for TouchHandler compatibility
     this.wholeSceneGroup.gridHelperSmall = gridHelperSmall;
     this.wholeSceneGroup.gridHelperBig = gridHelperBig;
+    this.wholeSceneGroup.gridHelperSmallVertical = gridHelperSmallVertical;
 
     // Add labels to the grid helpers to indicate 1 μm steps and 10 μm steps
     for (let i = -15; i <= 15; i += 5) {
@@ -93,7 +102,7 @@ export class DimensionHelpers {
         label + " μm", 0x000000
       );
       label1um.position.set(
-        i, -this.cellRadius, 0
+        i, -15, 0
       );
       this.staticGroup.add(label1um);
       if (i !== 0) { // Avoid duplicating the zero label
@@ -101,13 +110,13 @@ export class DimensionHelpers {
           (-i) + " μm", 0x000000
         );
         labelNeg.position.set(
-          0, -this.cellRadius, i
+          0, -15, i
         );
         this.staticGroup.add(labelNeg);
       }
     }
     
-    const axesHelper = new THREE.AxesHelper(this.cellRadius +1/2);
+    const axesHelper = new THREE.AxesHelper(this.cellRadius + 1/2);
     this.staticGroup.add(axesHelper);
   }
 
