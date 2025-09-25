@@ -39,7 +39,7 @@ export class ARController {
     document.body.appendChild(arButton);
     
     // Create reticle for AR placement
-    const reticleGeometry = new THREE.RingGeometry(0.18, 0.25, 32).rotateX(-Math.PI / 2); //0.25 are 0.25 meters in the real world
+    const reticleGeometry = new THREE.RingGeometry(0.10, 0.12, 32).rotateX(-Math.PI / 2); //0.10 are 0.10 meters in the real world
     const reticleMaterial = new THREE.MeshBasicMaterial({color: 0x0000ff,transparent: true, opacity: 0.5, side: THREE.DoubleSide});
     this.reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
     this.reticle.matrixAutoUpdate = false;
@@ -78,7 +78,7 @@ export class ARController {
     if (this.reticle.visible && !this.modelPlaced) {
       // Place the cell group at the reticle position
       this.wholeSceneGroup.position.setFromMatrixPosition(this.reticle.matrix);
-      this.wholeSceneGroup.position.y += 1.5
+      this.wholeSceneGroup.position.y += 1.5; // Adjust height to sit on the surface
       this.wholeSceneGroup.scale.set(0.1, 0.1, 0.1);
       //hide the reticle after placing the model
       this.reticle.visible = true;
