@@ -88,20 +88,20 @@ export class DimensionHelpers {
     const gridHelperSmallVertical = gridHelperSmall.clone();
     gridHelperSmallVertical.rotation.x = Math.PI / 2; // Rotate to vertical\
     gridHelperSmallVertical.position.set(0, 0, -15); // Position it at the back
-    this.staticGroup.add(gridHelperSmallVertical);
+    //this.staticGroup.add(gridHelperSmallVertical);
 
     // Add a larger vertical grid helper to represent the 10 μm scale
     const gridHelperBigVertical = gridHelperBig.clone();
     gridHelperBigVertical.rotation.x = Math.PI / 2; // Rotate to vertical
     gridHelperBigVertical.position.set(0, 0, -15); // Position it at the back
-    this.staticGroup.add(gridHelperBigVertical);
+    //this.staticGroup.add(gridHelperBigVertical);
 
     // Store references for TouchHandler compatibility
     this.wholeSceneGroup.gridHelperSmall = gridHelperSmall;
     this.wholeSceneGroup.gridHelperBig = gridHelperBig;
-    this.wholeSceneGroup.gridHelperSmallVertical = gridHelperSmallVertical;
+   /*  this.wholeSceneGroup.gridHelperSmallVertical = gridHelperSmallVertical;
     this.wholeSceneGroup.gridHelperBigVertical = gridHelperBigVertical;
-
+ */
     // Add labels to the grid helpers to indicate 1 μm steps and 10 μm steps
     for (let i = -15; i <= 15; i += 5) {
       const label = i;
@@ -117,7 +117,7 @@ export class DimensionHelpers {
       );
 
       this.staticGroup.add(label1um);
-      this.staticGroup.add(label1umVertical);
+      //this.staticGroup.add(label1umVertical);
       if (i !== 0) { // Avoid duplicating the zero label
         const label1um2 = this.createTextLabel(
           (-i) + " μm", 0x000000
@@ -126,7 +126,7 @@ export class DimensionHelpers {
         label1umVertical2.position.set(
           0, -15, i
         );
-        this.staticGroup.add(label1umVertical2);
+        //this.staticGroup.add(label1umVertical2);
         label1um2.position.set(
           0, -15, i
         );
@@ -135,7 +135,7 @@ export class DimensionHelpers {
         labelNegVertical.position.set(
          0, -i, -15
         );
-        this.staticGroup.add(labelNegVertical);
+        //this.staticGroup.add(labelNegVertical);
       }
     }
     
