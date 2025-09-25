@@ -72,14 +72,14 @@ export class DimensionHelpers {
 
   createHelperGrid() {
     // Add a plane grid helper to represent the 1 μm scale
-    const gridHelperSmall = new THREE.GridHelper(30, 30, 0xff0000, 0x00ffff);
+    const gridHelperSmall = new THREE.GridHelper(30, 30, 0x000000, 0xffff00);
     gridHelperSmall.position.y = -this.cellRadius; // Position it at the bottom of the cell
     gridHelperSmall.position.set(0, -15, 0); // Position it at the bottom of the cell
     // Add grids to static group (won't rotate)
     this.staticGroup.add(gridHelperSmall);
 
     // Add a larger grid helper to represent the 10 μm scale
-    const gridHelperBig = new THREE.GridHelper(30, 6, 0xff0000, 0xff00ff);
+    const gridHelperBig = new THREE.GridHelper(30, 6, 0x000000, 0xff00ff);
     gridHelperBig.position.y = -this.cellRadius; // Position it at the bottom of the cell
     gridHelperBig.position.set(0, -15, 0); // Position it at the bottom of the cell
     this.staticGroup.add(gridHelperBig); 
