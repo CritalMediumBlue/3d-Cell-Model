@@ -19,8 +19,8 @@ export class TouchHandler {
     
     // Scaling properties
     this.initialPinchDistance = 0;
-    this.initialScale = 0.1;
-    this.currentScale = 0.1;
+    this.initialScale = 0.01;
+    this.currentScale = 0.01;
 
     
     this.setupTouchInteraction();
