@@ -73,6 +73,7 @@ export class CellViewer {
         // Callback for pause events
         this.isPaused = !this.isPaused;
       },
+      this.mode,
       () => {
         this.particleSystem.centerATPMolecules();
       }

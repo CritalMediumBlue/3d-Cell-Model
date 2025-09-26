@@ -111,7 +111,7 @@ export class TouchHandler {
           if (this.currentScale <= 0) {
             this.currentScale = 0; // Prevent scaling to negative values
           }
-          if (this.currentScale > 0.005) {
+          if (this.currentScale > 0.006) {
             // Hide the huge helper grid
             this.wholeSceneGroup.gridHelperHuge.visible = false;
             this.wholeSceneGroup.hugeLabels.forEach(label => label.visible = false);
