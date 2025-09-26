@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     new CellViewer('cell');
     startCellModel.remove(); // Remove the button after starting
     startATPsimulation.remove(); // Remove the button after starting
+    startNucleusTransport.remove(); // Remove the button after starting
   });
 
     // Create start button
@@ -63,8 +64,43 @@ document.addEventListener('DOMContentLoaded', () => {
     new CellViewer('atp');
     startATPsimulation.remove(); // Remove the button after starting
     startCellModel.remove(); // Remove the button after starting
+    startNucleusTransport.remove(); // Remove the button after starting
+  });
+
+  // Create nucleus transport button
+  const startNucleusTransport = document.createElement('button');
+  startNucleusTransport.textContent = 'Nucleus transport';
+  startNucleusTransport.style.position = 'fixed';
+  startNucleusTransport.style.top = '20px';
+  startNucleusTransport.style.left = '380px';
+  startNucleusTransport.style.padding = '15px 20px';
+  startNucleusTransport.style.fontSize = '16px';
+  startNucleusTransport.style.fontWeight = 'bold';
+  startNucleusTransport.style.backgroundColor = '#4CAF50';
+  startNucleusTransport.style.color = 'white';
+  startNucleusTransport.style.border = 'none';
+  startNucleusTransport.style.borderRadius = '5px';
+  startNucleusTransport.style.cursor = 'pointer';
+  startNucleusTransport.style.zIndex = '1000';
+  
+  // Add hover effect
+  startNucleusTransport.addEventListener('mouseenter', () => {
+    startNucleusTransport.style.backgroundColor = '#45a049';
+  });
+  
+  startNucleusTransport.addEventListener('mouseleave', () => {
+    startNucleusTransport.style.backgroundColor = '#4CAF50';
+  });
+  
+  // Add click event to start the simulation
+  startNucleusTransport.addEventListener('click', () => {
+    new CellViewer('nucleus');
+    startNucleusTransport.remove(); // Remove the button after starting
+    startCellModel.remove(); // Remove the button after starting
+    startATPsimulation.remove(); // Remove the button after starting
   });
   
   document.body.appendChild(startCellModel);
   document.body.appendChild(startATPsimulation);
+  document.body.appendChild(startNucleusTransport);
 });
