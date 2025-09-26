@@ -181,7 +181,7 @@ export class ParticleSystem {
       this.createParticles(proteinRadius, 5, 0xffffff, 5, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
       this.createParticles(bacteriaRadius, 7, 0xff00ff, 10, this.bacteria, this.cellRadius, this.cellRadius*3); // Extra cellular molecules
     } else if (mode === "atp") {
-      this.createParticles(atpRadius, 5, 0x00ff00, 30, this.ATPmolecules, 0, this.cellRadius/100); // ATP molecules
+      this.createParticles(atpRadius, 5, 0x00ff00, 100, this.ATPmolecules, 0, this.cellRadius/100); // ATP molecules
     }
   }
 }
