@@ -121,10 +121,10 @@ export class TouchHandler {
             
             if (deltaY > 0) {
               // Swipe down - slow down simulation (decrease time step)
-              newTimeStep = this.simulationTimeStep * 0.95;
+              newTimeStep = this.simulationTimeStep * 0.99;
             } else {
               // Swipe up - speed up simulation (increase time step)
-              newTimeStep = this.simulationTimeStep * 1.05;
+              newTimeStep = this.simulationTimeStep * 1.01;
             }
             
             
