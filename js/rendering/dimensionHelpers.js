@@ -236,10 +236,11 @@ export class DimensionHelpers {
   initializeAllDimensions(mode) {
     if (mode === "cell"){
       this.createCellMembrane();
-      this.loadCellModel();
+      
 
     }
     this.createHelperGrid();
+    this.loadCellModel();
    
   }
 }

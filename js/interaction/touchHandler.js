@@ -17,6 +17,12 @@ export class TouchHandler {
     this.tapMovementThreshold = 10; // Maximum movement for a tap (pixels)
     this.hasMoved = false;
     
+    // Click detection properties for non-AR mode
+    this.clickStartTime = 0;
+    this.clickStartX = 0;
+    this.clickStartY = 0;
+    this.hasClickMoved = false;
+    
     // Scaling properties
     this.initialPinchDistance = 0;
     this.initialScale = 0.01;
@@ -168,6 +174,43 @@ export class TouchHandler {
             }
           }
         }
+      }
+    });
+    
+    // Mouse events for pause/play detection in non-AR mode
+    document.addEventListener('mousedown', (event) => {
+      this.clickStartTime = performance.now();
+      this.clickStartX = event.clientX;
+      this.clickStartY = event.clientY;
+      this.hasClickMoved = false;
+    });
+    
+    document.addEventListener('mousemove', (event) => {
+      if (this.clickStartTime > 0) { // Only track if we started a click
+        const deltaX = event.clientX - this.clickStartX;
+        const deltaY = event.clientY - this.clickStartY;
+        const totalMovement = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        
+        if (totalMovement > this.tapMovementThreshold) {
+          this.hasClickMoved = true;
+        }
+      }
+    });
+    
+    document.addEventListener('mouseup', (event) => {
+      if (this.clickStartTime > 0) {
+        const clickDuration = performance.now() - this.clickStartTime;
+        
+        // If click was short enough and didn't move much, consider it a pause click
+        if (clickDuration <= this.tapThreshold && !this.hasClickMoved) {
+          // Call the pause callback
+          if (this.onPause) {
+            this.onPause();
+          }
+        }
+        
+        // Reset click tracking
+        this.clickStartTime = 0;
       }
     });
   }

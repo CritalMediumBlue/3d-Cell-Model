@@ -13,6 +13,7 @@ export class CellViewer {
   }
 
   start(){
+    this.isPaused = true;
     this.initScene();
     this.initComponents();
     this.setupPhysics();
@@ -155,7 +156,7 @@ export class CellViewer {
     
     if (!this.isPaused) {
       if(this.mode === "atp"){
-      this.brownianMotion.applyBrownianMotion(this.ATPSD, this.atpMolecules, 0, this.cellRadius*20, -1000,-15);
+      this.brownianMotion.applyBrownianMotion(this.ATPSD, this.atpMolecules, 0, this.cellRadius*30, -1000,-15);
       }
       if(this.mode === "cell"){
       this.brownianMotion.applyBrownianMotion(this.virusSD, this.viralParticles, this.cellRadius, this.cellRadius*2);
