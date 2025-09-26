@@ -43,20 +43,7 @@ export class DimensionHelpers {
     return sprite;
   }
 
-  createCellMembrane() {
-    const geometry = new THREE.SphereGeometry(this.cellRadius, 60, 60);
-    const material = new THREE.MeshBasicMaterial({
-      color: 0x0000ff,
-      wireframe: false,
-      transparent: true, 
-      side: THREE.DoubleSide,
-      opacity: 0.2
-    });
-    const membrane = new THREE.Mesh(geometry, material);
-    membrane.position.set(0, 0, 0); // Center the membrane
-    // Add membrane to rotatable group
-    this.rotatableGroup.add(membrane);
-  }
+
 
   // Helper method to dispose of a label and remove it from the scene
   disposeLabel(label) {
@@ -208,33 +195,9 @@ export class DimensionHelpers {
     this.staticGroup.add(this.currentTimeStepLabel);
   }
 
-  loadCellModel() {
-    const gltfLoader = new GLTFLoader();
-    
-    // Set up DRACO loader for compressed models
-    const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
-    gltfLoader.setDRACOLoader(dracoLoader);
-    
-    // Set current path
-    gltfLoader.setPath('./');
-    gltfLoader.load("./cellModel/output.glb", (gltf) => {
-      const object = gltf.scene;
-      object.scale.set(0.15, 0.15, 0.15);
-      object.position.set(0.2, -7.95, 0.2);
-      // Add cell model to rotatable group
-      this.rotatableGroup.add(object);
-      
-      // Clean up DRACO loader
-      dracoLoader.dispose();
-    }, undefined, (error) => {
-      console.error('Error loading cell model:', error);
-    });
-  }
+
 
   initializeAllDimensions() {
-    this.createCellMembrane();
     this.createHelperGrid();
-    this.loadCellModel();
   }
 }
