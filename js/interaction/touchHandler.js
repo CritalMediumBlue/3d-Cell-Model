@@ -101,7 +101,11 @@ export class TouchHandler {
           const scaleChange = currentPinchDistance / this.initialPinchDistance;
           this.currentScale = this.initialScale + (scaleChange - 1) * 0.01;
           if (this.currentScale <= 0) {
-            this.currentScale = 0; // Prevent scaling to zero or negative
+            this.currentScale = 0; // Prevent scaling to negative values
+          }
+          if (this.currentScale > 0.1) {
+            // Hide the huge helper grid
+            this.wholeSceneGroup.gridHelperHuge.visible = false;
           }
           
     
@@ -109,6 +113,8 @@ export class TouchHandler {
           this.wholeSceneGroup.scale.set(this.currentScale, this.currentScale, this.currentScale);
           this.wholeSceneGroup.position.setFromMatrixPosition(this.arController.reticle.matrix);
           this.wholeSceneGroup.position.y += 15 * this.currentScale;
+
+          
         }
         // Three touches for speed control
         else if (event.touches.length === 3) {
