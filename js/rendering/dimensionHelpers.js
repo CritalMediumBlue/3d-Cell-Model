@@ -164,6 +164,8 @@ export class DimensionHelpers {
     label500umNegZ.position.set(0, -15, -500);
     this.staticGroup.add(label500umNegZ);
 
+    this.wholeSceneGroup.hugeLabels.push(label500umPosX, label500umNegX, label500umPosZ, label500umNegZ);
+
 
 
     
