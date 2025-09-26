@@ -1,5 +1,5 @@
 export class TouchHandler {
-  constructor(wholeSceneGroup, rotatableGroup, arController, simulationTimeStep, onTimeStepChange, onPause) {
+  constructor(wholeSceneGroup, rotatableGroup, arController, simulationTimeStep, onTimeStepChange, onPause, mode, atpMoleculesToCenter) {
     this.wholeSceneGroup = wholeSceneGroup;
     this.rotatableGroup = rotatableGroup;
     this.arController = arController;
@@ -10,6 +10,8 @@ export class TouchHandler {
     this.touchStartY = 0;
     this.isARMode = false;
     this.modelPlaced = false;
+    this.mode = mode;
+    this.atpMoleculesToCenter = atpMoleculesToCenter;
 
     // Tap gesture detection properties
     this.tapStartTime = 0;
@@ -175,14 +177,21 @@ export class TouchHandler {
           }
         }
       }
-    });
-    
-    // Click event for pause/play in non-AR mode (works everywhere)
-    document.addEventListener('click', (event) => {
-      // Call the pause callback regardless of AR mode
-      if (this.onPause) {
-        this.onPause();
+        if (this.isARMode && this.modelPlaced && event.changedTouches.length > 0 && this.mode === "atp") {
+        // Check if this was a single finger tap
+        if (event.changedTouches.length === 1 && event.touches.length === 0) {
+          const tapDuration = performance.now() - this.tapStartTime;
+          
+          // If touch was short enough and didn't move much, consider it a tap
+          if (tapDuration <= this.tapThreshold && !this.hasMoved) {
+            // Call the pause callback
+            if (this.onPause) {
+              this.atpMoleculesToCenter();
+            }
+          }
+        }
       }
     });
+   
   }
 }
