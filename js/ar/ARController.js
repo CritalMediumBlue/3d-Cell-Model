@@ -26,15 +26,15 @@ export class ARController {
       domOverlay: { root: document.body }
     });
     
-    // Apply custom styling to make the button bigger
-    arButton.style.padding = '20px 25px';
-    arButton.style.fontSize = '24px';
-    arButton.style.width = 'auto';
-    arButton.style.fontWeight = 'bold';
-    arButton.style.borderRadius = '8px';
-    arButton.style.minWidth = '180px';  // Ensure minimum width
-    arButton.style.opacity = '0.9';
-    document.body.appendChild(arButton);
+  arButton.style.padding = '10px 12px';      // Reduced from 20px 25px
+  arButton.style.fontSize = '12px';          // Reduced from 24px
+  arButton.style.width = 'auto';
+  arButton.style.fontWeight = 'bold';
+  arButton.style.borderRadius = '4px';       // Reduced from 8px
+  arButton.style.minWidth = '90px';          // Reduced from 180px
+  arButton.style.opacity = '0.9';
+  document.body.appendChild(arButton);
+  
     
     // Create reticle for AR placement
     const reticleGeometry = new THREE.RingGeometry(0.05, 0.07, 32).rotateX(-Math.PI / 2); //0.07 are 0.07 meters in the real world
