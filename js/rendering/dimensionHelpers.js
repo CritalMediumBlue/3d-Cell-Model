@@ -14,7 +14,7 @@ export class DimensionHelpers {
     this.frameLengthLabel = null; // Store reference to frame length label
   }
 
-  createTextLabel(text, color = 0xffffff, size = 0.8, width = 256*2, height = 64*2, centered = true) {
+  createTextLabel(text, color = 0xffffff, size = 1, width = 256*2, height = 64*2, centered = true) {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     canvas.width = width;
