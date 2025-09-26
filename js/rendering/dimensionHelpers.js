@@ -95,6 +95,11 @@ export class DimensionHelpers {
     this.wholeSceneGroup.gridHelperSmall = gridHelperSmall;
     this.wholeSceneGroup.gridHelperBig = gridHelperBig;
     this.wholeSceneGroup.gridHelperHuge = gridHelperHuge;
+
+      // Initialize hugeLabels array if it doesn't exist
+  if (!this.wholeSceneGroup.hugeLabels) {
+    this.wholeSceneGroup.hugeLabels = [];
+  }
   
     // Add labels to the grid helpers to indicate 1 μm steps and 5 μm steps
     for (let i = -15; i <= 15; i += 5) {
@@ -122,10 +127,10 @@ export class DimensionHelpers {
     }
 
     // Add labels to the huge helper grid to indicate 100 μm steps
-    for (let i = -500; i <= 500; i += 100) {
+    for (let i = -400; i <= 400; i += 100) {
       if (i === 0) continue; // Skip the center label
       const label100um = this.createTextLabel(
-        i + " μm", 0x000000,10 
+        i + " μm", 0x000000,15 
       );
       label100um.position.set(
         i, -15, 0
@@ -133,12 +138,13 @@ export class DimensionHelpers {
       this.staticGroup.add(label100um);
 
       const label100um2 = this.createTextLabel(
-        (-i) + " μm", 0x000000, 10
+        (-i) + " μm", 0x000000, 15
       );
       label100um2.position.set(
         0, -15, i
       );
       this.staticGroup.add(label100um2);
+      this.wholeSceneGroup.hugeLabels.push(label100um, label100um2);
     }
 
     // add four labels to indicate 0.5 milimiters (500 μm) in each direction

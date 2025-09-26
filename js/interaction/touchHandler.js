@@ -106,9 +106,11 @@ export class TouchHandler {
           if (this.currentScale > 0.005) {
             // Hide the huge helper grid
             this.wholeSceneGroup.gridHelperHuge.visible = false;
+            this.wholeSceneGroup.hugeLabels.forEach(label => label.visible = false);
           } else {
             // Show the huge helper grid
             this.wholeSceneGroup.gridHelperHuge.visible = true;
+            this.wholeSceneGroup.hugeLabels.forEach(label => label.visible = true);
           }
           
     
