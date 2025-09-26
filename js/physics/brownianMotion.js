@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 
 export class BrownianMotion {
-  constructor(timeStep) {
+  constructor(timeStep, mode) {
     this.initPhysicsProperties(timeStep);
+    this.mode = mode;
   }
 
   initPhysicsProperties(timeStep) {
@@ -17,20 +18,27 @@ export class BrownianMotion {
     this.viralRadius = 0.05;    // micrometers in radius
     this.bacteriaRadius = 0.5;  // micrometers in radius
 
+
+
+    this.ATPRadius = 0.0007; // micrometers in radius (approx 0.7 nm)
+
     // Calculate diffusion coefficients using the Stokes-Einstein equation
     this.diffusionCoefficientProtein = boltzmannConstant * temperatureKelvin / (6 * Math.PI * cytoplasmViscosity * this.proteinRadius*(1/1e6)); // units: m²/s
     this.diffusionCoefficientVirus = boltzmannConstant * temperatureKelvin / (6 * Math.PI * plasmaViscosity * this.viralRadius*(1/1e6)); // units: m²/s
     this.diffusionCoefficientBacteria = boltzmannConstant * temperatureKelvin / (6 * Math.PI * plasmaViscosity * this.bacteriaRadius*(1/1e6)); // units: m²/s
+    this.diffusionCoefficientATP = boltzmannConstant * temperatureKelvin / (6 * Math.PI * plasmaViscosity * this.ATPRadius*(1/1e6)); // units: m²/s
 
     console.log("Diffusion Coefficient Protein (m²/s): ", this.diffusionCoefficientProtein);
     console.log("Diffusion Coefficient Virus (m²/s): ", this.diffusionCoefficientVirus);
     console.log("Diffusion Coefficient Bacteria (m²/s): ", this.diffusionCoefficientBacteria);
+    console.log("Diffusion Coefficient ATP (m²/s): ", this.diffusionCoefficientATP);
     this.timeStep = timeStep; // seconds
 
     // Calculate standard deviations based on the Einstein-Smoluchowski equation
     this.proteinSD = Math.sqrt(2 * this.diffusionCoefficientProtein * this.timeStep)*1e6 ; // units: micrometers
     this.virusSD = Math.sqrt(2 * this.diffusionCoefficientVirus * this.timeStep)*1e6 ; // units: micrometers
     this.bacteriaSD = Math.sqrt(2 * this.diffusionCoefficientBacteria * this.timeStep)*1e6 ; // units: micrometers
+    this.ATPSD = Math.sqrt(2 * this.diffusionCoefficientATP * this.timeStep)*1e6 ; // units: micrometers
 
   }
 
@@ -40,6 +48,7 @@ export class BrownianMotion {
     this.proteinSD = Math.sqrt(2 * this.diffusionCoefficientProtein * this.timeStep)*1e6 ; // units: micrometers
     this.virusSD = Math.sqrt(2 * this.diffusionCoefficientVirus * this.timeStep)*1e6 ; // units: micrometers
     this.bacteriaSD = Math.sqrt(2 * this.diffusionCoefficientBacteria * this.timeStep)*1e6 ; // units: micrometers
+    this.ATPSD = Math.sqrt(2 * this.diffusionCoefficientATP * this.timeStep)*1e6 ; // units: micrometers
   }
 
 

@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 
 export class ParticleSystem {
-  constructor(wholeSceneGroup, brownianMotion = null) {
+  constructor(wholeSceneGroup, brownianMotion = null, mode) {
+    this.mode = mode;
     this.wholeSceneGroup = wholeSceneGroup;
     this.brownianMotion = brownianMotion;
     
@@ -16,6 +17,7 @@ export class ParticleSystem {
     this.proteins = [];
     this.viralParticles = [];
     this.bacteria = [];
+    this.ATPmolecules = [];
     this.cellRadius = 7.7; //15.4 micrometers in diameter
     
     // Trail configuration
@@ -162,14 +164,24 @@ export class ParticleSystem {
     });
   }
 
-  initializeAllParticles() {
-    // Use radii from BrownianMotion class if available, otherwise use fallback values
-    const viralRadius = this.brownianMotion.viralRadius ;
-    const proteinRadius = this.brownianMotion.proteinRadius 
-    const bacteriaRadius = this.brownianMotion.bacteriaRadius ;
+  initializeAllParticles(mode) {
+    let viralRadius, proteinRadius, bacteriaRadius, atpRadius;
+    
+    if (mode === "cell") {
+      viralRadius = this.brownianMotion.viralRadius;
+      proteinRadius = this.brownianMotion.proteinRadius;
+      bacteriaRadius = this.brownianMotion.bacteriaRadius;
+    } else if (mode === "atp") {
+      atpRadius = this.brownianMotion.ATPRadius;
+    }
 
-    this.createParticles(viralRadius, 5, 0x00ffff, 10, this.viralParticles, this.cellRadius, this.cellRadius*3); // Viral particles
-    this.createParticles(proteinRadius, 5, 0xffffff, 5, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
-    this.createParticles(bacteriaRadius, 7, 0xff00ff, 10, this.bacteria, this.cellRadius, this.cellRadius*3); // Extra cellular molecules
+    // Only create particles that are defined for the current mode
+    if (mode === "cell") {
+      this.createParticles(viralRadius, 5, 0x00ffff, 10, this.viralParticles, this.cellRadius, this.cellRadius*3); // Viral particles
+      this.createParticles(proteinRadius, 5, 0xffffff, 5, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
+      this.createParticles(bacteriaRadius, 7, 0xff00ff, 10, this.bacteria, this.cellRadius, this.cellRadius*3); // Extra cellular molecules
+    } else if (mode === "atp") {
+      this.createParticles(atpRadius, 5, 0x00ff00, 10, this.ATPmolecules, 0, this.cellRadius/100); // ATP molecules
+    }
   }
 }

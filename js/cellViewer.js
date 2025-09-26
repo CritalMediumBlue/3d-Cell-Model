@@ -7,7 +7,8 @@ import { ARController } from './ar/ARController.js';
 import { TouchHandler } from './interaction/touchHandler.js';
 
 export class CellViewer {
-  constructor() {
+  constructor(mode) {
+    this.mode = mode;
     this.start();
   }
 
@@ -43,9 +44,8 @@ export class CellViewer {
     this.currentFPS = 0;
     this.frameTimeHistory = [];
     
-    this.brownianMotion = new BrownianMotion(this.simulationTimeStep);
-
-    this.particleSystem = new ParticleSystem(this.wholeSceneGroup, this.brownianMotion);
+    this.brownianMotion = new BrownianMotion(this.simulationTimeStep, this.mode);
+    this.particleSystem = new ParticleSystem(this.wholeSceneGroup, this.brownianMotion, this.mode);
     
     this.dimensionHelpers = new DimensionHelpers(
       this.particleSystem.rotatableGroup, 
@@ -81,19 +81,21 @@ export class CellViewer {
     this.proteinSD = this.brownianMotion.proteinSD;
     this.virusSD = this.brownianMotion.virusSD;
     this.bacteriaSD = this.brownianMotion.bacteriaSD;
+    this.ATPSD = this.brownianMotion.ATPSD;
     this.cellRadius = this.particleSystem.cellRadius;
   }
 
   setupParticlesAndDimensions() {
     // Initialize all particles
-    this.particleSystem.initializeAllParticles();
+    this.particleSystem.initializeAllParticles(this.mode);
     
     // Initialize dimension helpers (grids, membrane, 3D model)
-    this.dimensionHelpers.initializeAllDimensions();
+    this.dimensionHelpers.initializeAllDimensions(this.mode);
     
     this.proteins = this.particleSystem.proteins;
     this.viralParticles = this.particleSystem.viralParticles;
     this.bacteria = this.particleSystem.bacteria;
+    this.atpMolecules = this.particleSystem.ATPmolecules;
   }
 
   setupInteractions() {
@@ -152,10 +154,14 @@ export class CellViewer {
     this.calculateFPS();
     
     if (!this.isPaused) {
+      if(this.mode === "atp"){
+      this.brownianMotion.applyBrownianMotion(this.ATPSD, this.atpMolecules, 0, this.cellRadius*20, -1000,-15);
+      }
+      if(this.mode === "cell"){
       this.brownianMotion.applyBrownianMotion(this.virusSD, this.viralParticles, this.cellRadius, this.cellRadius*2);
       this.brownianMotion.applyBrownianMotion(this.proteinSD, this.proteins, this.cellRadius/3, this.cellRadius, 0, 0);
       this.brownianMotion.applyBrownianMotion(this.bacteriaSD, this.bacteria, this.cellRadius, this.cellRadius*2);
-
+      }
       this.particleSystem.updateParticleTrails();
       this.currentSimulationtime += this.simulationTimeStep;
 
@@ -170,7 +176,6 @@ export class CellViewer {
 
     if(this.frameCount % 60 === 0) {
       this.dimensionHelpers.updateTimeLabels(this.currentFPS, this.simulationTimeStep);
-      //this.particleSystem.calculateMSD(this.viralParticles); // Calculate MSD for viral particles only
 
     }
   }

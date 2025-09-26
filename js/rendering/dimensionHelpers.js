@@ -44,7 +44,11 @@ export class DimensionHelpers {
   }
 
   createCellMembrane() {
-    const geometry = new THREE.SphereGeometry(this.cellRadius, 60, 60);
+    let radius;
+    
+    radius = this.cellRadius; // Default radius for cell mode
+    
+    const geometry = new THREE.SphereGeometry(radius, 60, 60);
     const material = new THREE.MeshBasicMaterial({
       color: 0x0000ff,
       wireframe: false,
@@ -71,22 +75,21 @@ export class DimensionHelpers {
   }
 
   createHelperGrid() {
+
+
     // Add a plane grid helper to represent the 1 μm scale
     const gridHelperSmall = new THREE.GridHelper(30, 30, 0x000000, 0xffff00); // from -15 to +15 in 1um steps
-    gridHelperSmall.position.y = -this.cellRadius; // Position it at the bottom of the cell
     gridHelperSmall.position.set(0, -15, 0); // Position it at the bottom of the cell
     // Add grids to static group (won't rotate)
     this.staticGroup.add(gridHelperSmall);
 
     // Add a larger grid helper to represent the 5 μm scale
     const gridHelperBig = new THREE.GridHelper(30, 6, 0x000000, 0xff00ff); // from -15 to +15 in 5um steps
-    gridHelperBig.position.y = -this.cellRadius; // Position it at the bottom of the cell
     gridHelperBig.position.set(0, -15, 0); // Position it at the bottom of the cell
     this.staticGroup.add(gridHelperBig); 
 
     // Add an even larger grid helper to represent the 100 μm scale
     const gridHelperHuge = new THREE.GridHelper(1000, 10, 0x000000, 0x00ffff); // from -500 to +500 in 100um steps
-    gridHelperHuge.position.y = -this.cellRadius; // Position it at the bottom of the cell
     gridHelperHuge.position.set(0, -15, 0); // Position it at the bottom of the cell
     this.staticGroup.add(gridHelperHuge);
 
@@ -169,8 +172,6 @@ export class DimensionHelpers {
 
 
     
-    const axesHelper = new THREE.AxesHelper(this.cellRadius + 1/2);
-    this.staticGroup.add(axesHelper);
   }
 
   updateTimeLabels(frameRate, simulationTimeStep) {
@@ -184,13 +185,13 @@ export class DimensionHelpers {
     const frameLength = (1 / frameRate) ; // in s
 
      // Create new FPS label
-    this.currentFPSLabel = this.createTextLabel("Frames per second: " + frameRate.toFixed(2) + " frames", 0x000000, 2.5, 6 * 256, 6 * 64, false);
-    this.currentFPSLabel.position.set(0, this.cellRadius + 3.0, 0);
+    this.currentFPSLabel = this.createTextLabel("    Frames per second: " + frameRate.toFixed(2) + " frames", 0x000000, 5, 8 * 256, 8 * 64, false);
+    this.currentFPSLabel.position.set(0, 20, 0);
     this.staticGroup.add(this.currentFPSLabel);
 
     // Create new frame length label
-    this.frameLengthLabel = this.createTextLabel("Duration of animation frame: " + frameLength.toFixed(5) + " s", 0x000000, 2.5, 6 * 256, 6 * 64, false);
-    this.frameLengthLabel.position.set(0, this.cellRadius + 2.5, 0);
+    this.frameLengthLabel = this.createTextLabel("    Duration of animation frame: " + frameLength.toFixed(5) + " s", 0x000000, 5, 8 * 256, 8 * 64, false);
+    this.frameLengthLabel.position.set(0,19, 0);
     this.staticGroup.add(this.frameLengthLabel);
 
    
@@ -199,10 +200,10 @@ export class DimensionHelpers {
     const timeRate = (simulationTimeStep / deltaTime).toFixed(5);
 
     // Create new time label
-    this.currentTimeLabel = this.createTextLabel("Simulation speed: " + timeRate + "x real-time", 0x000000, 2.5,6 * 256, 6 * 64, false);
-    this.currentTimeLabel.position.set(0, this.cellRadius + 1.0, 0);
-    this.currentTimeStepLabel = this.createTextLabel("Simulation time step: " + simulationTimeStep.toFixed(5) + "s", 0x000000, 2.5, 6* 256, 6 * 64, false);
-    this.currentTimeStepLabel.position.set(0, this.cellRadius + 1.5, 0);
+    this.currentTimeLabel = this.createTextLabel("    Simulation speed: " + timeRate + "x real-time", 0x000000, 5, 8 * 256, 8 * 64, false);
+    this.currentTimeLabel.position.set(0, 17, 0);
+    this.currentTimeStepLabel = this.createTextLabel("    Simulation time step: " + simulationTimeStep.toFixed(5) + "s", 0x000000, 5, 8 * 256, 8 * 64, false);
+    this.currentTimeStepLabel.position.set(0, 16, 0);
 
     this.staticGroup.add(this.currentTimeLabel);
     this.staticGroup.add(this.currentTimeStepLabel);
@@ -232,9 +233,13 @@ export class DimensionHelpers {
     });
   }
 
-  initializeAllDimensions() {
-    this.createCellMembrane();
+  initializeAllDimensions(mode) {
+    if (mode === "cell"){
+      this.createCellMembrane();
+      this.loadCellModel();
+
+    }
     this.createHelperGrid();
-    this.loadCellModel();
+   
   }
 }
