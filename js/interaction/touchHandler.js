@@ -99,8 +99,8 @@ export class TouchHandler {
           
           // Calculate scale factor based on distance change
           const scaleChange = currentPinchDistance / this.initialPinchDistance;
-          this.currentScale = this.initialScale + (scaleChange - 1) * 0.05;
-          if (this.currentScale <= 0.001) {
+          this.currentScale = this.initialScale + (scaleChange - 1) * 0.03;
+          if (this.currentScale <= 0.0001) {
             this.currentScale = 0.001; // Prevent scaling to zero or negative
           }
           

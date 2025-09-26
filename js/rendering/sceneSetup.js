@@ -15,7 +15,6 @@ export class SceneSetup {
     this.camera.position.set(20, 20, 20);
     this.camera.lookAt(0, 0, 0);
 
-    this.scene.fog = new THREE.FogExp2(0xffffff, 0.02);
 
 
     this.renderer = new THREE.WebGLRenderer({ 

@@ -14,9 +14,7 @@ export class ARController {
     this.controller = null;
     this.onModelPlaced = null; // Callback function for when model is placed
     
-    // Store original fog settings to preserve them during AR
-    this.originalFog = this.scene.fog;
-    
+   
     this.setupAR();
   }
 
@@ -60,18 +58,12 @@ export class ARController {
     this.isARMode = true;
     this.wholeSceneGroup.visible = false; // Hide until placed
     this.modelPlaced = false;
-    // Ensure fog is preserved when entering AR mode
-    if (this.originalFog && !this.scene.fog) {
-      this.scene.fog = this.originalFog;
-    }
+   
   }
 
   onARSessionEnd() {
     this.isARMode = false;
-    // Restore fog when exiting AR mode
-    if (this.originalFog) {
-      this.scene.fog = this.originalFog;
-    } 
+   
   }
 
   onSelect() {
@@ -93,10 +85,7 @@ export class ARController {
   }
 
   handleARHitTest() {
-    // Ensure fog is maintained during AR session
-    if (this.isARMode && this.originalFog && !this.scene.fog) {
-      this.scene.fog = this.originalFog;
-    }
+ 
     
     if (!this.hitTestSourceRequested) {
       const session = this.renderer.xr.getSession();

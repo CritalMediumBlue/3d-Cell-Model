@@ -72,72 +72,94 @@ export class DimensionHelpers {
 
   createHelperGrid() {
     // Add a plane grid helper to represent the 1 μm scale
-    const gridHelperSmall = new THREE.GridHelper(30, 30, 0x000000, 0xffff00);
+    const gridHelperSmall = new THREE.GridHelper(30, 30, 0x000000, 0xffff00); // from -15 to +15 in 1um steps
     gridHelperSmall.position.y = -this.cellRadius; // Position it at the bottom of the cell
     gridHelperSmall.position.set(0, -15, 0); // Position it at the bottom of the cell
     // Add grids to static group (won't rotate)
     this.staticGroup.add(gridHelperSmall);
 
-    // Add a larger grid helper to represent the 10 μm scale
-    const gridHelperBig = new THREE.GridHelper(30, 6, 0x000000, 0xff00ff);
+    // Add a larger grid helper to represent the 5 μm scale
+    const gridHelperBig = new THREE.GridHelper(30, 6, 0x000000, 0xff00ff); // from -15 to +15 in 5um steps
     gridHelperBig.position.y = -this.cellRadius; // Position it at the bottom of the cell
     gridHelperBig.position.set(0, -15, 0); // Position it at the bottom of the cell
     this.staticGroup.add(gridHelperBig); 
 
-    // Add a small-grid vertical grid helper on the back. We can copy the small grid and rotate it.
-    const gridHelperSmallVertical = gridHelperSmall.clone();
-    gridHelperSmallVertical.rotation.x = Math.PI / 2; // Rotate to vertical\
-    gridHelperSmallVertical.position.set(0, 0, -15); // Position it at the back
-    //this.staticGroup.add(gridHelperSmallVertical);
+    // Add an even larger grid helper to represent the 100 μm scale
+    const gridHelperHuge = new THREE.GridHelper(1000, 10, 0x000000, 0x00ffff); // from -500 to +500 in 100um steps
+    gridHelperHuge.position.y = -this.cellRadius; // Position it at the bottom of the cell
+    gridHelperHuge.position.set(0, -15, 0); // Position it at the bottom of the cell
+    this.staticGroup.add(gridHelperHuge);
 
-    // Add a larger vertical grid helper to represent the 10 μm scale
-    const gridHelperBigVertical = gridHelperBig.clone();
-    gridHelperBigVertical.rotation.x = Math.PI / 2; // Rotate to vertical
-    gridHelperBigVertical.position.set(0, 0, -15); // Position it at the back
-    //this.staticGroup.add(gridHelperBigVertical);
-
+ 
     // Store references for TouchHandler compatibility
     this.wholeSceneGroup.gridHelperSmall = gridHelperSmall;
     this.wholeSceneGroup.gridHelperBig = gridHelperBig;
-   /*  this.wholeSceneGroup.gridHelperSmallVertical = gridHelperSmallVertical;
-    this.wholeSceneGroup.gridHelperBigVertical = gridHelperBigVertical;
- */
-    // Add labels to the grid helpers to indicate 1 μm steps and 10 μm steps
+    this.wholeSceneGroup.gridHelperHuge = gridHelperHuge;
+  
+    // Add labels to the grid helpers to indicate 1 μm steps and 5 μm steps
     for (let i = -15; i <= 15; i += 5) {
       const label = i;
       const label1um = this.createTextLabel(
         label + " μm", 0x000000
       );
-      const label1umVertical = label1um.clone();
       label1um.position.set(
         i, -15, 0
       );
-      label1umVertical.position.set(
-        i, 0, -15
-      );
+   
 
       this.staticGroup.add(label1um);
-      //this.staticGroup.add(label1umVertical);
       if (i !== 0) { // Avoid duplicating the zero label
         const label1um2 = this.createTextLabel(
           (-i) + " μm", 0x000000
         );
-        const label1umVertical2 = label1um2.clone();
-        label1umVertical2.position.set(
-          0, -15, i
-        );
-        //this.staticGroup.add(label1umVertical2);
+      
         label1um2.position.set(
           0, -15, i
         );
         this.staticGroup.add(label1um2);
-        const labelNegVertical = label1um2.clone();
-        labelNegVertical.position.set(
-         0, -i, -15
-        );
-        //this.staticGroup.add(labelNegVertical);
+    
       }
     }
+
+    // Add labels to the huge helper grid to indicate 100 μm steps
+    for (let i = -500; i <= 500; i += 100) {
+      if (i === 0) continue; // Skip the center label
+      const label100um = this.createTextLabel(
+        i + " μm", 0x000000, 5 
+      );
+      label100um.position.set(
+        i, -15, 0
+      );
+      this.staticGroup.add(label100um);
+
+      const label100um2 = this.createTextLabel(
+        (-i) + " μm", 0x000000, 5
+      );
+      label100um2.position.set(
+        0, -15, i
+      );
+      this.staticGroup.add(label100um2);
+    }
+
+    // add four labels to indicate 0.5 milimiters (500 μm) in each direction
+    const label500umPosX = this.createTextLabel("0.5 mm", 0x000000, 30);
+    label500umPosX.position.set(500, -15, 0);
+    this.staticGroup.add(label500umPosX);
+
+    const label500umNegX = this.createTextLabel("-0.5 mm", 0x000000, 30);
+    label500umNegX.position.set(-500, -15, 0);
+    this.staticGroup.add(label500umNegX);
+
+    const label500umPosZ = this.createTextLabel("0.5 mm", 0x000000, 30);
+    label500umPosZ.position.set(0, -15, 500);
+    this.staticGroup.add(label500umPosZ);
+
+    const label500umNegZ = this.createTextLabel("-0.5 mm", 0x000000, 30);
+    label500umNegZ.position.set(0, -15, -500);
+    this.staticGroup.add(label500umNegZ);
+
+
+
     
     const axesHelper = new THREE.AxesHelper(this.cellRadius + 1/2);
     this.staticGroup.add(axesHelper);
