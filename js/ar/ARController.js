@@ -71,7 +71,7 @@ export class ARController {
       // Place the cell group at the reticle position
       this.wholeSceneGroup.position.setFromMatrixPosition(this.reticle.matrix);
       this.wholeSceneGroup.position.y += 1.5; // Adjust height to sit on the surface
-      this.wholeSceneGroup.scale.set(0.1, 0.1, 0.1);
+      this.wholeSceneGroup.scale.set(0.02, 0.02, 0.02);
       //hide the reticle after placing the model
       this.reticle.visible = false;
       this.wholeSceneGroup.visible = true;
