@@ -177,40 +177,11 @@ export class TouchHandler {
       }
     });
     
-    // Mouse events for pause/play detection in non-AR mode
-    document.addEventListener('mousedown', (event) => {
-      this.clickStartTime = performance.now();
-      this.clickStartX = event.clientX;
-      this.clickStartY = event.clientY;
-      this.hasClickMoved = false;
-    });
-    
-    document.addEventListener('mousemove', (event) => {
-      if (this.clickStartTime > 0) { // Only track if we started a click
-        const deltaX = event.clientX - this.clickStartX;
-        const deltaY = event.clientY - this.clickStartY;
-        const totalMovement = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        
-        if (totalMovement > this.tapMovementThreshold) {
-          this.hasClickMoved = true;
-        }
-      }
-    });
-    
-    document.addEventListener('mouseup', (event) => {
-      if (this.clickStartTime > 0) {
-        const clickDuration = performance.now() - this.clickStartTime;
-        
-        // If click was short enough and didn't move much, consider it a pause click
-        if (clickDuration <= this.tapThreshold && !this.hasClickMoved) {
-          // Call the pause callback
-          if (this.onPause) {
-            this.onPause();
-          }
-        }
-        
-        // Reset click tracking
-        this.clickStartTime = 0;
+    // Click event for pause/play in non-AR mode (works everywhere)
+    document.addEventListener('click', (event) => {
+      // Call the pause callback regardless of AR mode
+      if (this.onPause) {
+        this.onPause();
       }
     });
   }
