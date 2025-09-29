@@ -91,9 +91,11 @@ export class TouchHandler {
             this.hasMoved = true;
             
             // Apply rotation only if moved significantly
-            if (this.rotatableGroup) {
+            if (this.rotatableGroup && this.mode === "cell") {
               this.wholeSceneGroup.rotation.y += deltaX * 0.005;
               this.rotatableGroup.rotation.x += deltaY * 0.005;
+            } else if (this.rotatableGroup && this.mode === "atp") {
+              this.wholeSceneGroup.rotation.y += deltaX * 0.005;
             }
 
             // Update the starting position for continuous rotation
