@@ -1,7 +1,4 @@
 import * as THREE from 'three';
-import { LineSegments2 } from 'three/addons/lines/LineSegments2.js';
-import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
-import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 
 export class ParticleSystem {
   constructor(wholeSceneGroup, brownianMotion = null, mode) {
@@ -27,21 +24,6 @@ export class ParticleSystem {
     // Trail configuration
     this.trailLength = 10; // Number of trail points per particle
     this.particleTrails = new Map(); // Store trail data for each particle
-    
-    // Add window resize handler for line materials
-    this.setupWindowResize();
-  }
-
-  setupWindowResize() {
-    window.addEventListener('resize', () => {
-      this.particleTrails.forEach((trailData) => {
-        trailData.trailLines.forEach(line => {
-          if (line.material && line.material.resolution) {
-            line.material.resolution.set(window.innerWidth, window.innerHeight);
-          }
-        });
-      });
-    });
   }
 
   centerATPMolecules() {
@@ -102,22 +84,15 @@ export class ParticleSystem {
     
     // Create connecting lines between trail points
     for (let i = 0; i < this.trailLength; i++) {
-      // Use LineGeometry instead of BufferGeometry
-      const lineGeometry = new LineGeometry();
-      lineGeometry.setPositions([0, 0, 0, 0, 0, 0]); // Initial positions (start and end points)
+      const lineGeometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(6); // 2 points (start and end) * 3 coordinates
+      lineGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       
-      // Use LineMaterial with sizeAttenuation for perspective-correct thickness
-      const lineMaterial = new LineMaterial({
+      const lineMaterial = new THREE.LineBasicMaterial({
         color: baseColor,
-        linewidth: 0.002, // Width in world units (adjust as needed)
-        resolution: new THREE.Vector2(window.innerWidth, window.innerHeight),
-        dashed: false,
-        alphaToCoverage: true,
-        sizeAttenuation: true // This makes lines thinner with distance!
       });
       
-      // Use LineSegments2 instead of Line
-      const line = new LineSegments2(lineGeometry, lineMaterial);
+      const line = new THREE.Line(lineGeometry, lineMaterial);
       line.visible = false;
       
       // Fix: Disable frustum culling to prevent lines from disappearing
@@ -188,12 +163,18 @@ export class ParticleSystem {
           const startPos = trailData.positions[startPosIndex];
           const endPos = trailData.positions[endPosIndex];
           
-          // Update line geometry with new positions
-          const positions = [
-            startPos.x, startPos.y, startPos.z,
-            endPos.x, endPos.y, endPos.z
-          ];
-          line.geometry.setPositions(positions);
+          // Update line geometry
+          const positions = line.geometry.attributes.position.array;
+          positions[0] = startPos.x;
+          positions[1] = startPos.y;
+          positions[2] = startPos.z;
+          positions[3] = endPos.x;
+          positions[4] = endPos.y;
+          positions[5] = endPos.z;
+          
+          line.geometry.attributes.position.needsUpdate = true;
+          
+ 
           
           line.visible = true;
         }
