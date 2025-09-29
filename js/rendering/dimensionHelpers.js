@@ -75,26 +75,30 @@ export class DimensionHelpers {
 
 
     // Add a plane grid helper to represent the 1 μm scale
-    const gridHelperSmall = new THREE.GridHelper(30, 30, 0x000000, 0x000000); // from -15 to +15 in 1um steps
+    const gridHelperSmall = new THREE.GridHelper(30, 30, 0xffff00, 0x000000); // from -15 to +15 in 1um steps
     gridHelperSmall.position.set(0, -15, 0); // Position it at the bottom of the cell
     // Add grids to static group (won't rotate)
     this.staticGroup.add(gridHelperSmall);
 
     // Add a larger grid helper to represent the 5 μm scale
-    const gridHelperBig = new THREE.GridHelper(30, 6, 0x000000, 0xffff00); // from -15 to +15 in 5um steps
+    const gridHelperBig = new THREE.GridHelper(30, 6, 0xffff00, 0xffff00); // from -15 to +15 in 5um steps
     gridHelperBig.position.set(0, -15, 0); // Position it at the bottom of the cell
     this.staticGroup.add(gridHelperBig); 
 
     // Add an even larger grid helper to represent the 100 μm scale
-    const gridHelperHuge = new THREE.GridHelper(1000, 10, 0x000000, 0x00ffff); // from -500 to +500 in 100um steps
+    const gridHelperHuge = new THREE.GridHelper(1000, 10, 0x00ffff, 0x00ffff); // from -500 to +500 in 100um steps
     gridHelperHuge.position.set(0, -15, 0); // Position it at the bottom of the cell
     this.staticGroup.add(gridHelperHuge);
 
- 
+    const gridHelperHugeFine = new THREE.GridHelper(1000, 20, 0x00ffff, 0x000000); // from -500 to +500 in 10um steps
+    gridHelperHugeFine.position.set(0, -15, 0); // Position it at the bottom of the cell
+    this.staticGroup.add(gridHelperHugeFine);
+
     // Store references for TouchHandler compatibility
     this.wholeSceneGroup.gridHelperSmall = gridHelperSmall;
     this.wholeSceneGroup.gridHelperBig = gridHelperBig;
     this.wholeSceneGroup.gridHelperHuge = gridHelperHuge;
+    this.wholeSceneGroup.gridHelperHugeFine = gridHelperHugeFine;
 
       // Initialize hugeLabels array if it doesn't exist
   if (!this.wholeSceneGroup.hugeLabels) {
