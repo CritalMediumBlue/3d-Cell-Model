@@ -43,21 +43,18 @@ export class DimensionHelpers {
     return sprite;
   }
 
-  createCellMembrane() {
-    let radius;
-    
-    radius = this.cellRadius; // Default radius for cell mode
-    
-    const geometry = new THREE.SphereGeometry(radius, 60, 60);
+  createCellMembrane(radius, xOffset=0, yOffset=0, zOffset=0, wireframe=false, color=0x0000ff) {
+ 
+    const geometry = new THREE.SphereGeometry(radius, 30, 30);
     const material = new THREE.MeshBasicMaterial({
-      color: 0x0000ff,
-      wireframe: false,
+      color: color,
+      wireframe: wireframe,
       transparent: true, 
       side: THREE.DoubleSide,
       opacity: 0.2
     });
     const membrane = new THREE.Mesh(geometry, material);
-    membrane.position.set(0, 0, 0); // Center the membrane
+    membrane.position.set(xOffset, yOffset, zOffset);
     // Add membrane to rotatable group
     this.rotatableGroup.add(membrane);
   }
@@ -235,12 +232,20 @@ export class DimensionHelpers {
 
   initializeAllDimensions(mode) {
     if (mode === "cell"){
-      this.createCellMembrane();
-      
+      this.createCellMembrane(7.7,0,0,0);
+      this.createHelperGrid();
+      this.loadCellModel();
+    }
+    if (mode === "nucleus"){
+      this.createCellMembrane(7.7,0,0,0, true, 0x00ff00);
+      this.createCellMembrane(1.65, -0.05,0.54,0.23, true, 0xff00ff);
+      this.createHelperGrid();
 
     }
+    if (mode === "atp"){
     this.createHelperGrid();
     this.loadCellModel();
+    }
    
   }
 }

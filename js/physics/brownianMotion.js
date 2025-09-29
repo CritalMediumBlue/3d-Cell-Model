@@ -1,9 +1,8 @@
 import * as THREE from 'three';
 
 export class BrownianMotion {
-  constructor(timeStep, mode) {
+  constructor(timeStep) {
     this.initPhysicsProperties(timeStep);
-    this.mode = mode;
   }
 
   initPhysicsProperties(timeStep) {

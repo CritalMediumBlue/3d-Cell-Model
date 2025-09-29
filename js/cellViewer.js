@@ -45,7 +45,7 @@ export class CellViewer {
     this.currentFPS = 0;
     this.frameTimeHistory = [];
     
-    this.brownianMotion = new BrownianMotion(this.simulationTimeStep, this.mode);
+    this.brownianMotion = new BrownianMotion(this.simulationTimeStep);
     this.particleSystem = new ParticleSystem(this.wholeSceneGroup, this.brownianMotion, this.mode);
     
     this.dimensionHelpers = new DimensionHelpers(
