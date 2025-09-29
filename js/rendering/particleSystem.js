@@ -201,12 +201,12 @@ export class ParticleSystem {
     // Only create particles that are defined for the current mode
     if (mode === "cell") {
       this.createParticles(viralRadius, 5, 0x00ffff, 10, this.viralParticles, this.cellRadius, this.cellRadius*2); // Viral particles
-      this.createParticles(proteinRadius, 5, 0xffffff, 5, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
+      this.createParticles(proteinRadius, 4, 0xffffff, 5, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
       this.createParticles(bacteriaRadius, 7, 0xff00ff, 10, this.bacteria, this.cellRadius, this.cellRadius*2); // Extra cellular molecules
     } else if (mode === "atp") {
-      this.createParticles(atpRadius, 5, 0x00ff00, 100, this.ATPmolecules, 0, this.cellRadius/100); // ATP molecules
+      this.createParticles(atpRadius, 3, 0x00ff00, 100, this.ATPmolecules, 0, this.cellRadius/100); // ATP molecules
     } else if (mode === "nucleus") {
-      this.createParticles(proteinRadius, 5, 0x00ffff, 100, this.transportins, this.cellRadius/4, this.cellRadius); // Protein molecules
+      this.createParticles(proteinRadius, 4, 0x00ffff, 10, this.transportins, this.cellRadius/4, this.cellRadius); // Protein molecules
     }
 
   }
