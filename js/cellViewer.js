@@ -84,6 +84,7 @@ export class CellViewer {
     this.brownianMotion.simulationTimeStep = this.simulationTimeStep;  // this.simulationTimeStep will be dynamically adjustable by user through finger gestures in AR mode
     this.brownianMotion.updatePhysicsProperties(this.simulationTimeStep);
     this.proteinSD = this.brownianMotion.proteinSD;
+    this.transportinSD = this.brownianMotion.proteinSD;
     this.virusSD = this.brownianMotion.virusSD;
     this.bacteriaSD = this.brownianMotion.bacteriaSD;
     this.ATPSD = this.brownianMotion.ATPSD;
@@ -101,6 +102,7 @@ export class CellViewer {
     this.viralParticles = this.particleSystem.viralParticles;
     this.bacteria = this.particleSystem.bacteria;
     this.atpMolecules = this.particleSystem.ATPmolecules;
+    this.transportins = this.particleSystem.transportins;
   }
 
   setupInteractions() {
@@ -164,11 +166,11 @@ export class CellViewer {
       }
       if(this.mode === "cell"){
       this.brownianMotion.applyBrownianMotion(this.virusSD, this.viralParticles, this.cellRadius, this.cellRadius*2);
-      this.brownianMotion.applyBrownianMotion(this.proteinSD, this.proteins, this.cellRadius/3, this.cellRadius, 0, 0);
+      this.brownianMotion.applyBrownianMotion(this.proteinSD, this.proteins, this.cellRadius/4, this.cellRadius, 0, 0);
       this.brownianMotion.applyBrownianMotion(this.bacteriaSD, this.bacteria, this.cellRadius, this.cellRadius*2);
       }
       if(this.mode === "nucleus"){
-      this.brownianMotion.applyBrownianMotion(this.proteinSD, this.transportins, this.cellRadius/4, this.cellRadius, 0, 0);
+      this.brownianMotion.applyBrownianMotion(this.transportinSD, this.transportins, this.cellRadius/4, this.cellRadius, 0, 0);
       }
       this.particleSystem.updateParticleTrails();
       this.currentSimulationtime += this.simulationTimeStep;
