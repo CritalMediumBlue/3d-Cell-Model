@@ -87,6 +87,7 @@ export class CellViewer {
     this.brownianMotion.updatePhysicsProperties(this.simulationTimeStep);
     this.proteinSD = this.brownianMotion.proteinSD;
     this.transportinSD = this.brownianMotion.proteinSD;
+    this.cargoProteinSD = this.brownianMotion.proteinSD;
     this.virusSD = this.brownianMotion.virusSD;
     this.bacteriaSD = this.brownianMotion.bacteriaSD;
     this.ATPSD = this.brownianMotion.ATPSD;
@@ -105,6 +106,7 @@ export class CellViewer {
     this.bacteria = this.particleSystem.bacteria;
     this.atpMolecules = this.particleSystem.ATPmolecules;
     this.transportins = this.particleSystem.transportins;
+    this.cargoProteins = this.particleSystem.cargoProteins;
   }
 
   setupInteractions() {
@@ -173,6 +175,7 @@ export class CellViewer {
       }
       if(this.mode === "nucleus"){
       this.brownianMotion.applyBrownianMotion(this.transportinSD, this.transportins, this.cellRadius/4, this.cellRadius);
+      this.brownianMotion.applyBrownianMotion(this.cargoProteinSD, this.cargoProteins, this.cellRadius/4, this.cellRadius);
       
     }
       this.particleSystem.updateParticleTrails();

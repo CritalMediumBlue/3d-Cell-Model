@@ -81,7 +81,7 @@ export class DimensionHelpers {
     this.staticGroup.add(gridHelperSmall);
 
     // Add a larger grid helper to represent the 5 μm scale
-    const gridHelperBig = new THREE.GridHelper(30, 6, 0x000000, 0xff00ff); // from -15 to +15 in 5um steps
+    const gridHelperBig = new THREE.GridHelper(30, 6, 0x000000, 0xffffff); // from -15 to +15 in 5um steps
     gridHelperBig.position.set(0, -15, 0); // Position it at the bottom of the cell
     this.staticGroup.add(gridHelperBig); 
 

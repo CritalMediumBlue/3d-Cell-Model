@@ -16,9 +16,6 @@ export class BrownianMotion {
     this.proteinRadius = 0.005; // micrometers in radius
     this.viralRadius = 0.05;    // micrometers in radius
     this.bacteriaRadius = 0.5;  // micrometers in radius
-
-
-
     this.ATPRadius = 0.0007; // micrometers in radius (approx 0.7 nm)
 
     // Calculate diffusion coefficients using the Stokes-Einstein equation
