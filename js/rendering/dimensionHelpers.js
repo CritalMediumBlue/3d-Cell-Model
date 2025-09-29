@@ -45,7 +45,7 @@ export class DimensionHelpers {
 
   createCellMembrane(radius, xOffset=0, yOffset=0, zOffset=0, wireframe=false, color=0x0000ff) {
  
-    const geometry = new THREE.SphereGeometry(radius, 30, 30);
+    const geometry = new THREE.SphereGeometry(radius, 20, 20);
     const material = new THREE.MeshBasicMaterial({
       color: color,
       wireframe: wireframe,

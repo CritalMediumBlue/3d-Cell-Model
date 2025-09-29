@@ -23,7 +23,7 @@ export class ChemicalReactions {
         // Remove from THREE.js scene
         this.particleSystem.rotatableGroup.remove(particle);
 
-        // Clean up particle trail
+    /*     // Clean up particle trail
         const trailData = this.particleSystem.particleTrails.get(particle);
         if (trailData) {
             // Remove trail lines from scene and dispose geometries/materials
@@ -34,7 +34,7 @@ export class ChemicalReactions {
             });
             // Remove trail data from map
             this.particleSystem.particleTrails.delete(particle);
-        }
+        } */
 
         // Dispose particle geometry and material
         if (particle.geometry) particle.geometry.dispose();
