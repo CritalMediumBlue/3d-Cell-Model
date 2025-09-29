@@ -136,7 +136,7 @@ export class DimensionHelpers {
     for (let i = -400; i <= 400; i += 100) {
       if (i === 0) continue; // Skip the center label
       const label100um = this.createTextLabel(
-        i + " μm", 0x000000,15 
+        i + " μm", 0x000000, 18
       );
       label100um.position.set(
         i, -15, 0
@@ -144,7 +144,7 @@ export class DimensionHelpers {
       this.staticGroup.add(label100um);
 
       const label100um2 = this.createTextLabel(
-        (-i) + " μm", 0x000000, 15
+        (-i) + " μm", 0x000000, 18
       );
       label100um2.position.set(
         0, -15, i
@@ -154,19 +154,19 @@ export class DimensionHelpers {
     }
 
     // add four labels to indicate 0.5 milimiters (500 μm) in each direction
-    const label500umPosX = this.createTextLabel("0.5 mm", 0x000000, 40);
+    const label500umPosX = this.createTextLabel("0.5 mm", 0x000000, 60);
     label500umPosX.position.set(500, -15, 0);
     this.staticGroup.add(label500umPosX);
 
-    const label500umNegX = this.createTextLabel("-0.5 mm", 0x000000, 40);
+    const label500umNegX = this.createTextLabel("-0.5 mm", 0x000000, 60);
     label500umNegX.position.set(-500, -15, 0);
     this.staticGroup.add(label500umNegX);
 
-    const label500umPosZ = this.createTextLabel("0.5 mm", 0x000000, 40);
+    const label500umPosZ = this.createTextLabel("0.5 mm", 0x000000, 60);
     label500umPosZ.position.set(0, -15, 500);
     this.staticGroup.add(label500umPosZ);
 
-    const label500umNegZ = this.createTextLabel("-0.5 mm", 0x000000, 40);
+    const label500umNegZ = this.createTextLabel("-0.5 mm", 0x000000, 60);
     label500umNegZ.position.set(0, -15, -500);
     this.staticGroup.add(label500umNegZ);
 
