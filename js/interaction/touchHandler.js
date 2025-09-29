@@ -121,6 +121,7 @@ export class TouchHandler {
           } else {
             // Show the huge helper grid
             this.wholeSceneGroup.gridHelperHuge.visible = true;
+            this.wholeSceneGroup.gridHelperHugeFine.visible = true;
             this.wholeSceneGroup.hugeLabels.forEach(label => label.visible = true);
           }
           
