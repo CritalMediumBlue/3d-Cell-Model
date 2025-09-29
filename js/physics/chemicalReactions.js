@@ -4,6 +4,47 @@ export class ChemicalReactions {
         this.cellSize = 1; // micrometers
         this.cellGridCargoProteins = new Map(); // Spatial partitioning grid
         this.cellGridTransportins = new Map(); // Spatial partitioning grid
+        this.boundPairsCount = 0; // Count of bound pairs
+        this.particleSystem = null; // Reference to particle system for cleanup
+    }
+
+    // Set reference to particle system for cleanup operations
+    setParticleSystem(particleSystem) {
+        this.particleSystem = particleSystem;
+    }
+
+    // Method to completely remove a particle and clean up all references
+    removeParticle(particle, particleArray) {
+        if (!this.particleSystem) {
+            console.warn('ParticleSystem reference not set. Cannot perform complete cleanup.');
+            return;
+        }
+
+        // Remove from THREE.js scene
+        this.particleSystem.rotatableGroup.remove(particle);
+
+        // Clean up particle trail
+        const trailData = this.particleSystem.particleTrails.get(particle);
+        if (trailData) {
+            // Remove trail lines from scene and dispose geometries/materials
+            trailData.trailLines.forEach(line => {
+                this.particleSystem.rotatableGroup.remove(line);
+                if (line.geometry) line.geometry.dispose();
+                if (line.material) line.material.dispose();
+            });
+            // Remove trail data from map
+            this.particleSystem.particleTrails.delete(particle);
+        }
+
+        // Dispose particle geometry and material
+        if (particle.geometry) particle.geometry.dispose();
+        if (particle.material) particle.material.dispose();
+
+        // Remove from particle array
+        const index = particleArray.indexOf(particle);
+        if (index > -1) {
+            particleArray.splice(index, 1);
+        }
     }
 
     getCellKey(x, y, z) {
@@ -19,7 +60,7 @@ export class ChemicalReactions {
 
         // Add each point to the appropriate cell
         cargoProteins.forEach(cargo => {
-            const key = this.getCellKey(cargo.x, cargo.y, cargo.z);
+            const key = this.getCellKey(cargo.position.x, cargo.position.y, cargo.position.z);
 
             if (!this.cellGridCargoProteins.has(key)) {
                 this.cellGridCargoProteins.set(key, []);
@@ -29,7 +70,7 @@ export class ChemicalReactions {
         });
 
         transportins.forEach(transportin => {
-            const key = this.getCellKey(transportin.x, transportin.y, transportin.z);
+            const key = this.getCellKey(transportin.position.x, transportin.position.y, transportin.position.z);
 
             if (!this.cellGridTransportins.has(key)) {
                 this.cellGridTransportins.set(key, []);
@@ -38,8 +79,40 @@ export class ChemicalReactions {
             this.cellGridTransportins.get(key).push(transportin);
         });
     }
+    //if particles are in the same grid cell, they will "bind". Once they bind, both particles will be completely removed from the simulation.
+    bindParticles(cargoProteins, transportins) {
+        this.buildGrid(cargoProteins, transportins);
 
-    bind
+        const particlesToRemove = []; // Track particles to remove
+
+        // Check each cell for potential bindings
+        this.cellGridCargoProteins.forEach((cargoList, key) => {
+            const transportinList = this.cellGridTransportins.get(key);
+            if (transportinList) {
+                // If there are both cargo proteins and transportins in the same cell, bind them
+                const minLength = Math.min(cargoList.length, transportinList.length);
+                for (let i = 0; i < minLength; i++) {
+                    const cargo = cargoList[i];
+                    const transportin = transportinList[i];
+                    if (!cargo.bound && !transportin.bound) {
+                        this.boundPairsCount++;
+                        transportin.bound = true; // Mark as bound
+                        cargo.bound = true; // Mark as bound
+                        console.log(`Bound pair #${this.boundPairsCount} at cell ${key}`);
+                        
+                        // Add to removal list instead of hiding
+                        particlesToRemove.push({particle: cargo, array: cargoProteins});
+                        particlesToRemove.push({particle: transportin, array: transportins});
+                    }
+                }
+            }
+        });
+
+        // Remove all bound particles completely
+        particlesToRemove.forEach(({particle, array}) => {
+            this.removeParticle(particle, array);
+        });
+    }
         
 
 }

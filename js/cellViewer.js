@@ -176,7 +176,7 @@ export class CellViewer {
       if(this.mode === "nucleus"){
       this.brownianMotion.applyBrownianMotion(this.transportinSD, this.transportins, this.cellRadius/4, this.cellRadius);
       this.brownianMotion.applyBrownianMotion(this.cargoProteinSD, this.cargoProteins, this.cellRadius/4, this.cellRadius);
-      
+      this.chemicalReactions.bindParticles(this.cargoProteins, this.transportins);
     }
       this.particleSystem.updateParticleTrails();
       this.currentSimulationtime += this.simulationTimeStep;

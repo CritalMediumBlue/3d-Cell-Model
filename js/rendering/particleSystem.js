@@ -70,6 +70,8 @@ export class ParticleSystem {
         randomPosition().y,
         randomPosition().z
       );
+      particle.bound = false; // Initialize bound property
+      particle.visible = true; // Ensure particle is visible
       // Add particles to the rotatable group instead of wholeSceneGroup
       this.rotatableGroup.add(particle);
       particleGroup.push(particle);
@@ -142,6 +144,7 @@ export class ParticleSystem {
     // Update trails for all particles
     this.particleTrails.forEach((trailData, particle) => {
       // Add current position to trail history
+
       trailData.positions.push(particle.position.clone());
       
       // Remove oldest position if trail is too long
@@ -176,8 +179,11 @@ export class ParticleSystem {
           line.geometry.attributes.position.needsUpdate = true;
           
  
-          
-          line.visible = true;
+          if (particle.visible) {
+            line.visible = true;
+          } else {
+            line.visible = false;
+          }
         }
       }
 
