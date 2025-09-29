@@ -19,6 +19,7 @@ export class ParticleSystem {
     this.bacteria = [];
     this.ATPmolecules = [];
     this.cellRadius = 7.7; //15.4 micrometers in diameter
+    this.transportins = [];
     
     // Trail configuration
     this.trailLength = 10; // Number of trail points per particle
@@ -193,15 +194,20 @@ export class ParticleSystem {
       bacteriaRadius = this.brownianMotion.bacteriaRadius;
     } else if (mode === "atp") {
       atpRadius = this.brownianMotion.ATPRadius;
+    } else if (mode === "nucleus") {
+      proteinRadius = this.brownianMotion.proteinRadius;
     }
 
     // Only create particles that are defined for the current mode
     if (mode === "cell") {
-      this.createParticles(viralRadius, 5, 0x00ffff, 10, this.viralParticles, this.cellRadius, this.cellRadius*3); // Viral particles
+      this.createParticles(viralRadius, 5, 0x00ffff, 10, this.viralParticles, this.cellRadius, this.cellRadius*2); // Viral particles
       this.createParticles(proteinRadius, 5, 0xffffff, 5, this.proteins, this.cellRadius/3, this.cellRadius); // Proteins
-      this.createParticles(bacteriaRadius, 7, 0xff00ff, 10, this.bacteria, this.cellRadius, this.cellRadius*3); // Extra cellular molecules
+      this.createParticles(bacteriaRadius, 7, 0xff00ff, 10, this.bacteria, this.cellRadius, this.cellRadius*2); // Extra cellular molecules
     } else if (mode === "atp") {
       this.createParticles(atpRadius, 5, 0x00ff00, 100, this.ATPmolecules, 0, this.cellRadius/100); // ATP molecules
+    } else if (mode === "nucleus") {
+      this.createParticles(proteinRadius, 5, 0x00ffff, 100, this.transportins, this.cellRadius/3, this.cellRadius); // Protein molecules
     }
+
   }
 }
