@@ -49,7 +49,7 @@ export class ParticleSystem {
     });
   }
 
-  createParticles(size, segments, color, number, particleGroup, minRadius, maxRadius) {
+  createParticles(size, segments, color, number, particleGroup, minRadius, maxRadius,xCoord, yCoord, zCoord) {
     const geometry = new THREE.SphereGeometry(size, segments, segments);
     const material = new THREE.MeshStandardMaterial({ 
             color: color,
@@ -65,11 +65,15 @@ export class ParticleSystem {
       const randomPosition = () => randomUnitVector().multiplyScalar(
         Math.random() * (maxRadius - minRadius) + minRadius
       );
-      particle.position.set(
-        randomPosition().x,
-        randomPosition().y,
-        randomPosition().z
-      );
+      if (xCoord !== undefined && yCoord !== undefined && zCoord !== undefined) {
+        particle.position.set(xCoord, yCoord, zCoord);
+      } else {
+        particle.position.set(
+          randomPosition().x,
+          randomPosition().y,
+          randomPosition().z
+        );
+      }
       particle.bound = false; // Initialize bound property
       particle.visible = true; // Ensure particle is visible
       // Add particles to the rotatable group instead of wholeSceneGroup
@@ -78,7 +82,10 @@ export class ParticleSystem {
       
       // Initialize trail for this particle
       this.initializeParticleTrail(particle, color);
+    console.log(`Created ${number} particles of size ${size} and color ${color.toString(16)} at position (${particle.position.x}, ${particle.position.y}, ${particle.position.z})`);
+
     }
+   
   }
 
   initializeParticleTrail(particle, baseColor) {

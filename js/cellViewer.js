@@ -14,7 +14,7 @@ export class CellViewer {
   }
 
   start(){
-    this.isPaused = true;
+    this.isPaused = false;
     this.initScene();
     this.initComponents();
     this.setupPhysics();
@@ -49,9 +49,8 @@ export class CellViewer {
     
     this.brownianMotion = new BrownianMotion(this.simulationTimeStep);
     this.particleSystem = new ParticleSystem(this.wholeSceneGroup, this.brownianMotion, this.mode);
-    this.chemicalReactions = new ChemicalReactions();
-    this.chemicalReactions.setParticleSystem(this.particleSystem);
-    
+    this.chemicalReactions = new ChemicalReactions(this.particleSystem);
+
     this.dimensionHelpers = new DimensionHelpers(
       this.particleSystem.rotatableGroup, 
       this.particleSystem.staticGroup, 
@@ -178,6 +177,7 @@ export class CellViewer {
       if(this.mode === "nucleus"){
       this.brownianMotion.applyBrownianMotion(this.transportinSD, this.transportins, this.cellRadius/4, this.cellRadius);
       this.brownianMotion.applyBrownianMotion(this.cargoProteinSD, this.cargoProteins, this.cellRadius/4, this.cellRadius);
+      this.brownianMotion.applyBrownianMotion(this.proteinSD, this.proteins, this.cellRadius/4, this.cellRadius);
       this.chemicalReactions.bindParticles(this.cargoProteins, this.transportins);
     }
       this.particleSystem.updateParticleTrails();

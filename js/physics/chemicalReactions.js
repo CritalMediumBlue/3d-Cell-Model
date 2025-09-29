@@ -1,17 +1,14 @@
 export class ChemicalReactions {
-    constructor() {
+    constructor(particleSystem) {
+        this.particleSystem = particleSystem;
        
         this.cellSize = 1; // micrometers
         this.cellGridCargoProteins = new Map(); // Spatial partitioning grid
         this.cellGridTransportins = new Map(); // Spatial partitioning grid
         this.boundPairsCount = 0; // Count of bound pairs
-        this.particleSystem = null; // Reference to particle system for cleanup
     }
 
-    // Set reference to particle system for cleanup operations
-    setParticleSystem(particleSystem) {
-        this.particleSystem = particleSystem;
-    }
+  
 
     // Method to completely remove a particle and clean up all references
     removeParticle(particle, particleArray) {
@@ -22,19 +19,6 @@ export class ChemicalReactions {
 
         // Remove from THREE.js scene
         this.particleSystem.rotatableGroup.remove(particle);
-
-    /*     // Clean up particle trail
-        const trailData = this.particleSystem.particleTrails.get(particle);
-        if (trailData) {
-            // Remove trail lines from scene and dispose geometries/materials
-            trailData.trailLines.forEach(line => {
-                this.particleSystem.rotatableGroup.remove(line);
-                if (line.geometry) line.geometry.dispose();
-                if (line.material) line.material.dispose();
-            });
-            // Remove trail data from map
-            this.particleSystem.particleTrails.delete(particle);
-        } */
 
         // Dispose particle geometry and material
         if (particle.geometry) particle.geometry.dispose();
@@ -79,7 +63,7 @@ export class ChemicalReactions {
             this.cellGridTransportins.get(key).push(transportin);
         });
     }
-    //if particles are in the same grid cell, they will "bind". Once they bind, both particles will be completely removed from the simulation.
+    //if particles are in the same grid cell, they will "bind". Once they bind, both particles will be completely removed from the simulation and a new particle will be created.
     bindParticles(cargoProteins, transportins) {
         this.buildGrid(cargoProteins, transportins);
 
@@ -103,6 +87,12 @@ export class ChemicalReactions {
                         // Add to removal list instead of hiding
                         particlesToRemove.push({particle: cargo, array: cargoProteins});
                         particlesToRemove.push({particle: transportin, array: transportins});
+                        //add new particle with bigger size and different color (green)
+                        const x = cargo.position.x;
+                        const y = cargo.position.y;
+                        const z = cargo.position.z;
+                        this.particleSystem.createParticles( 0.005, 4, 0x00ff00, 1, this.particleSystem.proteins, 7.7/4, 7.7, x,y,z); // Proteins
+
                     }
                 }
             }
