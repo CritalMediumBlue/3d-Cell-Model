@@ -1,106 +1,64 @@
 import { CellViewer } from './cellViewer.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Create start button
-  const startCellModel = document.createElement('button');
-  startCellModel.textContent = 'Cell model';
-  startCellModel.style.position = 'fixed';
-  startCellModel.style.top = '20px';
-  startCellModel.style.left = '20px';
-  startCellModel.style.padding = '15px 20px';
-  startCellModel.style.fontSize = '16px';
-  startCellModel.style.fontWeight = 'bold';
-  startCellModel.style.backgroundColor = '#4CAF50';
-  startCellModel.style.color = 'white';
-  startCellModel.style.border = 'none';
-  startCellModel.style.borderRadius = '5px';
-  startCellModel.style.cursor = 'pointer';
-  startCellModel.style.zIndex = '1000';
-  
-  // Add hover effect
-  startCellModel.addEventListener('mouseenter', () => {
-    startCellModel.style.backgroundColor = '#45a049';
-  });
-  
-  startCellModel.addEventListener('mouseleave', () => {
-    startCellModel.style.backgroundColor = '#4CAF50';
-  });
-  
-  // Add click event to start the simulation
-  startCellModel.addEventListener('click', () => {
-    new CellViewer('cell');
-    startCellModel.remove(); // Remove the button after starting
-    startATPsimulation.remove(); // Remove the button after starting
-    startNucleusTransport.remove(); // Remove the button after starting
-  });
+  // Button configurations
+  const buttonConfigs = [
+    { text: 'Cell model', mode: 'cell', top: '20px' },
+    { text: 'ATP molecules', mode: 'atp', top: '70px' },
+    { text: 'Nucleus transport', mode: 'nucleus', top: '120px' },
+    { text: 'non-uniform diffusion', mode: 'non-uniform', top: '170px' }
+  ];
 
-    // Create start button
-  const startATPsimulation = document.createElement('button');
-  startATPsimulation.textContent = 'ATP molecules';
-  startATPsimulation.style.position = 'fixed';
-  startATPsimulation.style.top = '20px';
-  startATPsimulation.style.left = '200px';
-  startATPsimulation.style.padding = '15px 20px';
-  startATPsimulation.style.fontSize = '16px';
-  startATPsimulation.style.fontWeight = 'bold';
-  startATPsimulation.style.backgroundColor = '#4CAF50';
-  startATPsimulation.style.color = 'white';
-  startATPsimulation.style.border = 'none';
-  startATPsimulation.style.borderRadius = '5px';
-  startATPsimulation.style.cursor = 'pointer';
-  startATPsimulation.style.zIndex = '1000';
-  
-  // Add hover effect
-  startATPsimulation.addEventListener('mouseenter', () => {
-    startATPsimulation.style.backgroundColor = '#45a049';
-  });
-  
-  startATPsimulation.addEventListener('mouseleave', () => {
-    startATPsimulation.style.backgroundColor = '#4CAF50';
-  });
-  
-  // Add click event to start the simulation
-  startATPsimulation.addEventListener('click', () => {
-    new CellViewer('atp');
-    startATPsimulation.remove(); // Remove the button after starting
-    startCellModel.remove(); // Remove the button after starting
-    startNucleusTransport.remove(); // Remove the button after starting
-  });
+  const buttons = [];
 
-  // Create nucleus transport button
-  const startNucleusTransport = document.createElement('button');
-  startNucleusTransport.textContent = 'Nucleus transport';
-  startNucleusTransport.style.position = 'fixed';
-  startNucleusTransport.style.top = '20px';
-  startNucleusTransport.style.left = '380px';
-  startNucleusTransport.style.padding = '15px 20px';
-  startNucleusTransport.style.fontSize = '16px';
-  startNucleusTransport.style.fontWeight = 'bold';
-  startNucleusTransport.style.backgroundColor = '#4CAF50';
-  startNucleusTransport.style.color = 'white';
-  startNucleusTransport.style.border = 'none';
-  startNucleusTransport.style.borderRadius = '5px';
-  startNucleusTransport.style.cursor = 'pointer';
-  startNucleusTransport.style.zIndex = '1000';
-  
-  // Add hover effect
-  startNucleusTransport.addEventListener('mouseenter', () => {
-    startNucleusTransport.style.backgroundColor = '#45a049';
+  // Function to create a button with consistent styling
+  function createButton(config) {
+    const button = document.createElement('button');
+    button.textContent = config.text;
+    
+    // Apply consistent styling
+    Object.assign(button.style, {
+      position: 'fixed',
+      top: config.top,
+      left: '20px',
+      padding: '15px 20px',
+      fontSize: '16px',
+      fontWeight: 'bold',
+      backgroundColor: '#4CAF50',
+      color: 'white',
+      border: 'none',
+      borderRadius: '5px',
+      cursor: 'pointer',
+      zIndex: '1000'
+    });
+
+    // Add hover effects
+    button.addEventListener('mouseenter', () => {
+      button.style.backgroundColor = '#45a049';
+    });
+    
+    button.addEventListener('mouseleave', () => {
+      button.style.backgroundColor = '#4CAF50';
+    });
+
+    // Add click event
+    button.addEventListener('click', () => {
+      new CellViewer(config.mode);
+      removeAllButtons();
+    });
+
+    return button;
+  }
+
+  // Function to remove all buttons
+  function removeAllButtons() {
+    buttons.forEach(button => button.remove());
+  }
+
+  // Create and append all buttons
+  buttonConfigs.forEach(config => {
+    const button = createButton(config);
+    buttons.push(button);
+    document.body.appendChild(button);
   });
-  
-  startNucleusTransport.addEventListener('mouseleave', () => {
-    startNucleusTransport.style.backgroundColor = '#4CAF50';
-  });
-  
-  // Add click event to start the simulation
-  startNucleusTransport.addEventListener('click', () => {
-    new CellViewer('nucleus');
-    startNucleusTransport.remove(); // Remove the button after starting
-    startCellModel.remove(); // Remove the button after starting
-    startATPsimulation.remove(); // Remove the button after starting
-  });
-  
-  document.body.appendChild(startCellModel);
-  document.body.appendChild(startATPsimulation);
-  document.body.appendChild(startNucleusTransport);
 });
