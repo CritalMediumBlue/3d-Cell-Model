@@ -20,6 +20,7 @@ export class CellViewer {
     this.setupPhysics();
     this.setupParticlesAndDimensions();
     this.setupInteractions();
+
     this.animate();
   }
 
@@ -49,6 +50,7 @@ export class CellViewer {
     this.brownianMotion = new BrownianMotion(this.simulationTimeStep);
     this.particleSystem = new ParticleSystem(this.wholeSceneGroup, this.brownianMotion, this.mode);
     this.chemicalReactions = new ChemicalReactions();
+    this.chemicalReactions.setParticleSystem(this.particleSystem);
     
     this.dimensionHelpers = new DimensionHelpers(
       this.particleSystem.rotatableGroup, 
