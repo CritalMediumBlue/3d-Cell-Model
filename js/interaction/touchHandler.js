@@ -91,7 +91,7 @@ export class TouchHandler {
             this.hasMoved = true;
             
             // Apply rotation only if moved significantly
-            if (this.rotatableGroup && this.mode === "cell") {
+            if (this.rotatableGroup && (this.mode === "cell" || this.mode === "nucleus")) {
               this.wholeSceneGroup.rotation.y += deltaX * 0.005;
               this.rotatableGroup.rotation.x += deltaY * 0.005;
             } else if (this.rotatableGroup && this.mode === "atp") {
