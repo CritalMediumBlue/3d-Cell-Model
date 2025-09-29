@@ -206,7 +206,7 @@ export class ParticleSystem {
     } else if (mode === "atp") {
       this.createParticles(atpRadius, 5, 0x00ff00, 100, this.ATPmolecules, 0, this.cellRadius/100); // ATP molecules
     } else if (mode === "nucleus") {
-      this.createParticles(proteinRadius, 5, 0x00ffff, 100, this.transportins, this.cellRadius/3, this.cellRadius); // Protein molecules
+      this.createParticles(proteinRadius, 5, 0x00ffff, 100, this.transportins, this.cellRadius/4, this.cellRadius); // Protein molecules
     }
 
   }
