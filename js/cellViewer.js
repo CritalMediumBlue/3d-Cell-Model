@@ -3,8 +3,9 @@ import { SceneSetup } from './rendering/sceneSetup.js';
 import { ParticleSystem } from './rendering/particleSystem.js';
 import { DimensionHelpers } from './rendering/dimensionHelpers.js';
 import { BrownianMotion } from './physics/brownianMotion.js';
-import { ARController } from './ar/ARController.js';
+import { ARController } from './interaction/ARController.js';
 import { TouchHandler } from './interaction/touchHandler.js';
+import { ChemicalReactions } from './physics/chemicalReactions.js';
 
 export class CellViewer {
   constructor(mode) {
@@ -47,6 +48,7 @@ export class CellViewer {
     
     this.brownianMotion = new BrownianMotion(this.simulationTimeStep);
     this.particleSystem = new ParticleSystem(this.wholeSceneGroup, this.brownianMotion, this.mode);
+    this.chemicalReactions = new ChemicalReactions();
     
     this.dimensionHelpers = new DimensionHelpers(
       this.particleSystem.rotatableGroup, 
@@ -171,7 +173,8 @@ export class CellViewer {
       }
       if(this.mode === "nucleus"){
       this.brownianMotion.applyBrownianMotion(this.transportinSD, this.transportins, this.cellRadius/4, this.cellRadius);
-      }
+      
+    }
       this.particleSystem.updateParticleTrails();
       this.currentSimulationtime += this.simulationTimeStep;
 

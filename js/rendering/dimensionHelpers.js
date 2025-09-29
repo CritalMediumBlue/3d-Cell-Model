@@ -237,8 +237,8 @@ export class DimensionHelpers {
       this.loadCellModel();
     }
     if (mode === "nucleus"){
-      this.createCellMembrane(7.7,0,0,0, true, 0x00ff00);
-      this.createCellMembrane(7.7/3, 0,0,0, true, 0xff00ff);
+      this.createCellMembrane(7.7,0,0,0, true, 0x000000);
+      this.createCellMembrane(7.7/3, 0,0,0, true, 0xffffff);
       this.createHelperGrid();
 
     }

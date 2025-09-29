@@ -132,9 +132,7 @@ export class ParticleSystem {
     let averageMSD = 0;
     averageMSD = particles.reduce((sum, p) => sum + p.msd, 0) / particles.length;
     console.log("Average MSD:", averageMSD);
-   
-
-
+  
   }
 
   updateParticleTrails() {
