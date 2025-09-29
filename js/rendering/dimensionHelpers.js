@@ -85,14 +85,16 @@ export class DimensionHelpers {
     gridHelperBig.position.set(0, -15, 0); // Position it at the bottom of the cell
     this.staticGroup.add(gridHelperBig); 
 
-    // Add an even larger grid helper to represent the 100 μm scale
-    const gridHelperHuge = new THREE.GridHelper(1000, 10, 0x00ffff, 0x00ffff); // from -500 to +500 in 100um steps
-    gridHelperHuge.position.set(0, -15, 0); // Position it at the bottom of the cell
-    this.staticGroup.add(gridHelperHuge);
+
 
     const gridHelperHugeFine = new THREE.GridHelper(1000, 20, 0x00ffff, 0x000000); // from -500 to +500 in 10um steps
     gridHelperHugeFine.position.set(0, -15, 0); // Position it at the bottom of the cell
     this.staticGroup.add(gridHelperHugeFine);
+
+        // Add an even larger grid helper to represent the 100 μm scale
+    const gridHelperHuge = new THREE.GridHelper(1000, 10, 0x00ffff, 0x00ffff); // from -500 to +500 in 100um steps
+    gridHelperHuge.position.set(0, -15, 0); // Position it at the bottom of the cell
+    this.staticGroup.add(gridHelperHuge);
 
     // Store references for TouchHandler compatibility
     this.wholeSceneGroup.gridHelperSmall = gridHelperSmall;
