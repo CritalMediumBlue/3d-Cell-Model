@@ -172,7 +172,6 @@ export class DimensionHelpers {
 
     this.wholeSceneGroup.hugeLabels.push(label500umPosX, label500umNegX, label500umPosZ, label500umNegZ);
 
-    //create a semi-transparent plane to represent the ground. The size should be 30x30 um, which is the same as the small grid helper
     const planeGeometry = new THREE.PlaneGeometry(30, 30);
     const planeMaterial = new THREE.MeshBasicMaterial({ color: 0xaaaaaa, side: THREE.DoubleSide, transparent: false });
     const plane = new THREE.Mesh(planeGeometry, planeMaterial);
