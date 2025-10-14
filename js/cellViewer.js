@@ -14,7 +14,7 @@ export class CellViewer {
   }
 
   start(){
-    this.isPaused = false;
+    this.isPaused = true;
     this.initScene();
     this.initComponents();
     this.setupPhysics();
