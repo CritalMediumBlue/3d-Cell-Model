@@ -147,6 +147,44 @@ export class ParticleSystem {
   
   }
 
+  restartNucleusSimulation() {
+    if (this.mode !== "nucleus") return; // Only restart in nucleus mode
+
+    // Remove all existing particles, their trails, and clear arrays
+    this.removeAllParticles();
+
+    // Re-initialize particles
+    this.initializeAllParticles(this.mode);
+
+  }
+
+  removeAllParticles() {
+  //This function removes all particles, their trails, and clears all the related arrays.
+    const allParticleGroups = [this.proteins, this.viralParticles, this.bacteria, this.ATPmolecules, this.transportins, this.cargoProteins];
+    
+    allParticleGroups.forEach(particleGroup => {
+      particleGroup.forEach(particle => {
+        // Remove particle from the scene
+        this.rotatableGroup.remove(particle);
+        particle.geometry.dispose();
+        particle.material.dispose();
+        
+        // Remove and dispose of trail lines
+        const trailData = this.particleTrails.get(particle);
+        if (trailData) {
+          trailData.trailLines.forEach(line => {
+            this.rotatableGroup.remove(line);
+            line.geometry.dispose();
+            line.material.dispose();
+          });
+          this.particleTrails.delete(particle);
+        }
+      });
+      // Clear the particle array
+      particleGroup.length = 0;
+    });
+  }
+
   updateParticleTrails() {
     // Update trails for all particles
     this.particleTrails.forEach((trailData, particle) => {

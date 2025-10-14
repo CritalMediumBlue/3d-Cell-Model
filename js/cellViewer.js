@@ -79,6 +79,9 @@ export class CellViewer {
       this.mode,
       () => {
         this.particleSystem.centerATPMolecules();
+      },
+      () => {
+        this.particleSystem.restartNucleusSimulation();
       }
     );
   }

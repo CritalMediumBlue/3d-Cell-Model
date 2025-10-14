@@ -1,5 +1,5 @@
 export class TouchHandler {
-  constructor(wholeSceneGroup, rotatableGroup, arController, simulationTimeStep, onTimeStepChange, onPause, mode, atpMoleculesToCenter) {
+  constructor(wholeSceneGroup, rotatableGroup, arController, simulationTimeStep, onTimeStepChange, onPause, mode, atpMoleculesToCenter, restartNucleus) {
     this.wholeSceneGroup = wholeSceneGroup;
     this.rotatableGroup = rotatableGroup;
     this.arController = arController;
@@ -12,6 +12,7 @@ export class TouchHandler {
     this.modelPlaced = false;
     this.mode = mode;
     this.atpMoleculesToCenter = atpMoleculesToCenter;
+    this.restartNucleus = restartNucleus;
 
     // Tap gesture detection properties
     this.tapStartTime = 0;
@@ -90,11 +91,7 @@ export class TouchHandler {
           if (totalMovement > this.tapMovementThreshold) {
             this.hasMoved = true;
             
-         /*    // Apply rotation only if moved significantly
-            if (this.rotatableGroup && (this.mode === "cell" || this.mode === "nucleus")) {
-              this.wholeSceneGroup.rotation.y += deltaX * 0.005;
-              this.rotatableGroup.rotation.x += deltaY * 0.005;
-            } else  */
+        
               
             if (this.rotatableGroup && (this.mode === "atp" || this.mode === "cell" || this.mode === "nucleus")) {
               this.wholeSceneGroup.rotation.y += deltaX * 0.005;
@@ -197,6 +194,27 @@ export class TouchHandler {
           }
         }
       }
+
+        if (this.isARMode && this.modelPlaced && event.changedTouches.length > 0 && this.mode === "nucleus") {
+        // Check if this was a single finger tap
+        if (event.changedTouches.length === 1 && event.touches.length === 0) {
+          const tapDuration = performance.now() - this.tapStartTime;
+          
+          // If touch was short enough and didn't move much, consider it a tap
+          if (tapDuration <= this.tapThreshold && !this.hasMoved) {
+            // Call the pause callback
+            if (this.onPause) {
+              this.restartNucleus();
+            }
+          }
+        }
+      }
+
+
+
+
+
+
     });
    
   }
