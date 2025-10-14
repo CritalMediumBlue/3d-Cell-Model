@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     { text: 'Cell model', mode: 'cell', top: '20px' },
     { text: 'ATP molecules', mode: 'atp', top: '70px' },
     { text: 'Nucleus transport', mode: 'nucleus', top: '120px' },
-    { text: 'non-uniform diffusion', mode: 'non-uniform', top: '170px' }
   ];
 
   const buttons = [];

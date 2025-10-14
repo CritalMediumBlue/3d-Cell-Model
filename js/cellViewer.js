@@ -62,7 +62,7 @@ export class CellViewer {
 
     this.touchHandler = new TouchHandler(
       this.wholeSceneGroup, 
-      this.particleSystem.rotatableGroup, 
+      this.particleSystem, 
       this.arController, 
       this.simulationTimeStep,
       (newTimeStep) => {

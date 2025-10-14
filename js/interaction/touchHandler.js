@@ -1,10 +1,11 @@
 export class TouchHandler {
-  constructor(wholeSceneGroup, rotatableGroup, arController, simulationTimeStep, onTimeStepChange, pause,unpause,isPaused, 
+  constructor(wholeSceneGroup, particleSystem, arController, simulationTimeStep, onTimeStepChange, pause,unpause,isPaused, 
     mode, reset
 
   ) {
     this.wholeSceneGroup = wholeSceneGroup;
-    this.rotatableGroup = rotatableGroup;
+    this.particleSystem = particleSystem;
+    this.rotatableGroup = particleSystem.rotatableGroup;
     this.arController = arController;
     this.simulationTimeStep = simulationTimeStep;
     this.onTimeStepChange = onTimeStepChange; // Callback for time step changes
