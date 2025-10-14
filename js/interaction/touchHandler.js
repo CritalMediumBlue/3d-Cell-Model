@@ -1,5 +1,8 @@
 export class TouchHandler {
-  constructor(wholeSceneGroup, rotatableGroup, arController, simulationTimeStep, onTimeStepChange, pause,unpause,isPaused, mode, atpMoleculesToCenter, reset) {
+  constructor(wholeSceneGroup, rotatableGroup, arController, simulationTimeStep, onTimeStepChange, pause,unpause,isPaused, 
+    mode, reset
+
+  ) {
     this.wholeSceneGroup = wholeSceneGroup;
     this.rotatableGroup = rotatableGroup;
     this.arController = arController;
@@ -13,7 +16,6 @@ export class TouchHandler {
     this.isARMode = false;
     this.modelPlaced = false;
     this.mode = mode;
-    this.atpMoleculesToCenter = atpMoleculesToCenter;
     this.restartSimulation = reset;
 
     // Tap gesture detection properties
@@ -169,22 +171,7 @@ export class TouchHandler {
     // Touch end event for tap detection
     document.addEventListener('touchend', (event) => {
 
-        if (this.isARMode && this.modelPlaced && event.changedTouches.length > 0 && this.mode === "atp") {
-        // Check if this was a single finger tap
-        if (event.changedTouches.length === 1 && event.touches.length === 0) {
-          const tapDuration = performance.now() - this.tapStartTime;
-          
-          // If touch was short enough and didn't move much, consider it a tap
-          if (tapDuration <= this.tapThreshold && !this.hasMoved) {
-            // Call the pause callback
-            if (this.isPaused()) {
-              this.atpMoleculesToCenter();
-            }
-          }
-        }
-      }
-
-        if (this.isARMode && this.modelPlaced && event.changedTouches.length > 0 && this.mode === "nucleus") {
+        if (this.isARMode && this.modelPlaced && event.changedTouches.length > 0 && (this.mode === "nucleus" || this.mode === "atp")) {
         // Check if this was a single finger tap
         if (event.changedTouches.length === 1 && event.touches.length === 0) {
           const tapDuration = performance.now() - this.tapStartTime;

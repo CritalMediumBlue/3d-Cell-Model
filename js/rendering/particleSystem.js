@@ -29,25 +29,7 @@ export class ParticleSystem {
     this.particleTrails = new Map(); // Store trail data for each particle
   }
 
-  centerATPMolecules() {
-    if (this.mode !== "atp") return; // Only center in ATP mode
 
-    const center = new THREE.Vector3(0, 0, 0);
-    this.ATPmolecules.forEach(molecule => {
-      molecule.position.set(
-        (Math.random() - 0.5) * this.cellRadius / 2,
-        (Math.random() - 0.5) * this.cellRadius / 2,
-        (Math.random() - 0.5) * this.cellRadius / 2
-      );
-      
-      // Reset trail data for the molecule
-      const trailData = this.particleTrails.get(molecule);
-      if (trailData) {
-        trailData.positions = [molecule.position.clone()]; // Start new trail from current position
-        trailData.trailLines.forEach(line => line.visible = false); // Hide existing trail lines
-      }
-    });
-  }
 
   createParticles(size, segments, color, number, particleGroup, minRadius, maxRadius,xCoord, yCoord, zCoord) {
     const geometry = new THREE.SphereGeometry(size, segments, segments);
