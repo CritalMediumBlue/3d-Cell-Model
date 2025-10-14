@@ -188,12 +188,12 @@ export class DimensionHelpers {
     const frameLength = (1 / frameRate) ; // in s
 
      // Create new FPS label
-    this.currentFPSLabel = this.createTextLabel("    Frames per second: " + frameRate.toFixed(2) + " frames", 0x000000, 5, 8 * 256, 8 * 64, false);
+    this.currentFPSLabel = this.createTextLabel("    Bilder pro Sekunde: " + frameRate.toFixed(2) + " Bilder", 0x000000, 5, 8 * 256, 8 * 64, false);
     this.currentFPSLabel.position.set(0, 20, 0);
     this.staticGroup.add(this.currentFPSLabel);
 
     // Create new frame length label
-    this.frameLengthLabel = this.createTextLabel("    Duration of animation frame: " + frameLength.toFixed(5) + " s", 0x000000, 5, 8 * 256, 8 * 64, false);
+    this.frameLengthLabel = this.createTextLabel("    Dauer des Animationsbildes: " + frameLength.toFixed(5) + " s", 0x000000, 5, 8 * 256, 8 * 64, false);
     this.frameLengthLabel.position.set(0,19, 0);
     this.staticGroup.add(this.frameLengthLabel);
 
@@ -203,9 +203,9 @@ export class DimensionHelpers {
     const timeRate = (simulationTimeStep / deltaTime).toFixed(5);
 
     // Create new time label
-    this.currentTimeLabel = this.createTextLabel("    Simulation speed: " + timeRate + "x real-time", 0x000000, 5, 8 * 256, 8 * 64, false);
+    this.currentTimeLabel = this.createTextLabel("    Simulationsgeschwindigkeit: " + timeRate + "x Echtzeit", 0x000000, 5, 8 * 256, 8 * 64, false);
     this.currentTimeLabel.position.set(0, 17, 0);
-    this.currentTimeStepLabel = this.createTextLabel("    Simulation time step: " + simulationTimeStep.toFixed(5) + "s", 0x000000, 5, 8 * 256, 8 * 64, false);
+    this.currentTimeStepLabel = this.createTextLabel("    Simulationszeitschritt: " + simulationTimeStep.toFixed(5) + "s", 0x000000, 5, 8 * 256, 8 * 64, false);
     this.currentTimeStepLabel.position.set(0, 16, 0);
 
     this.staticGroup.add(this.currentTimeLabel);
