@@ -74,7 +74,13 @@ export class CellViewer {
       },
       () => {
         // Callback for pause events
-        this.isPaused = !this.isPaused;
+        this.isPaused = true;
+      },
+      () => {
+        // Callback for pause events
+        this.isPaused = false;
+      },
+      () => {
         return this.isPaused;
       },
       this.mode,

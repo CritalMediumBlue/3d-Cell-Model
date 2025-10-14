@@ -1,11 +1,13 @@
 export class TouchHandler {
-  constructor(wholeSceneGroup, rotatableGroup, arController, simulationTimeStep, onTimeStepChange, onPause, mode, atpMoleculesToCenter, restartNucleus) {
+  constructor(wholeSceneGroup, rotatableGroup, arController, simulationTimeStep, onTimeStepChange, pause,unpause,isPaused, mode, atpMoleculesToCenter, restartNucleus) {
     this.wholeSceneGroup = wholeSceneGroup;
     this.rotatableGroup = rotatableGroup;
     this.arController = arController;
     this.simulationTimeStep = simulationTimeStep;
     this.onTimeStepChange = onTimeStepChange; // Callback for time step changes
-    this.onPause = onPause; // Callback for pause events
+    this.pause = pause; // Callback for pause events
+    this.unpause = unpause; // Callback for unpause events
+    this.isPaused = isPaused; // Function to check if simulation is paused
     this.touchStartX = 0;
     this.touchStartY = 0;
     this.isARMode = false;
@@ -175,7 +177,7 @@ export class TouchHandler {
           // If touch was short enough and didn't move much, consider it a tap
           if (tapDuration <= this.tapThreshold && !this.hasMoved) {
             // Call the pause callback
-            if (this.onPause) {
+            if (this.isPaused()) {
               this.atpMoleculesToCenter();
             }
           }
@@ -190,7 +192,7 @@ export class TouchHandler {
           // If touch was short enough and didn't move much, consider it a tap
           if (tapDuration <= this.tapThreshold && !this.hasMoved) {
             // Call the pause callback
-            if (this.onPause) {
+            if (this.isPaused()) {
               this.restartNucleus();
             }
           }
@@ -206,7 +208,11 @@ export class TouchHandler {
           // If touch was short enough and didn't move much, consider it a tap
           if (tapDuration <= this.tapThreshold && !this.hasMoved) {
             
-              this.onPause();
+              if (this.isPaused()) {
+                this.unpause();
+              } else {
+                this.pause();
+              }
             
           }
         }
