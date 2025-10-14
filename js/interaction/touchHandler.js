@@ -175,7 +175,7 @@ export class TouchHandler {
           // If touch was short enough and didn't move much, consider it a tap
           if (tapDuration <= this.tapThreshold && !this.hasMoved) {
             // Call the pause callback
-            if (this.onPause) {
+            if (!this.onPause) {
               this.atpMoleculesToCenter();
             }
           }
@@ -190,7 +190,7 @@ export class TouchHandler {
           // If touch was short enough and didn't move much, consider it a tap
           if (tapDuration <= this.tapThreshold && !this.hasMoved) {
             // Call the pause callback
-            if (this.onPause) {
+            if (!this.onPause) {
               this.restartNucleus();
             }
           }
@@ -205,10 +205,9 @@ export class TouchHandler {
           
           // If touch was short enough and didn't move much, consider it a tap
           if (tapDuration <= this.tapThreshold && !this.hasMoved) {
-            // Call the pause callback
-            if (this.onPause) {
+            
               this.onPause();
-            }
+            
           }
         }
       }

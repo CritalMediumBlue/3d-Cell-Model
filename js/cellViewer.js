@@ -75,6 +75,7 @@ export class CellViewer {
       () => {
         // Callback for pause events
         this.isPaused = !this.isPaused;
+        return this.isPaused;
       },
       this.mode,
       () => {
