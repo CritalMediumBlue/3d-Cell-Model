@@ -22,6 +22,7 @@ export class ParticleSystem {
     this.cargoProteins = [];
 
     this.cellRadius = 7.7; //15.4 micrometers in diameter
+    this.allRemovableLabels = [];
 
     
     // Trail configuration
@@ -103,7 +104,7 @@ export class ParticleSystem {
     this.particleTrails.set(particle, trailData);
   }
 
-  showEndToEndTrails(){
+  showEndToEndTrails(createTextLabelCallback=null) {
     //This function will create a single line that connects the first and last position in the trail of each particle.
     this.particleTrails.forEach((trailData, particle) => {
       if (trailData.positions.length >= 2) {
@@ -134,12 +135,25 @@ export class ParticleSystem {
         this.rotatableGroup.add(line);
 
         // Optionally, store this line if you want to manage it later
-        trailData.endToEndLine = line;
+        trailData.endToEndLine = line;         
+        // Only create text label if callback function is provided
+    if (createTextLabelCallback && typeof createTextLabelCallback === 'function') {
+      //calculate end-to-end distance
+      const endToEndDistance = startPos.distanceTo(endPos);
+      const label = createTextLabelCallback(`${endToEndDistance.toFixed(1)} µm`,
+        0xffffff, 1, 256*3, 64*3, true, true);
+      label.position.copy(particle.position);
+      label.position.y += 0.1;
+      this.rotatableGroup.add(label);
+      this.allRemovableLabels.push(label); // Store reference for later removal
+    }
       }
+
+
     });
   }
 
-  hideEndToEndTrails(){
+  hideEndToEndTrails() {
     //This function will remove the end-to-end trail lines created by showEndToEndTrails() and it will clean up all the references to them.
     this.particleTrails.forEach((trailData, particle) => {
       if (trailData.endToEndLine) {
@@ -149,6 +163,14 @@ export class ParticleSystem {
         delete trailData.endToEndLine; // Clean up reference
       }
     });
+
+    this.allRemovableLabels.forEach(label => {
+      this.rotatableGroup.remove(label);
+      label.material.map.dispose();
+      label.material.dispose();
+    });
+    this.allRemovableLabels = []; // Clear the array after removal
+
   }
 
   calculateMSD(particles) {

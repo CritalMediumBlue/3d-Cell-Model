@@ -25,11 +25,6 @@ export class TouchHandler {
     this.tapMovementThreshold = 10; // Maximum movement for a tap (pixels)
     this.hasMoved = false;
     
-    // Click detection properties for non-AR mode
-    this.clickStartTime = 0;
-    this.clickStartX = 0;
-    this.clickStartY = 0;
-    this.hasClickMoved = false;
     
     // Scaling properties
     this.initialPinchDistance = 0;

@@ -75,11 +75,14 @@ export class CellViewer {
       () => {
         // Callback for pause events
         this.isPaused = true;
-        this.particleSystem.showEndToEndTrails();
+        this.particleSystem.showEndToEndTrails((text, color, size, width, height, centered, removable) => {
+          return this.dimensionHelpers.createTextLabel(text, color, size, width, height, centered, removable);
+        });
         if (this.mode === "nucleus") {
           this.hidableMesh1.visible = false;
           this.hidableMesh2.visible = false;
         }
+
       },
       () => {
         // Callback for pause events

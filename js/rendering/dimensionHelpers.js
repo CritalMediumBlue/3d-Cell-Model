@@ -12,9 +12,10 @@ export class DimensionHelpers {
     this.currentTimeStepLabel = null; // Store reference to current time step label
     this.currentFPSLabel = null; // Store reference to current FPS label
     this.frameLengthLabel = null; // Store reference to frame length label
+
   }
 
-  createTextLabel(text, color = 0xffffff, size = 1, width = 256*2, height = 64*2, centered = true) {
+  createTextLabel(text, color = 0xffffff, size = 1, width = 256*2, height = 64*2, centered = true, removable=false) {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     canvas.width = width;
@@ -39,10 +40,13 @@ export class DimensionHelpers {
     });
     const sprite = new THREE.Sprite(material);
     sprite.scale.set(size * 4, size, 1);
+
+    
     
     return sprite;
   }
 
+ 
   createCellMembrane(radius, xOffset=0, yOffset=0, zOffset=0, wireframe=false, color=0x0000ff) {
  
     const geometry = new THREE.SphereGeometry(radius, 20, 20);
