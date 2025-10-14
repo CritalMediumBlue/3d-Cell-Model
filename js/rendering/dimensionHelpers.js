@@ -114,7 +114,7 @@ export class DimensionHelpers {
         label + " μm", 0x000000
       );
       label1um.position.set(
-        i, -15, 0
+        i, -14.5, 0
       );
    
 
@@ -125,7 +125,7 @@ export class DimensionHelpers {
         );
       
         label1um2.position.set(
-          0, -15, i
+          0, -14.5, i
         );
         this.staticGroup.add(label1um2);
     
@@ -171,6 +171,14 @@ export class DimensionHelpers {
     this.staticGroup.add(label500umNegZ);
 
     this.wholeSceneGroup.hugeLabels.push(label500umPosX, label500umNegX, label500umPosZ, label500umNegZ);
+
+    //create a semi-transparent plane to represent the ground. The size should be 30x30 um, which is the same as the small grid helper
+    const planeGeometry = new THREE.PlaneGeometry(30, 30);
+    const planeMaterial = new THREE.MeshBasicMaterial({ color: 0xaaaaaa, side: THREE.DoubleSide, transparent: false });
+    const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    plane.rotation.x = Math.PI / 2; // Rotate to be horizontal
+    plane.position.set(0, -15.2, 0); // Position it at the bottom of the cell
+    this.staticGroup.add(plane);
 
 
 
