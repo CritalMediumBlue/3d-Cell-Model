@@ -1,5 +1,5 @@
 export class TouchHandler {
-  constructor(wholeSceneGroup, rotatableGroup, arController, simulationTimeStep, onTimeStepChange, pause,unpause,isPaused, mode, atpMoleculesToCenter, restartNucleus) {
+  constructor(wholeSceneGroup, rotatableGroup, arController, simulationTimeStep, onTimeStepChange, pause,unpause,isPaused, mode, atpMoleculesToCenter, reset) {
     this.wholeSceneGroup = wholeSceneGroup;
     this.rotatableGroup = rotatableGroup;
     this.arController = arController;
@@ -14,7 +14,7 @@ export class TouchHandler {
     this.modelPlaced = false;
     this.mode = mode;
     this.atpMoleculesToCenter = atpMoleculesToCenter;
-    this.restartNucleus = restartNucleus;
+    this.restartSimulation = reset;
 
     // Tap gesture detection properties
     this.tapStartTime = 0;
@@ -193,7 +193,7 @@ export class TouchHandler {
           if (tapDuration <= this.tapThreshold && !this.hasMoved) {
             // Call the pause callback
             if (this.isPaused()) {
-              this.restartNucleus();
+              this.restartSimulation();
             }
           }
         }

@@ -88,9 +88,23 @@ export class CellViewer {
         this.particleSystem.centerATPMolecules();
       },
       () => {
-        this.particleSystem.restartNucleusSimulation();
+        this.particleSystem.restartSimulation();
       }
     );
+
+    //add event listener for play/pausing the simulation with spacebar
+    window.addEventListener('keydown', (event) => {
+      if (event.code === 'Space') {
+        if (this.isPaused) {
+          this.touchHandler.unpause();
+        } else {
+          this.touchHandler.pause();
+        }
+      }
+    });
+
+    //add event
+
   }
 
   setupPhysics() {

@@ -147,8 +147,8 @@ export class ParticleSystem {
   
   }
 
-  restartNucleusSimulation() {
-    if (this.mode !== "nucleus") return; // Only restart in nucleus mode
+  restartSimulation() {
+    if (this.mode !== "nucleus" || this.mode !== "atp") return; // Only restart in nucleus or atp mode
 
     // Remove all existing particles, their trails, and clear arrays
     this.removeAllParticles();
