@@ -89,6 +89,7 @@ export class CellViewer {
       },
       () => {
         this.particleSystem.restartSimulation();
+        console.log("Simulation restarted");
       }
     );
 
@@ -103,7 +104,13 @@ export class CellViewer {
       }
     });
 
-    //add event
+    //add event listener for 'r' key to restart the simulation in nucleus and atp mode
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'r' && (this.mode === "nucleus" || this.mode === "atp")) {
+        console.log("Restarting simulation");
+        this.touchHandler.restartSimulation();
+      }
+    });
 
   }
 
