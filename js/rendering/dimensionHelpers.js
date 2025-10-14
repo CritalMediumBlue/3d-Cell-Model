@@ -47,16 +47,17 @@ export class DimensionHelpers {
  
     const geometry = new THREE.SphereGeometry(radius, 20, 20);
     const material = new THREE.MeshBasicMaterial({
+      transparent: true,
+      opacity: 0.2,
       color: color,
       wireframe: wireframe,
-      transparent: true, 
-      side: THREE.DoubleSide,
-      opacity: 0.2
     });
     const membrane = new THREE.Mesh(geometry, material);
     membrane.position.set(xOffset, yOffset, zOffset);
     // Add membrane to rotatable group
+    membrane.visible = true; // Hide the membrane by default
     this.rotatableGroup.add(membrane);
+    return membrane;
   }
 
   // Helper method to dispose of a label and remove it from the scene
@@ -244,14 +245,17 @@ export class DimensionHelpers {
   }
 
   initializeAllDimensions(mode) {
+
+  let hidableMesh1 = null;
+  let hidableMesh2 = null;
     if (mode === "cell"){
       this.createCellMembrane(7.7,0,0,0);
       this.createHelperGrid();
       this.loadCellModel();
     }
     if (mode === "nucleus"){
-      this.createCellMembrane(7.7,0,0,0, true, 0x000000);
-      this.createCellMembrane(7.7/3, 0,0,0, true, 0xffffff);
+      hidableMesh1 = this.createCellMembrane(7.7,0,0,0, true, 0x000000);
+      hidableMesh2 = this.createCellMembrane(7.7/3, 0,0,0, true, 0xffffff);
       this.createHelperGrid();
 
     }
@@ -259,6 +263,9 @@ export class DimensionHelpers {
     this.createHelperGrid();
     this.loadCellModel();
     }
+
+    // Return references to the hidable meshes for external control
+    return { hidableMesh1, hidableMesh2 };
    
   }
 }

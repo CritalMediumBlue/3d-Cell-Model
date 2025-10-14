@@ -75,10 +75,20 @@ export class CellViewer {
       () => {
         // Callback for pause events
         this.isPaused = true;
+        this.particleSystem.showEndToEndTrails();
+        if (this.mode === "nucleus") {
+          this.hidableMesh1.visible = false;
+          this.hidableMesh2.visible = false;
+        }
       },
       () => {
         // Callback for pause events
         this.isPaused = false;
+        this.particleSystem.hideEndToEndTrails();
+        if (this.mode === "nucleus") {
+          this.hidableMesh1.visible = true;
+          this.hidableMesh2.visible = true;
+        }
       },
       () => {
         return this.isPaused;
@@ -128,7 +138,7 @@ export class CellViewer {
     this.particleSystem.initializeAllParticles(this.mode);
     
     // Initialize dimension helpers (grids, membrane, 3D model)
-    this.dimensionHelpers.initializeAllDimensions(this.mode);
+    const { hidableMesh1, hidableMesh2 } = this.dimensionHelpers.initializeAllDimensions(this.mode);
     
     this.proteins = this.particleSystem.proteins;
     this.viralParticles = this.particleSystem.viralParticles;
@@ -136,6 +146,8 @@ export class CellViewer {
     this.atpMolecules = this.particleSystem.ATPmolecules;
     this.transportins = this.particleSystem.transportins;
     this.cargoProteins = this.particleSystem.cargoProteins;
+    this.hidableMesh1 = hidableMesh1;
+    this.hidableMesh2 = hidableMesh2;
   }
 
   setupInteractions() {

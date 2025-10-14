@@ -103,6 +103,54 @@ export class ParticleSystem {
     this.particleTrails.set(particle, trailData);
   }
 
+  showEndToEndTrails(){
+    //This function will create a single line that connects the first and last position in the trail of each particle.
+    this.particleTrails.forEach((trailData, particle) => {
+      if (trailData.positions.length >= 2) {
+        const startPos = trailData.positions[0];
+        const endPos = trailData.positions[trailData.positions.length - 1];
+        const baseColor = particle.material.color.getHex();
+        //get a darker shade of the base color for the trail line
+        const darkerShade = new THREE.Color(baseColor).multiplyScalar(0.3).getHex();
+        const lineGeometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(6); // 2 points * 3 coordinates
+        positions[0] = startPos.x;
+        positions[1] = startPos.y;
+        positions[2] = startPos.z;
+        positions[3] = endPos.x;
+        positions[4] = endPos.y;
+        positions[5] = endPos.z;
+        
+        lineGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        
+        const lineMaterial = new THREE.LineDashedMaterial({
+          color: darkerShade, 
+            dashSize: 0.2,    
+            gapSize: 0.2,    
+            scale: 1
+            });
+        const line = new THREE.Line(lineGeometry, lineMaterial);
+        line.computeLineDistances(); 
+        this.rotatableGroup.add(line);
+
+        // Optionally, store this line if you want to manage it later
+        trailData.endToEndLine = line;
+      }
+    });
+  }
+
+  hideEndToEndTrails(){
+    //This function will remove the end-to-end trail lines created by showEndToEndTrails() and it will clean up all the references to them.
+    this.particleTrails.forEach((trailData, particle) => {
+      if (trailData.endToEndLine) {
+        this.rotatableGroup.remove(trailData.endToEndLine);
+        trailData.endToEndLine.geometry.dispose();
+        trailData.endToEndLine.material.dispose();
+        delete trailData.endToEndLine; // Clean up reference
+      }
+    });
+  }
+
   calculateMSD(particles) {
     particles.forEach(particle => {
       const trailData = this.particleTrails.get(particle);
@@ -163,6 +211,9 @@ export class ParticleSystem {
           this.particleTrails.delete(particle);
         }
       });
+      //We also need to clear any end-to-end trail lines if they exist
+      this.hideEndToEndTrails();
+
       // Clear the particle array
       particleGroup.length = 0;
     });
@@ -183,7 +234,7 @@ export class ParticleSystem {
 
       
       // Update connecting lines
-      for (let i = 0; i < trailData.trailLines.length-1; i++) {
+      for (let i = 0; i < trailData.trailLines.length; i++) {
         const line = trailData.trailLines[i];
         const startPosIndex = trailData.positions.length - 1 - i; // Start from current/previous position
         const endPosIndex = trailData.positions.length - 2 - i;   // End at next trail point
