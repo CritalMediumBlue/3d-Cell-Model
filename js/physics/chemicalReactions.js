@@ -29,6 +29,13 @@ export class ChemicalReactions {
         if (index > -1) {
             particleArray.splice(index, 1);
         }
+
+        // Remove from trails if applicable
+        if (this.particleSystem.particleTrails.has(particle)) {
+            const trail = this.particleSystem.particleTrails.get(particle);
+            this.particleSystem.removeTrail(trail);
+            this.particleSystem.particleTrails.delete(particle);
+        }
     }
 
     getCellKey(x, y, z) {

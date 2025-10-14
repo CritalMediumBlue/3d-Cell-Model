@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 
 export class BrownianMotion {
-  constructor(timeStep) {
+  constructor(timeStep, mode) {
     this.initPhysicsProperties(timeStep);
+    this.mode = mode;
   }
 
   initPhysicsProperties(timeStep) {
@@ -68,7 +69,7 @@ export class BrownianMotion {
   }
   
 
-  applyBrownianMotion(sd, molecules, minRadius, maxRadius, minZ, minY) {
+  applyBrownianMotion(sd, molecules, minRadius, maxRadius, minZ, minY, type) {
     
     molecules.forEach(molecule => {
         

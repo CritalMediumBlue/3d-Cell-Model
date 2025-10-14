@@ -126,8 +126,8 @@ export class ParticleSystem {
         
         const lineMaterial = new THREE.LineDashedMaterial({
           color: darkerShade, 
-            dashSize: 0.2,    
-            gapSize: 0.2,    
+            dashSize: 0.25,    
+            gapSize: 0.25,    
             scale: 1
             });
         const line = new THREE.Line(lineGeometry, lineMaterial);
@@ -241,6 +241,24 @@ export class ParticleSystem {
     });
   }
 
+  removeTrail(trailData) {
+    // Remove and dispose of all trail lines
+    if (trailData && trailData.trailLines) {
+      trailData.trailLines.forEach(line => {
+        this.rotatableGroup.remove(line);
+        line.geometry.dispose();
+        line.material.dispose();
+      });
+    }
+    
+    // Remove end-to-end line if it exists
+    if (trailData && trailData.endToEndLine) {
+      this.rotatableGroup.remove(trailData.endToEndLine);
+      trailData.endToEndLine.geometry.dispose();
+      trailData.endToEndLine.material.dispose();
+    }
+  }
+
   updateParticleTrails() {
     // Update trails for all particles
     this.particleTrails.forEach((trailData, particle) => {
@@ -314,7 +332,7 @@ export class ParticleSystem {
     } else if (mode === "atp") {
       this.createParticles(atpRadius, 3, 0x00ff00, 100, this.ATPmolecules, 0, this.cellRadius/100); // ATP molecules
     } else if (mode === "nucleus") {
-      this.createParticles(proteinRadius, 4, 0x00ffff, 10, this.transportins, this.cellRadius/4, this.cellRadius); // Protein molecules
+      this.createParticles(proteinRadius, 4, 0x00ffff, 10, this.transportins, this.cellRadius/4, this.cellRadius); // transportins
       this.createParticles(proteinRadius, 4, 0xffa500, 10, this.cargoProteins, this.cellRadius/4, this.cellRadius); // Cargo proteins
     }
 
