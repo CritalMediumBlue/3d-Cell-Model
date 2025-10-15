@@ -54,14 +54,14 @@ export class TouchHandler {
   setupTouchInteraction() {
     // Touch events for rotating and scaling the model in AR mode
     document.addEventListener('touchstart', (event) => {
-      if (this.isARMode && this.modelPlaced && event.touches.length > 0) {
-        if (event.touches.length === 1) {
+      if (event.touches.length > 0) {
+        if (this.isARMode && this.modelPlaced && event.touches.length === 1) {
           // Single touch - prepare for rotation or tap detection
           this.touchStartX = event.touches[0].clientX;
           this.touchStartY = event.touches[0].clientY;
           this.tapStartTime = performance.now();
           this.hasMoved = false;
-        } else if (event.touches.length === 2) {
+        } else if (this.isARMode && this.modelPlaced && event.touches.length === 2) {
           // Two touches - prepare for scaling
           this.initialPinchDistance = this.getTouchDistance(event.touches[0], event.touches[1]);
           this.initialScale = this.currentScale;
@@ -74,11 +74,11 @@ export class TouchHandler {
     });
     
     document.addEventListener('touchmove', (event) => {
-      if (this.isARMode && this.modelPlaced && event.touches.length > 0) {
+      if (event.touches.length > 0) {
         // Prevent default to avoid scrolling the page
         
         // Single touch for rotation
-        if (event.touches.length === 1) {
+        if (this.isARMode && this.modelPlaced && event.touches.length === 1) {
           const touchX = event.touches[0].clientX;
           const touchY = event.touches[0].clientY;
           
@@ -103,7 +103,7 @@ export class TouchHandler {
           }
         }
         // Two touches for scaling (pinch-to-zoom)
-        else if (event.touches.length === 2) {
+        else if (this.isARMode && this.modelPlaced && event.touches.length === 2) {
           const currentPinchDistance = this.getTouchDistance(event.touches[0], event.touches[1]);
           
           // Calculate scale factor based on distance change
@@ -167,7 +167,7 @@ export class TouchHandler {
     // Touch end event for tap detection
     document.addEventListener('touchend', (event) => {
 
-        if (this.isARMode && this.modelPlaced && event.changedTouches.length > 0 && ( this.mode === "atp" || this.mode === "nucleus" )) {
+        if (event.changedTouches.length > 0 && ( this.mode === "atp" || this.mode === "nucleus" )) {
         // Check if this was a single finger tap
         if (event.changedTouches.length === 1 && event.touches.length === 0) {
           const tapDuration = performance.now() - this.tapStartTime;
