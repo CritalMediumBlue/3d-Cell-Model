@@ -22,6 +22,7 @@ export class TouchHandler {
     // Tap gesture detection properties
     this.tapStartTime = 0;
     this.tapThreshold = 200; // Maximum duration for a tap (ms)
+    this.longTapThreshold = 1000; // Minimum duration for a long tap (ms)
     this.tapMovementThreshold = 10; // Maximum movement for a tap (pixels)
     this.hasMoved = false;
     
@@ -167,20 +168,22 @@ export class TouchHandler {
     // Touch end event for tap detection
     document.addEventListener('touchend', (event) => {
 
-        if (this.isARMode && this.modelPlaced && event.changedTouches.length > 0 && ( this.mode === "atp")) {
+        if (this.isARMode && this.modelPlaced && event.changedTouches.length > 0 && ( this.mode === "atp" || this.mode === "nucleus" )) {
         // Check if this was a single finger tap
         if (event.changedTouches.length === 1 && event.touches.length === 0) {
           const tapDuration = performance.now() - this.tapStartTime;
-          
-          // If touch was short enough and didn't move much, consider it a tap
-          if (tapDuration <= this.tapThreshold && !this.hasMoved) {
-            // Call the pause callback
-            if (this.isPaused()) {
-              this.restartSimulation();
-            }
+
+          // If touch was long enough and didn't move much, consider it a long tap
+          if (tapDuration >= this.longTapThreshold && !this.hasMoved) {
+            
+            this.restartSimulation();
+            
           }
         }
       }
+
+
+
 
 
       if (this.isARMode && this.modelPlaced && event.changedTouches.length > 0) {
