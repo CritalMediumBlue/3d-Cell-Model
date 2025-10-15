@@ -26,6 +26,11 @@ export class TouchHandler {
     this.tapMovementThreshold = 5; // Maximum movement for a tap (pixels)
     this.hasMoved = false;
     
+    // Gesture state tracking
+    this.currentGesture = null; // 'single', 'pinch', 'three-finger', null
+    this.gestureStartTime = 0;
+    this.pinchCooldownTime = 0;
+    this.pinchCooldownDuration = 300; // ms to wait after pinch before allowing taps
     
     // Scaling properties
     this.initialPinchDistance = 0;
@@ -55,19 +60,30 @@ export class TouchHandler {
     // Touch events for rotating and scaling the model in AR mode
     document.addEventListener('touchstart', (event) => {
       if (event.touches.length > 0) {
+        const currentTime = performance.now();
+        
         if (this.isARMode && this.modelPlaced && event.touches.length === 1) {
-          // Single touch - prepare for rotation or tap detection
-          this.touchStartX = event.touches[0].clientX;
-          this.touchStartY = event.touches[0].clientY;
-          this.tapStartTime = performance.now();
-          this.hasMoved = false;
+          // Only start single touch gesture if we're not in cooldown from a recent pinch
+          if (currentTime - this.pinchCooldownTime > this.pinchCooldownDuration) {
+            // Single touch - prepare for rotation or tap detection
+            this.currentGesture = 'single';
+            this.touchStartX = event.touches[0].clientX;
+            this.touchStartY = event.touches[0].clientY;
+            this.tapStartTime = currentTime;
+            this.gestureStartTime = currentTime;
+            this.hasMoved = false;
+          }
         } else if (this.isARMode && this.modelPlaced && event.touches.length === 2) {
           // Two touches - prepare for scaling
+          this.currentGesture = 'pinch';
+          this.gestureStartTime = currentTime;
           this.initialPinchDistance = this.getTouchDistance(event.touches[0], event.touches[1]);
           this.initialScale = this.currentScale;
         }
         else if (event.touches.length === 3) {
           // Three touches - prepare for speed control
+          this.currentGesture = 'three-finger';
+          this.gestureStartTime = currentTime;
           this.touchStartY = (event.touches[0].clientY + event.touches[1].clientY + event.touches[2].clientY) / 3;
         }
       }
@@ -78,7 +94,7 @@ export class TouchHandler {
         // Prevent default to avoid scrolling the page
         
         // Single touch for rotation
-        if (this.isARMode && this.modelPlaced && event.touches.length === 1) {
+        if (this.isARMode && this.modelPlaced && event.touches.length === 1 && this.currentGesture === 'single') {
           const touchX = event.touches[0].clientX;
           const touchY = event.touches[0].clientY;
           
@@ -103,7 +119,7 @@ export class TouchHandler {
           }
         }
         // Two touches for scaling (pinch-to-zoom)
-        else if (this.isARMode && this.modelPlaced && event.touches.length === 2) {
+        else if (this.isARMode && this.modelPlaced && event.touches.length === 2 && this.currentGesture === 'pinch') {
           const currentPinchDistance = this.getTouchDistance(event.touches[0], event.touches[1]);
           
           // Calculate scale factor based on distance change
@@ -133,7 +149,7 @@ export class TouchHandler {
           
         }
         // Three touches for speed control
-        else if (event.touches.length === 3) {
+        else if (event.touches.length === 3 && this.currentGesture === 'three-finger') {
           const currentY = (event.touches[0].clientY + event.touches[1].clientY + event.touches[2].clientY) / 3;
           const deltaY = currentY - this.touchStartY;
           const threshold = 5; // Minimum movement to consider
@@ -186,20 +202,41 @@ export class TouchHandler {
 
 
       if (this.isARMode && this.modelPlaced && event.changedTouches.length > 0) {
-        // Check if this was a single finger tap
-        if (event.changedTouches.length === 1 && event.touches.length === 0) {
-          const tapDuration = performance.now() - this.tapStartTime;
+        const currentTime = performance.now();
+        
+        // Handle end of pinch gesture
+        if (this.currentGesture === 'pinch' && event.touches.length < 2) {
+          this.pinchCooldownTime = currentTime;
+          this.currentGesture = null;
+          return; // Exit early to prevent any tap detection
+        }
+        
+        // Handle end of three-finger gesture
+        if (this.currentGesture === 'three-finger' && event.touches.length < 3) {
+          this.currentGesture = null;
+          return; // Exit early
+        }
+        
+        // Handle single touch gestures (tap and long tap)
+        if (this.currentGesture === 'single' && event.touches.length === 0 && 
+            (this.mode === "atp" || this.mode === "nucleus" || this.mode === "cell")) {
           
-          // If touch was short enough and didn't move much, consider it a tap
-          if (tapDuration <= this.tapThreshold && !this.hasMoved) {
-            
-              if (this.isPaused()) {
-                this.unpause();
-              } else {
-                this.pause();
-              }
-            
+          const tapDuration = currentTime - this.tapStartTime;
+          
+          // Long tap for restart (only if gesture was consistently single touch)
+          if (tapDuration >= this.longTapThreshold && !this.hasMoved) {
+            this.restartSimulation();
           }
+          // Short tap for pause/unpause (only if gesture was consistently single touch)
+          else if (tapDuration <= this.tapThreshold && !this.hasMoved) {
+            if (this.isPaused()) {
+              this.unpause();
+            } else {
+              this.pause();
+            }
+          }
+          
+          this.currentGesture = null;
         }
       }
 
