@@ -70,8 +70,12 @@ export class BrownianMotion {
   
 
   applyBrownianMotion(sd, molecules, minRadius, maxRadius, minZ, minY, type) {
+
     
     molecules.forEach(molecule => {
+
+
+      const isItInsideTheNucleus = molecule.position.length() < minRadius;
         
       const [deltaX, deltaY] = this.normalPolar(0, sd);
       
@@ -90,12 +94,14 @@ export class BrownianMotion {
       
       // Keep particles within maximum radius (e.g., cell boundary)
       if (molecule.position.length() > maxRadius) {
-        molecule.position.setLength(maxRadius);
+        molecule.position.setLength(maxRadius*0.99);
       }
       
       // Keep particles outside minimum radius (e.g., nucleus or other structures)
-      if (molecule.position.length() < minRadius + this.bacteriaRadius) {
+      if (molecule.position.length() < minRadius + this.bacteriaRadius && type === "bacteria") {
         molecule.position.setLength(minRadius+ this.bacteriaRadius);
+      } else if (molecule.position.length() < minRadius && type !== "bacteria") {
+        molecule.position.setLength(minRadius);
       }
       
       // Additional boundary constraints if specified
