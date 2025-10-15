@@ -54,7 +54,6 @@ export class TouchHandler {
   setupTouchInteraction() {
     // Touch events for rotating and scaling the model in AR mode
     document.addEventListener('touchstart', (event) => {
-      event.preventDefault();
       if (this.isARMode && this.modelPlaced && event.touches.length > 0) {
         if (event.touches.length === 1) {
           // Single touch - prepare for rotation or tap detection
@@ -77,7 +76,6 @@ export class TouchHandler {
     document.addEventListener('touchmove', (event) => {
       if (this.isARMode && this.modelPlaced && event.touches.length > 0) {
         // Prevent default to avoid scrolling the page
-        event.preventDefault();
         
         // Single touch for rotation
         if (event.touches.length === 1) {
@@ -168,7 +166,6 @@ export class TouchHandler {
     
     // Touch end event for tap detection
     document.addEventListener('touchend', (event) => {
-      event.preventDefault();
 
         if (this.isARMode && this.modelPlaced && event.changedTouches.length > 0 && ( this.mode === "atp" || this.mode === "nucleus" )) {
         // Check if this was a single finger tap
