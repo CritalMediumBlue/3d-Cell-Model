@@ -78,7 +78,7 @@ export class TouchHandler {
         // Prevent default to avoid scrolling the page
         
         // Single touch for rotation
-        if (this.isARMode && this.modelPlaced && event.touches.length === 1) {
+        if (event.touches.length === 1) {
           const touchX = event.touches[0].clientX;
           const touchY = event.touches[0].clientY;
           
@@ -89,10 +89,10 @@ export class TouchHandler {
           
           // Check if movement exceeds tap threshold
           if (totalMovement > this.tapMovementThreshold) {
-            this.hasMoved = true;
+            this.hasMoved = true;}
             
         
-              
+          if (this.isARMode && this.modelPlaced && this.hasMoved) {    
             if (this.rotatableGroup && (this.mode === "atp" || this.mode === "cell" || this.mode === "nucleus")) {
               this.wholeSceneGroup.rotation.y += deltaX * 0.005;
             }
