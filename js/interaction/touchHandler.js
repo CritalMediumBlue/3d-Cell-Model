@@ -23,7 +23,7 @@ export class TouchHandler {
     this.tapStartTime = 0;
     this.tapThreshold = 200; // Maximum duration for a tap (ms)
     this.longTapThreshold = 500; // Minimum duration for a long tap (ms)
-    this.tapMovementThreshold = 10; // Maximum movement for a tap (pixels)
+    this.tapMovementThreshold = 5; // Maximum movement for a tap (pixels)
     this.hasMoved = false;
     
     
@@ -54,6 +54,7 @@ export class TouchHandler {
   setupTouchInteraction() {
     // Touch events for rotating and scaling the model in AR mode
     document.addEventListener('touchstart', (event) => {
+      event.preventDefault();
       if (this.isARMode && this.modelPlaced && event.touches.length > 0) {
         if (event.touches.length === 1) {
           // Single touch - prepare for rotation or tap detection
@@ -167,6 +168,7 @@ export class TouchHandler {
     
     // Touch end event for tap detection
     document.addEventListener('touchend', (event) => {
+      event.preventDefault();
 
         if (this.isARMode && this.modelPlaced && event.changedTouches.length > 0 && ( this.mode === "atp" || this.mode === "nucleus" )) {
         // Check if this was a single finger tap
