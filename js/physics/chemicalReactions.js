@@ -5,6 +5,7 @@ export class ChemicalReactions {
         this.cellSize = 1; // micrometers
         this.cellGridCargoProteins = new Map(); // Spatial partitioning grid
         this.cellGridTransportins = new Map(); // Spatial partitioning grid
+        this.cellGridProteins = new Map(); // Spatial partitioning grid
         this.boundPairsCount = 0; // Count of bound pairs
     }
 
@@ -45,9 +46,10 @@ export class ChemicalReactions {
     return `${cellX},${cellY},${cellZ}`;
     }
 
-    buildGrid(cargoProteins, transportins)  {
+    buildGrid(cargoProteins, transportins, proteins)  {
         this.cellGridCargoProteins = new Map();
         this.cellGridTransportins = new Map();
+        this.cellGridProteins = new Map();
 
         // Add each point to the appropriate cell
         cargoProteins.forEach(cargo => {
@@ -69,10 +71,20 @@ export class ChemicalReactions {
 
             this.cellGridTransportins.get(key).push(transportin);
         });
+
+        proteins.forEach(protein => {
+            const key = this.getCellKey(protein.position.x, protein.position.y, protein.position.z);
+
+            if (!this.cellGridProteins.has(key)) {
+                this.cellGridProteins.set(key, []);
+            }
+
+            this.cellGridProteins.get(key).push(protein);
+        });
     }
     //if particles are in the same grid cell, they will "bind". Once they bind, both particles will be completely removed from the simulation and a new particle will be created.
-    bindParticles(cargoProteins, transportins) {
-        this.buildGrid(cargoProteins, transportins);
+    bindParticles(cargoProteins, transportins, proteins) {
+        this.buildGrid(cargoProteins, transportins, proteins);
 
         const particlesToRemove = []; // Track particles to remove
 
@@ -85,7 +97,8 @@ export class ChemicalReactions {
                 for (let i = 0; i < minLength; i++) {
                     const cargo = cargoList[i];
                     const transportin = transportinList[i];
-                    if (!cargo.bound && !transportin.bound) {
+                    const isCargoInsideNucleus = cargo.position.length() < 7.7/4;
+                    if (!cargo.bound && !transportin.bound && !isCargoInsideNucleus) {
                         this.boundPairsCount++;
                         transportin.bound = true; // Mark as bound
                         cargo.bound = true; // Mark as bound
@@ -105,11 +118,40 @@ export class ChemicalReactions {
             }
         });
 
+        // unbind the proteins that are inside the nucleus
+        this.cellGridProteins.forEach((proteinList, key) => {
+            for (let i = 0; i < proteinList.length; i++) {
+                const protein = proteinList[i];
+                const distanceFromOrigin = protein.position.length();
+                if (distanceFromOrigin < 7.7/4) {
+                    particlesToRemove.push({particle: protein, array: proteins});
+               
+                this.boundPairsCount--;
+
+                const x = protein.position.x;
+                const y = protein.position.y;
+                const z = protein.position.z;
+                this.particleSystem.createParticles( 0.005, 4, 0xffa500, 1, this.particleSystem.cargoProteins, 0, 7.7/4, x,y,z); 
+                this.particleSystem.createParticles( 0.005, 4, 0x00ffff, 1, this.particleSystem.transportins, 0, 7.7/4, x,y,z);
+                console.log(`Unbound protein at cell ${key}`);
+
+                //remove protein from the simulation
+                 }
+
+
+
+            }
+                
+        });
+            
+
         // Remove all bound particles completely
         particlesToRemove.forEach(({particle, array}) => {
             this.removeParticle(particle, array);
         });
     }
+
+ 
         
 
 }

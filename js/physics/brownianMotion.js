@@ -74,9 +74,15 @@ export class BrownianMotion {
     
     molecules.forEach(molecule => {
 
+      let MolMinRadius = minRadius;
+      let MolMaxRadius = maxRadius;
 
-      const isItInsideTheNucleus = molecule.position.length() < minRadius;
-        
+      if (type === "cargo" && molecule.position.length() < 7.7/4 ) {
+        MolMinRadius = 0;
+        MolMaxRadius = maxRadius/4;
+      } 
+
+
       const [deltaX, deltaY] = this.normalPolar(0, sd);
       
       // Generate normally distributed random displacement for Z coordinate
@@ -93,15 +99,15 @@ export class BrownianMotion {
       // Apply boundary conditions to keep particles within realistic regions
       
       // Keep particles within maximum radius (e.g., cell boundary)
-      if (molecule.position.length() > maxRadius) {
-        molecule.position.setLength(maxRadius*0.99);
+      if (molecule.position.length() > MolMaxRadius) {
+        molecule.position.setLength(MolMaxRadius*0.99);
       }
       
       // Keep particles outside minimum radius (e.g., nucleus or other structures)
-      if (molecule.position.length() < minRadius + this.bacteriaRadius && type === "bacteria") {
-        molecule.position.setLength(minRadius+ this.bacteriaRadius);
-      } else if (molecule.position.length() < minRadius && type !== "bacteria") {
-        molecule.position.setLength(minRadius);
+      if (molecule.position.length() < MolMinRadius + this.bacteriaRadius && type === "bacteria") {
+        molecule.position.setLength(MolMinRadius + this.bacteriaRadius);
+      } else if (molecule.position.length() < MolMinRadius && type !== "bacteria") {
+        molecule.position.setLength(MolMinRadius);
       }
       
       // Additional boundary constraints if specified

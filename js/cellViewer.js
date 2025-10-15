@@ -222,8 +222,8 @@ export class CellViewer {
       if(this.mode === "nucleus"){
       this.brownianMotion.applyBrownianMotion(this.transportinSD, this.transportins,0, this.cellRadius, -1000000, -15, "transportin");
       this.brownianMotion.applyBrownianMotion(this.cargoProteinSD, this.cargoProteins, this.cellRadius/4, this.cellRadius, -1000000, -15, "cargo");
-      this.brownianMotion.applyBrownianMotion(this.proteinSD, this.proteins,0, this.cellRadius/4, -1000000, -15, "bindedCargoTransportin");
-      this.chemicalReactions.bindParticles(this.cargoProteins, this.transportins);
+      this.brownianMotion.applyBrownianMotion(this.proteinSD, this.proteins,  0, this.cellRadius, -1000000, -15, "bindedCargoTransportin");
+      this.chemicalReactions.bindParticles(this.cargoProteins, this.transportins, this.proteins);
     }
       this.particleSystem.updateParticleTrails();
       this.currentSimulationtime += this.simulationTimeStep;
