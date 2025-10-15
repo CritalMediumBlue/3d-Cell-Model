@@ -22,7 +22,7 @@ export class TouchHandler {
     // Tap gesture detection properties
     this.tapStartTime = 0;
     this.tapThreshold = 200; // Maximum duration for a tap (ms)
-    this.longTapThreshold = 1000; // Minimum duration for a long tap (ms)
+    this.longTapThreshold = 500; // Minimum duration for a long tap (ms)
     this.tapMovementThreshold = 10; // Maximum movement for a tap (pixels)
     this.hasMoved = false;
     
