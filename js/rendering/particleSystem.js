@@ -112,7 +112,7 @@ export class ParticleSystem {
         const endPos = trailData.positions[trailData.positions.length - 1];
         const baseColor = particle.material.color.getHex();
         //get a darker shade of the base color for the trail line
-        const darkerShade = new THREE.Color(baseColor).multiplyScalar(0.3).getHex();
+        const darkerShade = new THREE.Color(baseColor).multiplyScalar(0.5).getHex();
         const lineGeometry = new THREE.BufferGeometry();
         const positions = new Float32Array(6); // 2 points * 3 coordinates
         positions[0] = startPos.x;
