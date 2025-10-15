@@ -65,10 +65,12 @@ export class TouchHandler {
           // Two touches - prepare for scaling
           this.initialPinchDistance = this.getTouchDistance(event.touches[0], event.touches[1]);
           this.initialScale = this.currentScale;
+          this.hasMoved = true;
         }
         else if (event.touches.length === 3) {
           // Three touches - prepare for speed control
           this.touchStartY = (event.touches[0].clientY + event.touches[1].clientY + event.touches[2].clientY) / 3;
+          this.hasMoved = true;
         }
       }
     });
