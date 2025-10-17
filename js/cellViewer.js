@@ -213,6 +213,9 @@ export class CellViewer {
     if (!this.isPaused) {
       if(this.mode === "atp"){
       this.brownianMotion.applyBrownianMotion(this.ATPSD, this.atpMolecules, 0, this.cellRadius*100, -100000,-15);
+      if(this.frameCount % 5 === 0){      
+        this.dimensionHelpers.updateShells(this.atpMolecules)
+}
       }
       if(this.mode === "cell"){
       this.brownianMotion.applyBrownianMotion(this.virusSD, this.viralParticles, this.cellRadius, this.cellRadius*2);

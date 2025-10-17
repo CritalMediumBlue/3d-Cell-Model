@@ -23,6 +23,8 @@ export class SceneSetup {
     });
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.localClippingEnabled = true; // Enable clipping planes
+
     this.renderer.xr.enabled = true; // Enable WebXR
     document.body.appendChild(this.renderer.domElement);
   }

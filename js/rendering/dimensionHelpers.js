@@ -15,6 +15,71 @@ export class DimensionHelpers {
 
   }
 
+  updateShells(particles) {
+    // Calculate both statistics in a single loop
+    let MSD = 0;
+    let meanDistance = 0;
+    
+    particles.forEach(particle => {
+      const distanceFromCenter = particle.position.length();
+      MSD += distanceFromCenter * distanceFromCenter;
+      meanDistance += distanceFromCenter;
+    });
+    
+    MSD /= particles.length;
+    meanDistance /= particles.length;
+    
+    const RMSD = Math.sqrt(MSD);
+    
+    // Create clipping plane at y = -15 (reused for both shells)
+    const clippingPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 15);
+    
+    // Dispose of existing shells
+    if (this.shell) {
+      this.rotatableGroup.remove(this.shell);
+      if (this.shell.geometry) this.shell.geometry.dispose();
+      if (this.shell.material) this.shell.material.dispose();
+      this.shell = null;
+    }
+    
+    if (this.shell2) {
+      this.rotatableGroup.remove(this.shell2);
+      if (this.shell2.geometry) this.shell2.geometry.dispose();
+      if (this.shell2.material) this.shell2.material.dispose();
+      this.shell2 = null;
+    }
+    
+    // Create RMSD shell (pink)
+    const shellGeometry = new THREE.SphereGeometry(RMSD, 20, 20);
+    const shellMaterial = new THREE.MeshBasicMaterial({
+      color: 0xff00ff,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.5,
+      clippingPlanes: [clippingPlane],
+      side: THREE.DoubleSide
+    });
+    const shell = new THREE.Mesh(shellGeometry, shellMaterial);
+    this.rotatableGroup.add(shell);
+    this.shell = shell;
+    
+    // Create mean distance shell (black)
+    const shell2Geometry = new THREE.SphereGeometry(meanDistance, 20, 20);
+    const shell2Material = new THREE.MeshBasicMaterial({
+      color: 0x000000,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.5,
+      clippingPlanes: [clippingPlane],
+      side: THREE.DoubleSide
+    });
+    const shell2 = new THREE.Mesh(shell2Geometry, shell2Material);
+    this.rotatableGroup.add(shell2);
+    this.shell2 = shell2;
+    
+    return { RMSD, meanDistance };
+  }
+
   createTextLabel(text, color = 0xffffff, size = 1, width = 256*2, height = 64*2, centered = true, removable=false) {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
