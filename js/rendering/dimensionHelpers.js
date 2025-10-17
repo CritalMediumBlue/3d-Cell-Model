@@ -15,24 +15,28 @@ export class DimensionHelpers {
 
   }
 
-  updateShells(particles) {
+  updateShells(particles, diffusionCoefficientATP, currentTime) {
     // Calculate both statistics in a single loop
     let MSD = 0;
     let meanDistance = 0;
+    const allDistances = [];
     
     particles.forEach(particle => {
       const distanceFromCenter = particle.position.length();
       MSD += distanceFromCenter * distanceFromCenter;
       meanDistance += distanceFromCenter;
+      allDistances.push(distanceFromCenter);
     });
     
     MSD /= particles.length;
     meanDistance /= particles.length;
+    const medianDistance = allDistances.sort((a, b) => a - b)[Math.floor(allDistances.length / 2)];
     
     const RMSD = Math.sqrt(MSD);
+
+    const expectedRMSD = Math.sqrt(6 * diffusionCoefficientATP * 1e6 * 1e6 * currentTime); // in micrometers
     
-    // Create clipping plane at y = -15 (reused for both shells)
-    const clippingPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 15);
+    
     
     // Dispose of existing shells
     if (this.shell) {
@@ -48,36 +52,89 @@ export class DimensionHelpers {
       if (this.shell2.material) this.shell2.material.dispose();
       this.shell2 = null;
     }
+
+    if (this.medianShell) {
+      this.rotatableGroup.remove(this.medianShell);
+      if (this.medianShell.geometry) this.medianShell.geometry.dispose();
+      if (this.medianShell.material) this.medianShell.material.dispose();
+      this.medianShell = null;
+
+    }
+
+    if (this.expectedRMSShell) {
+      this.rotatableGroup.remove(this.expectedRMSShell);
+      if (this.expectedRMSShell.geometry) this.expectedRMSShell.geometry.dispose();
+      if (this.expectedRMSShell.material) this.expectedRMSShell.material.dispose();
+      this.expectedRMSShell = null;
+    }
+    const Height=15;
+    
+    const  angleRMSD = Height<RMSD ? Math.PI-Math.acos(Height/RMSD) : 0;
+
+
     
     // Create RMSD shell (pink)
-    const shellGeometry = new THREE.SphereGeometry(RMSD, 20, 20);
+    const shellGeometry = new THREE.SphereGeometry(RMSD, 20, 20, 0, 2 * Math.PI,0, angleRMSD);
     const shellMaterial = new THREE.MeshBasicMaterial({
       color: 0xff00ff,
       wireframe: true,
       transparent: true,
       opacity: 0.5,
-      clippingPlanes: [clippingPlane],
       side: THREE.DoubleSide
     });
     const shell = new THREE.Mesh(shellGeometry, shellMaterial);
     this.rotatableGroup.add(shell);
     this.shell = shell;
     
+
+    const angleMean = Height<meanDistance ? Math.PI-Math.acos(Height/meanDistance) : 0;
     // Create mean distance shell (black)
-    const shell2Geometry = new THREE.SphereGeometry(meanDistance, 20, 20);
+    const shell2Geometry = new THREE.SphereGeometry(meanDistance, 20, 20, 0, 2 * Math.PI,0, angleMean);
     const shell2Material = new THREE.MeshBasicMaterial({
       color: 0x000000,
       wireframe: true,
       transparent: true,
       opacity: 0.5,
-      clippingPlanes: [clippingPlane],
       side: THREE.DoubleSide
     });
     const shell2 = new THREE.Mesh(shell2Geometry, shell2Material);
     this.rotatableGroup.add(shell2);
     this.shell2 = shell2;
-    
-    return { RMSD, meanDistance };
+
+    const angleMedian = Height<medianDistance ? Math.PI-Math.acos(Height/medianDistance) : 0;
+
+    // Create median distance shell (blue)
+    const medianShellGeometry = new THREE.SphereGeometry(medianDistance, 20, 20, 0, 2 * Math.PI,0, angleMedian);
+    const medianShellMaterial = new THREE.MeshBasicMaterial({
+      color: 0x0000ff,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.5,
+      side: THREE.DoubleSide
+    });
+    const medianShell = new THREE.Mesh(medianShellGeometry, medianShellMaterial);
+    this.rotatableGroup.add(medianShell);
+    this.medianShell = medianShell;
+
+
+    const angleExpectedRMSD = Height<expectedRMSD ? Math.PI-Math.acos(Height/expectedRMSD) : 0;
+
+    // Create expected RMSD shell (cyan)
+    const expectedRMSShellGeometry = new THREE.SphereGeometry(expectedRMSD, 20, 20, 0, 2 * Math.PI,0, angleExpectedRMSD);
+    const expectedRMSShellMaterial = new THREE.MeshBasicMaterial({
+      color: 0x00ffff,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.5,
+      side: THREE.DoubleSide
+    });
+    const expectedRMSShell = new THREE.Mesh(expectedRMSShellGeometry, expectedRMSShellMaterial);
+    this.rotatableGroup.add(expectedRMSShell);
+    this.expectedRMSShell = expectedRMSShell; 
+
+    return [this.shell, this.shell2, this.medianShell, this.expectedRMSShell];
+
+
   }
 
   createTextLabel(text, color = 0xffffff, size = 1, width = 256*2, height = 64*2, centered = true, removable=false) {

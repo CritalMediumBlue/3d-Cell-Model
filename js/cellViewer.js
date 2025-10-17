@@ -11,6 +11,7 @@ export class CellViewer {
   constructor(mode) {
     this.mode = mode;
     this.start();
+
   }
 
   start(){
@@ -40,6 +41,7 @@ export class CellViewer {
   initComponents() {
     this.simulationTimeStep = 0.01666; // Approx 60 FPS
     this.currentSimulationtime = 0;
+    this.shells = [];
     
     // Frame rate monitoring variables
     this.frameCount = 0;
@@ -75,6 +77,7 @@ export class CellViewer {
       () => {
         // Callback for pause events
         this.isPaused = true;
+
         this.particleSystem.showEndToEndTrails((text, color, size, width, height, centered, removable) => {
           return this.dimensionHelpers.createTextLabel(text, color, size, width, height, centered, removable);
         });
@@ -101,6 +104,8 @@ export class CellViewer {
         this.particleSystem.hideEndToEndTrails();
 
         this.particleSystem.restartSimulation();
+        this.currentSimulationtime = 0;
+
         console.log("Simulation restarted");
       }
     );
@@ -110,8 +115,15 @@ export class CellViewer {
       if (event.code === 'Space') {
         if (this.isPaused) {
           this.touchHandler.unpause();
+          this.shells.forEach(shell => {
+            shell.visible = true;
+          });
+
         } else {
           this.touchHandler.pause();
+          this.shells.forEach(shell => {
+            shell.visible = false;
+          });
         }
       }
     });
@@ -135,6 +147,7 @@ export class CellViewer {
     this.virusSD = this.brownianMotion.virusSD;
     this.bacteriaSD = this.brownianMotion.bacteriaSD;
     this.ATPSD = this.brownianMotion.ATPSD;
+    this.diffusionCoefficientATP = this.brownianMotion.diffusionCoefficientATP;
     this.cellRadius = this.particleSystem.cellRadius;
   }
 
@@ -213,9 +226,9 @@ export class CellViewer {
     if (!this.isPaused) {
       if(this.mode === "atp"){
       this.brownianMotion.applyBrownianMotion(this.ATPSD, this.atpMolecules, 0, this.cellRadius*100, -100000,-15);
-      if(this.frameCount % 5 === 0){      
-        this.dimensionHelpers.updateShells(this.atpMolecules)
-}
+      if(this.frameCount % 3 === 0){     
+        this.shells = this.dimensionHelpers.updateShells(this.atpMolecules, this.diffusionCoefficientATP, this.currentSimulationtime);
+        }
       }
       if(this.mode === "cell"){
       this.brownianMotion.applyBrownianMotion(this.virusSD, this.viralParticles, this.cellRadius, this.cellRadius*2);
