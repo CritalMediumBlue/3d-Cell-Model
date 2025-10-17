@@ -85,7 +85,7 @@ export class DimensionHelpers {
 
     const Height=15;
     
-    const  angleRMSD = Height<RMSD ? Math.PI-Math.acos(Height/RMSD) : 0;
+    const  angleRMSD = Height<RMSD ? Math.PI-Math.acos(Height/RMSD) : Math.PI;
 
     // Create reticle (pink)
     const reticleGeometry = new THREE.RingGeometry(RMSD - 0.601, RMSD + 0.601, 40);
@@ -112,7 +112,7 @@ export class DimensionHelpers {
     this.shell = shell; */
     
 
-    const angleMean = Height<meanDistance ? Math.PI-Math.acos(Height/meanDistance) : 0;
+    const angleMean = Height<meanDistance ? Math.PI-Math.acos(Height/meanDistance) : Math.PI;
     const reticleMeanGeometry = new THREE.RingGeometry(meanDistance - 0.601, meanDistance + 0.601, 40);
     const reticleMeanMaterial = new THREE.MeshBasicMaterial({
       color: 0xffff00,
@@ -136,7 +136,7 @@ export class DimensionHelpers {
     this.shell2 = shell2;
 
 
-    const angleExpectedRMSD = Height<expectedRMSD ? Math.PI-Math.acos(Height/expectedRMSD) : 0;
+    const angleExpectedRMSD = Height<expectedRMSD ? Math.PI-Math.acos(Height/expectedRMSD) : Math.PI;
 
     const reticleExpectedRMSDGeometry = new THREE.RingGeometry(expectedRMSD - 0.601, expectedRMSD + 0.601, 40);
     const reticleExpectedRMSDMaterial = new THREE.MeshBasicMaterial({
