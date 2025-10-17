@@ -113,7 +113,7 @@ export class DimensionHelpers {
     const angleMean = Height<meanDistance ? Math.PI-Math.acos(Height/meanDistance) : 0;
     const reticleMeanGeometry = new THREE.RingGeometry(meanDistance, meanDistance + 0.5, 30);
     const reticleMeanMaterial = new THREE.MeshBasicMaterial({
-      color: 0x000000,
+      color: 0xffff00,
       side: THREE.DoubleSide
     });
     const reticleMean = new THREE.Mesh(reticleMeanGeometry, reticleMeanMaterial);
@@ -123,7 +123,7 @@ export class DimensionHelpers {
     // Create mean distance shell (black)
     const shell2Geometry = new THREE.SphereGeometry(meanDistance, 10, 11, 0, 2 * Math.PI,0, angleMean);
     const shell2Material = new THREE.MeshBasicMaterial({
-      color: 0x000000,
+      color: 0xffff00,
       wireframe: true,
       transparent: true,
       opacity: 0.5,
@@ -160,9 +160,10 @@ export class DimensionHelpers {
     this.rotatableGroup.add(expectedRMSShell);
     this.expectedRMSShell = expectedRMSShell; 
 
-    return [this.shell, this.shell2, this.expectedRMSShell, this.reticle, this.reticleMean, this.reticleExpectedRMSD];
-
-
+    return {
+      shells: [this.shell, this.shell2, this.expectedRMSShell],
+      reticles: [this.reticle, this.reticleMean, this.reticleExpectedRMSD]
+    };
   }
 
   createTextLabel(text, color = 0xffffff, size = 1, width = 256*2, height = 64*2, centered = true, removable=false) {
