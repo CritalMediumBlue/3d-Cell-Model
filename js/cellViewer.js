@@ -240,12 +240,12 @@ export class CellViewer {
       if(this.mode === "cell"){
       this.brownianMotion.applyBrownianMotion(this.virusSD, this.viralParticles, this.cellRadius, this.cellRadius*2);
       this.brownianMotion.applyBrownianMotion(this.proteinSD, this.proteins, this.cellRadius/4, this.cellRadius, 0, 0);
-      this.brownianMotion.applyBrownianMotion(this.bacteriaSD, this.bacteria, this.cellRadius, this.cellRadius*2, -1000000, -15,"bacteria");
+      this.brownianMotion.applyBrownianMotion(this.bacteriaSD, this.bacteria, this.cellRadius, this.cellRadius*2, -100000000, -15,"bacteria");
       }
       if(this.mode === "nucleus"){
-      this.brownianMotion.applyBrownianMotion(this.transportinSD, this.transportins,0, this.cellRadius, -1000000, -15, "transportin");
-      this.brownianMotion.applyBrownianMotion(this.cargoProteinSD, this.cargoProteins, this.cellRadius/4, this.cellRadius, -1000000, -15, "cargo");
-      this.brownianMotion.applyBrownianMotion(this.proteinSD, this.proteins,  0, this.cellRadius, -1000000, -15, "bindedCargoTransportin");
+      this.brownianMotion.applyBrownianMotion(this.transportinSD, this.transportins,0, this.cellRadius, -100000000, -15, "transportin");
+      this.brownianMotion.applyBrownianMotion(this.cargoProteinSD, this.cargoProteins, this.cellRadius/4, this.cellRadius, -100000000, -15, "cargo");
+      this.brownianMotion.applyBrownianMotion(this.proteinSD, this.proteins,  0, this.cellRadius, -100000000, -15, "bindedCargoTransportin");
       this.chemicalReactions.bindParticles(this.cargoProteins, this.transportins, this.proteins);
     }
       this.particleSystem.updateParticleTrails();
@@ -261,7 +261,7 @@ export class CellViewer {
     this.renderer.render(this.scene, this.camera);
 
     if(this.frameCount % 60 === 0) {
-      this.dimensionHelpers.updateTimeLabels(this.currentFPS, this.simulationTimeStep);
+      this.dimensionHelpers.updateTimeLabels(this.currentFPS, this.simulationTimeStep, this.currentSimulationtime);
 
     }
   }

@@ -67,7 +67,7 @@ export class DimensionHelpers {
       this.reticleMean = null;
     }
 
-    
+
 
 /* 
     if (this.expectedRMSShell) {
@@ -342,12 +342,13 @@ export class DimensionHelpers {
     
   }
 
-  updateTimeLabels(frameRate, simulationTimeStep) {
+  updateTimeLabels(frameRate, simulationTimeStep, currentSimulationtimeSinceStart) {
     // Dispose of all existing labels
     this.disposeLabel(this.currentTimeLabel);
     this.disposeLabel(this.currentTimeStepLabel);
     this.disposeLabel(this.currentFPSLabel);
     this.disposeLabel(this.frameLengthLabel);
+    this.disposeLabel(this.currentSimulationTimeLabel);
 
     // Calculate frame length in milliseconds
     const frameLength = (1 / frameRate) ; // in s
@@ -372,6 +373,10 @@ export class DimensionHelpers {
     this.currentTimeLabel.position.set(0, 17, 0);
     this.currentTimeStepLabel = this.createTextLabel("    Simulationszeitschritt: " + simulationTimeStep.toFixed(5) + "s", 0x000000, 5, 8 * 256, 8 * 64, false);
     this.currentTimeStepLabel.position.set(0, 16, 0);
+
+    this.currentSimulationTimeLabel = this.createTextLabel("    Verstrichene Simulationszeit: " + currentSimulationtimeSinceStart.toFixed(2) + "s", 0x000000, 5, 8 * 256, 8 * 64, false);
+    this.currentSimulationTimeLabel.position.set(0, 15, 0);
+    this.staticGroup.add(this.currentSimulationTimeLabel);
 
     this.staticGroup.add(this.currentTimeLabel);
     this.staticGroup.add(this.currentTimeStepLabel);
