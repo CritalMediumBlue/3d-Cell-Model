@@ -45,7 +45,14 @@ export class DimensionHelpers {
       if (this.shell.material) this.shell.material.dispose();
       this.shell = null;
     }
-    
+
+    if (this.reticle) {
+      this.rotatableGroup.remove(this.reticle);
+      if (this.reticle.geometry) this.reticle.geometry.dispose();
+      if (this.reticle.material) this.reticle.material.dispose();
+      this.reticle = null;
+    }
+
     if (this.shell2) {
       this.rotatableGroup.remove(this.shell2);
       if (this.shell2.geometry) this.shell2.geometry.dispose();
@@ -53,13 +60,13 @@ export class DimensionHelpers {
       this.shell2 = null;
     }
 
-    if (this.medianShell) {
-      this.rotatableGroup.remove(this.medianShell);
-      if (this.medianShell.geometry) this.medianShell.geometry.dispose();
-      if (this.medianShell.material) this.medianShell.material.dispose();
-      this.medianShell = null;
-
+    if (this.reticleMean) {
+      this.rotatableGroup.remove(this.reticleMean);
+      if (this.reticleMean.geometry) this.reticleMean.geometry.dispose();
+      if (this.reticleMean.material) this.reticleMean.material.dispose();
+      this.reticleMean = null;
     }
+
 
     if (this.expectedRMSShell) {
       this.rotatableGroup.remove(this.expectedRMSShell);
@@ -67,14 +74,30 @@ export class DimensionHelpers {
       if (this.expectedRMSShell.material) this.expectedRMSShell.material.dispose();
       this.expectedRMSShell = null;
     }
+    if (this.reticleExpectedRMSD) {
+      this.rotatableGroup.remove(this.reticleExpectedRMSD);
+      if (this.reticleExpectedRMSD.geometry) this.reticleExpectedRMSD.geometry.dispose();
+      if (this.reticleExpectedRMSD.material) this.reticleExpectedRMSD.material.dispose();
+      this.reticleExpectedRMSD = null;
+    }
+
     const Height=15;
     
     const  angleRMSD = Height<RMSD ? Math.PI-Math.acos(Height/RMSD) : 0;
 
+    // Create reticle (pink)
+    const reticleGeometry = new THREE.RingGeometry(RMSD, RMSD + 0.5, 30);
+    const reticleMaterial = new THREE.MeshBasicMaterial({
+      color: 0xff00ff,
+      side: THREE.DoubleSide
+    });
+    const reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
+    this.rotatableGroup.add(reticle);
+    this.reticle = reticle;
+    this.reticle.rotation.x = -Math.PI / 2;
 
-    
     // Create RMSD shell (pink)
-    const shellGeometry = new THREE.SphereGeometry(RMSD, 20, 20, 0, 2 * Math.PI,0, angleRMSD);
+    const shellGeometry = new THREE.SphereGeometry(RMSD, 10, 11, 0, 2 * Math.PI,0, angleRMSD);
     const shellMaterial = new THREE.MeshBasicMaterial({
       color: 0xff00ff,
       wireframe: true,
@@ -88,8 +111,17 @@ export class DimensionHelpers {
     
 
     const angleMean = Height<meanDistance ? Math.PI-Math.acos(Height/meanDistance) : 0;
+    const reticleMeanGeometry = new THREE.RingGeometry(meanDistance, meanDistance + 0.5, 30);
+    const reticleMeanMaterial = new THREE.MeshBasicMaterial({
+      color: 0x000000,
+      side: THREE.DoubleSide
+    });
+    const reticleMean = new THREE.Mesh(reticleMeanGeometry, reticleMeanMaterial);
+    this.rotatableGroup.add(reticleMean);
+    this.reticleMean = reticleMean;
+    this.reticleMean.rotation.x = -Math.PI / 2;
     // Create mean distance shell (black)
-    const shell2Geometry = new THREE.SphereGeometry(meanDistance, 20, 20, 0, 2 * Math.PI,0, angleMean);
+    const shell2Geometry = new THREE.SphereGeometry(meanDistance, 10, 11, 0, 2 * Math.PI,0, angleMean);
     const shell2Material = new THREE.MeshBasicMaterial({
       color: 0x000000,
       wireframe: true,
@@ -101,26 +133,22 @@ export class DimensionHelpers {
     this.rotatableGroup.add(shell2);
     this.shell2 = shell2;
 
-    const angleMedian = Height<medianDistance ? Math.PI-Math.acos(Height/medianDistance) : 0;
-
-    // Create median distance shell (blue)
-    const medianShellGeometry = new THREE.SphereGeometry(medianDistance, 20, 20, 0, 2 * Math.PI,0, angleMedian);
-    const medianShellMaterial = new THREE.MeshBasicMaterial({
-      color: 0x0000ff,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.5,
-      side: THREE.DoubleSide
-    });
-    const medianShell = new THREE.Mesh(medianShellGeometry, medianShellMaterial);
-    this.rotatableGroup.add(medianShell);
-    this.medianShell = medianShell;
-
 
     const angleExpectedRMSD = Height<expectedRMSD ? Math.PI-Math.acos(Height/expectedRMSD) : 0;
 
+    const reticleExpectedRMSDGeometry = new THREE.RingGeometry(expectedRMSD, expectedRMSD + 0.5, 30);
+    const reticleExpectedRMSDMaterial = new THREE.MeshBasicMaterial({
+      color: 0x00ffff,
+      side: THREE.DoubleSide
+    });
+    const reticleExpectedRMSD = new THREE.Mesh(reticleExpectedRMSDGeometry, reticleExpectedRMSDMaterial);
+    this.rotatableGroup.add(reticleExpectedRMSD);
+    this.reticleExpectedRMSD = reticleExpectedRMSD;
+    this.reticleExpectedRMSD.rotation.x = -Math.PI / 2;
+
+
     // Create expected RMSD shell (cyan)
-    const expectedRMSShellGeometry = new THREE.SphereGeometry(expectedRMSD, 20, 20, 0, 2 * Math.PI,0, angleExpectedRMSD);
+    const expectedRMSShellGeometry = new THREE.SphereGeometry(expectedRMSD, 10, 11, 0, 2 * Math.PI,0, angleExpectedRMSD);
     const expectedRMSShellMaterial = new THREE.MeshBasicMaterial({
       color: 0x00ffff,
       wireframe: true,
@@ -132,7 +160,7 @@ export class DimensionHelpers {
     this.rotatableGroup.add(expectedRMSShell);
     this.expectedRMSShell = expectedRMSShell; 
 
-    return [this.shell, this.shell2, this.medianShell, this.expectedRMSShell];
+    return [this.shell, this.shell2, this.expectedRMSShell];
 
 
   }

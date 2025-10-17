@@ -76,6 +76,9 @@ export class CellViewer {
       },
       () => {
         // Callback for pause events
+          this.shells.forEach(shell => {
+            shell.visible = false;
+          });
         this.isPaused = true;
 
         this.particleSystem.showEndToEndTrails((text, color, size, width, height, centered, removable) => {
@@ -89,6 +92,9 @@ export class CellViewer {
       },
       () => {
         // Callback for pause events
+          this.shells.forEach(shell => {
+            shell.visible = true;
+          });
         this.isPaused = false;
         this.particleSystem.hideEndToEndTrails();
         if (this.mode === "nucleus") {
@@ -101,6 +107,9 @@ export class CellViewer {
       },
       this.mode,
       () => {
+          this.shells.forEach(shell => {
+            shell.visible = false;
+          });
         this.particleSystem.hideEndToEndTrails();
 
         this.particleSystem.restartSimulation();
@@ -115,15 +124,8 @@ export class CellViewer {
       if (event.code === 'Space') {
         if (this.isPaused) {
           this.touchHandler.unpause();
-          this.shells.forEach(shell => {
-            shell.visible = true;
-          });
-
         } else {
           this.touchHandler.pause();
-          this.shells.forEach(shell => {
-            shell.visible = false;
-          });
         }
       }
     });
