@@ -97,6 +97,7 @@ export class DimensionHelpers {
     this.rotatableGroup.add(reticle);
     this.reticle = reticle;
     this.reticle.rotation.x = -Math.PI / 2;
+    this.reticle.position.y = Height-0.01; // Slightly below the top to avoid z-fighting
 
 /*     // Create RMSD shell (pink)
     const shellGeometry = new THREE.SphereGeometry(RMSD, 10, 11, 0, 2 * Math.PI,0, angleRMSD);
@@ -147,6 +148,7 @@ export class DimensionHelpers {
     this.rotatableGroup.add(reticleExpectedRMSD);
     this.reticleExpectedRMSD = reticleExpectedRMSD;
     this.reticleExpectedRMSD.rotation.x = -Math.PI / 2;
+    this.reticleExpectedRMSD.position.y = Height+0.01; // Slightly above the top to avoid z-fighting
 
 /* 
     // Create expected RMSD shell (cyan)
