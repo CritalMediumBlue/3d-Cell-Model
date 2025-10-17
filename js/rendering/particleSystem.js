@@ -62,6 +62,7 @@ export class ParticleSystem {
       // Add particles to the rotatable group instead of wholeSceneGroup
       this.rotatableGroup.add(particle);
       particleGroup.push(particle);
+      particle.radius = size; // Store radius for reference 
       
       // Initialize trail for this particle
       this.initializeParticleTrail(particle, color);
@@ -143,7 +144,7 @@ export class ParticleSystem {
       const label = createTextLabelCallback(`${endToEndDistance.toFixed(1)} µm`,
         0xffffff, 1, 256*3, 64*3, true, true);
       label.position.copy(particle.position);
-      label.position.y += 0.1;
+      label.position.y += particle.radius + 0.2; // Slightly above the particle
       this.rotatableGroup.add(label);
       this.allRemovableLabels.push(label); // Store reference for later removal
     }

@@ -231,11 +231,11 @@ export class CellViewer {
     if (!this.isPaused) {
       if(this.mode === "atp"){
       this.brownianMotion.applyBrownianMotion(this.ATPSD, this.atpMolecules, 0, this.cellRadius*100, -100000,-15);
-      if(this.frameCount % 1 === 0){     
+           
         const { shells, reticles } = this.dimensionHelpers.updateShells(this.atpMolecules, this.diffusionCoefficientATP, this.currentSimulationtime);
         this.shells = shells;
         this.reticles = reticles;
-      }
+      
       }
       if(this.mode === "cell"){
       this.brownianMotion.applyBrownianMotion(this.virusSD, this.viralParticles, this.cellRadius, this.cellRadius*2);
