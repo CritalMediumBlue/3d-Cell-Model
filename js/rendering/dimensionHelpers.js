@@ -160,7 +160,7 @@ export class DimensionHelpers {
     this.rotatableGroup.add(expectedRMSShell);
     this.expectedRMSShell = expectedRMSShell; 
 
-    return [this.shell, this.shell2, this.expectedRMSShell];
+    return [this.shell, this.shell2, this.expectedRMSShell, this.reticle, this.reticleMean, this.reticleExpectedRMSD];
 
 
   }
