@@ -89,9 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Button configurations
   const buttonConfigs = [
-    { text: 'Bakterien, Viren, und Proteine', mode: 'cell' },
-    { text: 'ATP Moleküle', mode: 'atp' },
-    { text: 'Nukleus Transport', mode: 'nucleus' },
+    { text: 'Mikroskopische Bewegung', mode: 'cell' },
+    { text: 'Signalmolekül-Explosion', mode: 'atp' },
+    { text: 'Nukleartransport', mode: 'nucleus' },
   ];
 
   // Create main container

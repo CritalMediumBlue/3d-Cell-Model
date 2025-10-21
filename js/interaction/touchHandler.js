@@ -169,7 +169,7 @@ export class TouchHandler {
     // Touch end event for tap detection
     document.addEventListener('touchend', (event) => {
 
-        if (event.changedTouches.length > 0 && ( this.mode === "atp" || this.mode === "nucleus" )) {
+        if (event.changedTouches.length > 0 ) {
         // Check if this was a single finger tap
         if (event.changedTouches.length === 1 && event.touches.length === 0) {
           const tapDuration = performance.now() - this.tapStartTime;
